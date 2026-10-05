@@ -1,0 +1,100 @@
+[
+  {
+    "key": "leave",
+    "title": "Annual leave policy",
+    "text": "Annual leave requests must be submitted at least two business days before the first day of absence. Submit the request through the people portal.\n\nUnused annual leave may be carried forward until March 31 of the following year.",
+    "audience": "all"
+  },
+  {
+    "key": "expenses",
+    "title": "Expense claims",
+    "text": "Expense claims must be filed within thirty calendar days after the purchase. Attach the itemized receipt and the project code. Claims missing receipts are returned for correction.",
+    "audience": "all"
+  },
+  {
+    "key": "vpn",
+    "title": "Remote access",
+    "text": "VPN access requires an enrolled company laptop and multi-factor authentication. Contact the IT service desk to request remote access. Personal devices cannot connect to the VPN.",
+    "audience": "all"
+  },
+  {
+    "key": "password",
+    "title": "Account recovery",
+    "text": "To reset an account password, use the identity portal and complete multi-factor verification. The service desk never requests an existing password or verification code.",
+    "audience": "all"
+  },
+  {
+    "key": "meeting",
+    "title": "Meeting room guide",
+    "text": "Meeting rooms can be reserved for up to two hours per booking. Cancel unused reservations at least fifteen minutes before the meeting.",
+    "audience": "all"
+  },
+  {
+    "key": "procurement",
+    "title": "Purchasing workflow",
+    "text": "Purchase requests above five thousand demo credits require department manager approval before ordering. This fictional policy applies to synthetic demonstration data only.",
+    "audience": "all"
+  },
+  {
+    "key": "incidents",
+    "title": "Security incident reporting",
+    "text": "Report a lost company laptop to the security service desk immediately. Include the asset tag and last known location. Do not include passwords in the report.",
+    "audience": "all"
+  },
+  {
+    "key": "release",
+    "title": "Internal release approval",
+    "text": "Internal release approval requires a second engineer to review the rollback plan. The release steward records the approval in the change register.",
+    "audience": "internal"
+  },
+  {
+    "key": "onboarding",
+    "title": "入职设备领取",
+    "text": "新员工在入职当天到信息服务台领取办公电脑。领取时需要出示员工编号，并签署设备领用记录。",
+    "audience": "all"
+  },
+  {
+    "key": "training",
+    "title": "培训申请流程",
+    "text": "员工申请岗位培训需要先获得直属主管同意。培训结束后七天内提交学习摘要和课程反馈。",
+    "audience": "all"
+  },
+  {
+    "key": "travel",
+    "title": "出差住宿政策",
+    "text": "出差住宿应通过企业差旅平台预订。酒店发票应包含住宿日期和企业抬头，报销材料提交给行政服务台。",
+    "audience": "all"
+  },
+  {
+    "key": "backup",
+    "title": "备份恢复演练",
+    "text": "内部备份恢复演练安排在每季度最后一个周五。演练负责人必须记录恢复耗时和数据完整性核对结果。",
+    "audience": "internal"
+  },
+  {
+    "key": "retention",
+    "title": "Temporary workspace retention",
+    "text": "Temporary project workspaces are archived ninety days after project completion. The project owner receives a reminder seven days before archival.",
+    "audience": "all"
+  },
+  {
+    "key": "support",
+    "title": "Service desk hours",
+    "text": "The IT service desk accepts routine requests Monday through Friday from 09:00 to 18:00. Critical security incidents can be reported at any time.",
+    "audience": "all"
+  },
+  {
+    "key": "other-tenant",
+    "tenant": "other",
+    "title": "Other company leave",
+    "text": "Annual leave requests in this other synthetic company require ten days notice. This document must never appear for acme readers.",
+    "audience": "all"
+  },
+  {
+    "key": "other-workspace",
+    "workspace": "restricted",
+    "title": "Restricted workspace",
+    "text": "The confidential roadmap launch date is November 12. This synthetic document is visible only in the restricted workspace.",
+    "audience": "all"
+  }
+]

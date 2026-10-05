@@ -1,0 +1,239 @@
+[
+  {
+    "id": "leave-direct",
+    "question": "How much notice is required for annual leave?",
+    "relevant": [
+      "leave"
+    ],
+    "audience": "all",
+    "split": "validation"
+  },
+  {
+    "id": "leave-carry",
+    "question": "When does carried forward annual leave expire?",
+    "relevant": [
+      "leave"
+    ],
+    "audience": "all",
+    "split": "validation"
+  },
+  {
+    "id": "expenses",
+    "question": "What must I attach to an expense claim?",
+    "relevant": [
+      "expenses"
+    ],
+    "audience": "all",
+    "split": "validation"
+  },
+  {
+    "id": "expenses-deadline",
+    "question": "What is the deadline for filing expense claims?",
+    "relevant": [
+      "expenses"
+    ],
+    "audience": "all",
+    "split": "validation"
+  },
+  {
+    "id": "vpn",
+    "question": "Can personal devices connect to VPN?",
+    "relevant": [
+      "vpn"
+    ],
+    "audience": "all",
+    "split": "validation"
+  },
+  {
+    "id": "vpn-paraphrase",
+    "question": "How do I get remote access?",
+    "relevant": [
+      "vpn"
+    ],
+    "audience": "all",
+    "split": "challenge"
+  },
+  {
+    "id": "password",
+    "question": "How can I reset an account password?",
+    "relevant": [
+      "password"
+    ],
+    "audience": "all",
+    "split": "validation"
+  },
+  {
+    "id": "meeting",
+    "question": "What is the meeting room booking duration?",
+    "relevant": [
+      "meeting"
+    ],
+    "audience": "all",
+    "split": "validation"
+  },
+  {
+    "id": "meeting-cancel",
+    "question": "When should I cancel unused meeting reservations?",
+    "relevant": [
+      "meeting"
+    ],
+    "audience": "all",
+    "split": "validation"
+  },
+  {
+    "id": "purchasing",
+    "question": "Who approves purchase requests above five thousand demo credits?",
+    "relevant": [
+      "procurement"
+    ],
+    "audience": "all",
+    "split": "validation"
+  },
+  {
+    "id": "incident",
+    "question": "What should I report when a company laptop is lost?",
+    "relevant": [
+      "incidents"
+    ],
+    "audience": "all",
+    "split": "validation"
+  },
+  {
+    "id": "cn-onboard",
+    "question": "新员工在哪里领取办公电脑？",
+    "relevant": [
+      "onboarding"
+    ],
+    "audience": "all",
+    "split": "validation"
+  },
+  {
+    "id": "cn-training",
+    "question": "培训结束后多久提交学习摘要？",
+    "relevant": [
+      "training"
+    ],
+    "audience": "all",
+    "split": "validation"
+  },
+  {
+    "id": "cn-travel",
+    "question": "出差住宿应在哪里预订？",
+    "relevant": [
+      "travel"
+    ],
+    "audience": "all",
+    "split": "validation"
+  },
+  {
+    "id": "retention",
+    "question": "When are temporary project workspaces archived?",
+    "relevant": [
+      "retention"
+    ],
+    "audience": "all",
+    "split": "validation"
+  },
+  {
+    "id": "support",
+    "question": "What are the IT service desk routine hours?",
+    "relevant": [
+      "support"
+    ],
+    "audience": "all",
+    "split": "validation"
+  },
+  {
+    "id": "multi",
+    "question": "How do I obtain VPN access and reset my password?",
+    "relevant": [
+      "vpn",
+      "password"
+    ],
+    "audience": "all",
+    "split": "validation"
+  },
+  {
+    "id": "paraphrase-hard",
+    "question": "I forgot my login secret; where can I regain access?",
+    "relevant": [
+      "password"
+    ],
+    "audience": "all",
+    "split": "challenge"
+  },
+  {
+    "id": "internal-allowed",
+    "question": "Who reviews the rollback plan for internal release approval?",
+    "relevant": [
+      "release"
+    ],
+    "audience": "internal",
+    "split": "validation"
+  },
+  {
+    "id": "cn-internal",
+    "question": "备份恢复演练什么时候进行？",
+    "relevant": [
+      "backup"
+    ],
+    "audience": "internal",
+    "split": "validation"
+  },
+  {
+    "id": "negative-space",
+    "question": "What is the launch velocity of the lunar spacecraft?",
+    "relevant": [],
+    "audience": "all",
+    "split": "validation"
+  },
+  {
+    "id": "negative-medical",
+    "question": "What medication cures migraine?",
+    "relevant": [],
+    "audience": "all",
+    "split": "validation"
+  },
+  {
+    "id": "negative-unknown-policy",
+    "question": "How many weeks of parental leave are available?",
+    "relevant": [],
+    "audience": "all",
+    "split": "validation"
+  },
+  {
+    "id": "negative-amount",
+    "question": "What is the exact annual salary increase percentage?",
+    "relevant": [],
+    "audience": "all",
+    "split": "validation"
+  },
+  {
+    "id": "negative-internal",
+    "question": "Who reviews the rollback plan for internal release approval?",
+    "relevant": [],
+    "audience": "all",
+    "split": "validation"
+  },
+  {
+    "id": "negative-workspace",
+    "question": "What is the confidential roadmap launch date?",
+    "relevant": [],
+    "audience": "all",
+    "split": "validation"
+  },
+  {
+    "id": "negative-tenant",
+    "question": "What are the other company's annual leave requirements?",
+    "relevant": [],
+    "audience": "all",
+    "split": "validation"
+  },
+  {
+    "id": "negative-cn",
+    "question": "员工健身房每月补贴金额是多少？",
+    "relevant": [],
+    "audience": "all",
+    "split": "validation"
+  }
+]

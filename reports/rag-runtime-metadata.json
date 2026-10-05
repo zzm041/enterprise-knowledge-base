@@ -1,0 +1,23 @@
+{
+  "/api/version": {
+    "status": 200,
+    "version": "0.34.4"
+  },
+  "/api/tags": {
+    "status": 200,
+    "model_names": [
+      "qwen38-27b-q3km-g55-ctx8192:7af3b8f",
+      "qwen38-27b-q3km-g55:7af3b8f",
+      "qwen38-27b-q3km-g52:7af3b8f",
+      "qwen38-27b-q3km:7af3b8f",
+      "qwen3.5:4b"
+    ]
+  },
+  "/api/ps": {
+    "status": 200,
+    "model_names": []
+  },
+  "adapter_health_without_credentials": {
+    "status": 401
+  }
+}

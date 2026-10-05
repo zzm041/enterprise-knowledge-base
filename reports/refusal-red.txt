@@ -1,0 +1,44 @@
+.......FF                                                                [100%]
+================================== FAILURES ===================================
+_ test_extractive_refuses_unsupported_questions_with_incidental_overlap[How many weeks of parental leave are available?] _
+
+setup = <ekb.catalog.Catalog object at 0x000001FD8AA5ACF0>
+question = 'How many weeks of parental leave are available?'
+
+    @pytest.mark.parametrize("question",[
+        "What is the launch velocity of the lunar spacecraft?",
+        "How many weeks of parental leave are available?",
+        "What is the exact annual salary increase percentage?",
+    ])
+    def test_extractive_refuses_unsupported_questions_with_incidental_overlap(setup,question):
+        result=Engine(setup).query(READER,"kb",question)
+>       assert result["status"]=="insufficient_knowledge"
+E       AssertionError: assert 'answered' == 'insufficient_knowledge'
+E         
+E         - insufficient_knowledge
+E         + answered
+
+tests\test_retrieval.py:86: AssertionError
+_ test_extractive_refuses_unsupported_questions_with_incidental_overlap[What is the exact annual salary increase percentage?] _
+
+setup = <ekb.catalog.Catalog object at 0x000001FD8AA5BC20>
+question = 'What is the exact annual salary increase percentage?'
+
+    @pytest.mark.parametrize("question",[
+        "What is the launch velocity of the lunar spacecraft?",
+        "How many weeks of parental leave are available?",
+        "What is the exact annual salary increase percentage?",
+    ])
+    def test_extractive_refuses_unsupported_questions_with_incidental_overlap(setup,question):
+        result=Engine(setup).query(READER,"kb",question)
+>       assert result["status"]=="insufficient_knowledge"
+E       AssertionError: assert 'answered' == 'insufficient_knowledge'
+E         
+E         - insufficient_knowledge
+E         + answered
+
+tests\test_retrieval.py:86: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_retrieval.py::test_extractive_refuses_unsupported_questions_with_incidental_overlap[How many weeks of parental leave are available?]
+FAILED tests/test_retrieval.py::test_extractive_refuses_unsupported_questions_with_incidental_overlap[What is the exact annual salary increase percentage?]
+2 failed, 7 passed in 0.40s

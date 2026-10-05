@@ -1,0 +1,23 @@
+F                                                                        [100%]
+================================== FAILURES ===================================
+_____________ test_model_manifest_is_paired_frozen_and_unexecuted _____________
+
+    def test_model_manifest_is_paired_frozen_and_unexecuted():
+>       namespace=runpy.run_path(str(Path(__file__).resolve().parents[1]/"scripts"/"prepare_model_selection.py"))
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_model_manifest.py:7: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+<frozen runpy>:286: in run_path
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+fname = 'D:\\enterprise-knowledge-base\\scripts\\prepare_model_selection.py'
+
+>   ???
+E   FileNotFoundError: [Errno 2] No such file or directory: 'D:\\enterprise-knowledge-base\\scripts\\prepare_model_selection.py'
+
+<frozen runpy>:254: FileNotFoundError
+=========================== short test summary info ===========================
+FAILED tests/test_model_manifest.py::test_model_manifest_is_paired_frozen_and_unexecuted
+1 failed in 0.09s

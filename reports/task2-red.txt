@@ -1,0 +1,27 @@
+
+=================================== ERRORS ====================================
+__________________ ERROR collecting tests/test_retrieval.py ___________________
+ImportError while importing test module 'D:\enterprise-knowledge-base\tests\test_retrieval.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\Users\lmj\AppData\Local\Programs\Python\Python312\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_retrieval.py:4: in <module>
+    from ekb.retrieval import Engine, bm25, rrf
+E   ModuleNotFoundError: No module named 'ekb.retrieval'
+__________________ ERROR collecting tests/test_providers.py ___________________
+ImportError while importing test module 'D:\enterprise-knowledge-base\tests\test_providers.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\Users\lmj\AppData\Local\Programs\Python\Python312\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_providers.py:3: in <module>
+    from ekb.providers import ModelHTTP
+E   ModuleNotFoundError: No module named 'ekb.providers'
+=========================== short test summary info ===========================
+ERROR tests/test_retrieval.py
+ERROR tests/test_providers.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 2 errors during collection !!!!!!!!!!!!!!!!!!!
+2 errors in 0.44s

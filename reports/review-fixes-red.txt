@@ -1,0 +1,277 @@
+..FF......FFF..........FF.........                                       [100%]
+================================== FAILURES ===================================
+___________ test_default_request_logging_excludes_source_and_token ____________
+
+tmp_path = WindowsPath('D:/enterprise-knowledge-base/.cache/pytest/test_default_request_logging_e0')
+
+    def test_default_request_logging_excludes_source_and_token(tmp_path):
+        import io
+        import json
+        import logging
+        from ekb.api import logger
+        actor=Principal("owner","acme",{"kb":"editor"},("all",))
+        token="SYNTHETIC_DO_NOT_LOG_TOKEN"
+        conf=Config(tmp_path/"logging.db",{hashlib.sha256(token.encode()).hexdigest():actor})
+        stream=io.StringIO()
+        handler=logging.StreamHandler(stream)
+        logger.addHandler(handler)
+        try:
+            with TestClient(create_app(conf)) as client:
+                response=client.post("/documents",headers={"Authorization":"Bearer "+token},
+                    json={"workspace":"kb","title":"note","text":"SYNTHETIC_DO_NOT_LOG_SOURCE"})
+            lines=[json.loads(x) for x in stream.getvalue().splitlines()]
+>           assert any(x.get("request_id")==response.headers["X-Request-ID"] for x in lines)
+E           assert False
+E            +  where False = any(<generator object test_default_request_logging_excludes_source_and_token.<locals>.<genexpr> at 0x000001B5EBCF19A0>)
+
+tests\test_api.py:101: AssertionError
+_________________ test_oversized_request_uses_one_request_id __________________
+
+tmp_path = WindowsPath('D:/enterprise-knowledge-base/.cache/pytest/test_oversized_request_uses_on0')
+
+    def test_oversized_request_uses_one_request_id(tmp_path):
+        conf=Config(tmp_path/"large.db",{})
+        with TestClient(create_app(conf)) as client:
+            response=client.post("/query",content=b"x"*260_000)
+        assert response.status_code==413
+>       assert response.json()["request_id"]==response.headers["X-Request-ID"]
+E       AssertionError: assert 'ae00d25618aa...2050db593fd9f' == 'bbb178addeda...2ee8ccb8489e2'
+E         
+E         - bbb178addeda4f7c99b2ee8ccb8489e2
+E         + ae00d25618aa43b282b2050db593fd9f
+
+tests\test_api.py:111: AssertionError
+____________ test_chunk_capacity_rejection_preserves_old_revision _____________
+
+catalog = <ekb.catalog.Catalog object at 0x000001B5EBD099A0>
+
+    def test_chunk_capacity_rejection_preserves_old_revision(catalog):
+        d=create(catalog)
+        catalog.ingest(OWNER,d["id"],1)
+        catalog.add_version(OWNER,d["id"],"\n\n".join(["entry"]*5001),1)
+>       with pytest.raises(KBError) as error:
+             ^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE KBError
+
+tests\test_catalog.py:130: Failed
+_____________ test_workspace_capacity_is_checked_across_documents _____________
+
+catalog = <ekb.catalog.Catalog object at 0x000001B5EBCECD40>
+
+    def test_workspace_capacity_is_checked_across_documents(catalog):
+        bulk=create(catalog,"\n\n".join(["entry"]*4999))
+        catalog.ingest(OWNER,bulk["id"],1)
+        d=create(catalog)
+        catalog.ingest(OWNER,d["id"],1)
+        catalog.add_version(OWNER,d["id"],"first\n\nsecond",1)
+>       with pytest.raises(KBError) as error:
+             ^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE KBError
+
+tests\test_catalog.py:142: Failed
+________ test_embedding_ingestion_is_batched_and_publishes_all_chunks _________
+
+catalog = <ekb.catalog.Catalog object at 0x000001B5EBCCD460>
+
+    def test_embedding_ingestion_is_batched_and_publishes_all_chunks(catalog):
+        calls=[]
+        class BoundedEmbed:
+            fingerprint="test:1024"
+            def embed(self,texts):
+                calls.append(len(texts))
+                assert len(texts)<=8
+                return [[0.25]*1024 for _ in texts]
+        d=create(catalog,"A policy passage. "*1000)
+>       catalog.ingest(OWNER,d["id"],1,BoundedEmbed())
+
+tests\test_catalog.py:157: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <ekb.catalog.Catalog object at 0x000001B5EBCCD460>
+actor = Principal(subject='editor', tenant='acme', workspaces={'handbook': 'editor'}, audiences=('all', 'internal'))
+document_id = 1, version = 1
+embedder = <test_catalog.test_embedding_ingestion_is_batched_and_publishes_all_chunks.<locals>.BoundedEmbed object at 0x000001B5EBCCDF70>
+request_id = 'local'
+
+    def ingest(self, actor, document_id, version, embedder=None, request_id="local"):
+        with self.store.connection(True) as c:
+            d = self._document(c, actor, document_id, True)
+            v = c.execute(
+                "SELECT * FROM versions WHERE document_id=? AND version=?",
+                (document_id, version),
+            ).fetchone()
+            if v is None:
+                raise KBError("KB.NOT_FOUND", 404)
+            if d["status"] == "ARCHIVED" or version != d["latest_version"]:
+                raise KBError("KB.CONFLICT", 409)
+            if v["status"] == "ACTIVE":
+                return {"status": "ACTIVE", "version": version}
+            if v["status"] == "PROCESSING" and time.time() - v["started"] < 120:
+                raise KBError("KB.INGEST_BUSY", 409)
+            attempt, epoch = v["attempt"] + 1, d["epoch"]
+            c.execute(
+                "UPDATE versions SET status='PROCESSING',attempt=?,started=?,error_code=NULL WHERE document_id=? AND version=?",
+                (attempt, time.time(), document_id, version),
+            )
+            source = v["source"]
+        try:
+            pieces = chunks(source)
+            vectors = (
+                embedder.embed([p["text"] for p in pieces])
+                if embedder
+                else [None] * len(pieces)
+            )
+            if len(vectors) != len(pieces):
+                raise KBError("KB.INVALID_PROVIDER_OUTPUT", 502)
+            if embedder and (
+                not vectors
+                or not vectors[0]
+                or any(
+                    len(v) != len(vectors[0])
+                    or any(
+                        not isinstance(x, (int, float))
+                        or isinstance(x, bool)
+                        or not math.isfinite(x)
+                        for x in v
+                    )
+                    or not any(v)
+                    for v in vectors
+                )
+            ):
+                raise KBError("KB.INVALID_PROVIDER_OUTPUT", 502)
+            with self.store.connection(True) as c:
+                current = self._document(c, actor, document_id, True)
+                row = c.execute(
+                    "SELECT attempt FROM versions WHERE document_id=? AND version=?",
+                    (document_id, version),
+                ).fetchone()
+                if (
+                    current["epoch"] != epoch
+                    or current["latest_version"] != version
+                    or current["status"] == "ARCHIVED"
+                    or row["attempt"] != attempt
+                ):
+                    raise KBError("KB.CONFLICT", 409)
+                c.execute(
+                    "DELETE FROM chunks WHERE document_id=? AND version=?",
+                    (document_id, version),
+                )
+                for i, (p, vector) in enumerate(zip(pieces, vectors, strict=True), 1):
+                    c.execute(
+                        "INSERT INTO chunks(document_id,version,ordinal,text,start,end,vector) VALUES(?,?,?,?,?,?,?)",
+                        (
+                            document_id,
+                            version,
+                            i,
+                            p["text"],
+                            p["start"],
+                            p["end"],
+                            json.dumps(vector) if vector is not None else None,
+                        ),
+                    )
+                c.execute(
+                    "UPDATE versions SET status='SUPERSEDED' WHERE document_id=? AND status='ACTIVE'",
+                    (document_id,),
+                )
+                c.execute(
+                    "UPDATE versions SET status='ACTIVE',fingerprint=?,error_code=NULL WHERE document_id=? AND version=?",
+                    (embedder.fingerprint if embedder else None, document_id, version),
+                )
+                c.execute(
+                    "UPDATE documents SET current_version=?,status='ACTIVE' WHERE id=?",
+                    (version, document_id),
+                )
+                self._audit(c, actor, "published", document_id, request_id)
+        except Exception as exc:
+            code = exc.code if isinstance(exc, KBError) else "KB.INGEST_FAILED"
+            with self.store.connection(True) as c:
+                c.execute(
+                    "UPDATE versions SET status='FAILED',error_code=? WHERE document_id=? AND version=? AND attempt=? AND status='PROCESSING'",
+                    (code, document_id, version, attempt),
+                )
+                self._audit(c, actor, "ingest_failed", document_id, request_id)
+            if isinstance(exc, KBError):
+                raise
+>           raise KBError(code, 503) from None
+E           ekb.errors.KBError: KB.INGEST_FAILED
+
+ekb\catalog.py:230: KBError
+_ test_extreme_json_integer_is_invalid_output_not_internal_exception[embedding] _
+
+kind = 'embedding'
+
+    @pytest.mark.parametrize("kind",["embedding","reranking"])
+    def test_extreme_json_integer_is_invalid_output_not_internal_exception(kind):
+        p=provider({"data":[{"index":0,"embedding":[10**400,1]}]} if kind=="embedding"
+                   else {"results":[{"index":0,"relevance_score":10**400}]})
+        with pytest.raises(KBError) as error:
+>           if kind=="embedding": p.embed(["a"])
+                                  ^^^^^^^^^^^^^^
+
+tests\test_providers.py:103: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ekb\providers.py:107: in embed
+    vector = [self._number(x) for x in item["embedding"]]
+              ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+x = 100000000000000000...0000000000000000000
+
+    @staticmethod
+    def _number(x):
+        if (
+            isinstance(x, bool)
+            or not isinstance(x, (float, int))
+>           or not math.isfinite(x)
+                   ^^^^^^^^^^^^^^^^
+        ):
+E       OverflowError: int too large to convert to float
+
+ekb\providers.py:88: OverflowError
+_ test_extreme_json_integer_is_invalid_output_not_internal_exception[reranking] _
+
+kind = 'reranking'
+
+    @pytest.mark.parametrize("kind",["embedding","reranking"])
+    def test_extreme_json_integer_is_invalid_output_not_internal_exception(kind):
+        p=provider({"data":[{"index":0,"embedding":[10**400,1]}]} if kind=="embedding"
+                   else {"results":[{"index":0,"relevance_score":10**400}]})
+        with pytest.raises(KBError) as error:
+            if kind=="embedding": p.embed(["a"])
+>           else: p.rerank("q",["a"])
+                  ^^^^^^^^^^^^^^^^^^^
+
+tests\test_providers.py:104: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ekb\providers.py:128: in rerank
+    self._number(x["relevance_score"])
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+x = 100000000000000000...0000000000000000000
+
+    @staticmethod
+    def _number(x):
+        if (
+            isinstance(x, bool)
+            or not isinstance(x, (float, int))
+>           or not math.isfinite(x)
+                   ^^^^^^^^^^^^^^^^
+        ):
+E       OverflowError: int too large to convert to float
+
+ekb\providers.py:88: OverflowError
+============================== warnings summary ===============================
+.venv\Lib\site-packages\fastapi\testclient.py:1
+  D:\enterprise-knowledge-base\.venv\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_api.py::test_default_request_logging_excludes_source_and_token
+FAILED tests/test_api.py::test_oversized_request_uses_one_request_id - Assert...
+FAILED tests/test_catalog.py::test_chunk_capacity_rejection_preserves_old_revision
+FAILED tests/test_catalog.py::test_workspace_capacity_is_checked_across_documents
+FAILED tests/test_catalog.py::test_embedding_ingestion_is_batched_and_publishes_all_chunks
+FAILED tests/test_providers.py::test_extreme_json_integer_is_invalid_output_not_internal_exception[embedding]
+FAILED tests/test_providers.py::test_extreme_json_integer_is_invalid_output_not_internal_exception[reranking]
+7 failed, 27 passed, 1 warning in 1.05s
