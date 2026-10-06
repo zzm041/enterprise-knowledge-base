@@ -1,0 +1,16 @@
+# Enterprise Knowledge Base project boundary
+
+- The only active project root is E:/enterprise-knowledge-base. Run project commands with this working directory.
+- D:/property-ai is read-only reference material. Do not alter its source, Git, configuration, tmp bindings, locks, ledgers, queues, databases, business data or services.
+- The previous authorization for a shared property-ai model window is revoked. Do not use its guarded adapters or native 11435/11438 endpoints for inference under that old authorization.
+- All project source, config, test/evaluation data, model copies, runtime state, locks, ledgers, reports, caches and temporary files stay inside this project. Set TEMP/TMP to .cache/temp and UV_CACHE_DIR to .cache/uv for child processes; disable automatic Python downloads when using uv.
+- Do not read upstream secrets for this project. Only explicitly selected nonsecret endpoint/model/protocol metadata may be used as reference.
+- The user approves using the same RTX 5070 Ti serially, with E-owned assets/service/config/runtime. Do not seek a second GPU, host or cloud resource.
+- Offline verify/copy of only existing candidate model manifests/blobs into E is authorized; copy no upstream config/log/runtime state. No project model service start, model load or inference until the upstream original thread/owner explicitly confirms the exclusive GPU window is established and local read-only observations agree. An E-only lock does not establish that window.
+- The upstream owner confirms no business tasks, pauses its AI services/model occupancy and confirms 11435/11436/11437/11438-related model processes no longer use the GPU. Codex C must not perform those operations or call those endpoints.
+- On 24-call completion or any failure/unknown/interruption, stop only the E-owned model service and verify its GPU residency/processes released. Report exact results and cleanup status. property-ai restoration and its health checks belong exclusively to the upstream owner; never perform them here.
+- Read docs/INDEPENDENT_MODEL_EVAL.md and docs/MODEL_SELECTION.md before further model-related work. The accepted 2026-10-06 run stopped at 17/24 (16 success, 1 failure, 0 unknown) and HAND_BACK is complete. No active GPU window exists; do not replay M2, pursue the remaining seven calls, request a new window, implement routing or add holdout during the current portfolio closeout.
+- Do not download large models, use paid/cloud resources or copy material to another host without separate authorization.
+- scripts/model_window.py is a fail-closed revoked entry point. Historical .txt reports must not be revived as executable code.
+- The historical evaluation scope was 12 synthetic cases x 2 models, maximum 24 calls, without retries. Actual calls: 17. The local 16 GB model-enabled operating default is qwen3.5 4B; 27B is a configurable experimental/high-quality candidate, not a default and not deemed lower quality. The standalone main API demo remains extractive unless a model is explicitly configured. Keep the measured limitations and bad cases visible.
+- Preserve historical evidence paths verbatim; new artifacts and runtime configuration use the E root. Migration does not imply production acceptance.

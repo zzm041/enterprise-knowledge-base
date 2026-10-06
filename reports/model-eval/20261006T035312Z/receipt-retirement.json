@@ -1,0 +1,8 @@
+{
+  "utc": "2026-10-06T03:56:58.821738+00:00",
+  "status": "FAILED_RECEIPT_RETIRED",
+  "pid": 34264,
+  "archive": "E:\\enterprise-knowledge-base\\runtime\\model-eval\\services\\retired-failed-20261006T035312Z.json",
+  "release_proof": "E:\\enterprise-knowledge-base\\reports\\model-eval\\20261006T035312Z\\post-abort-release-verification.json",
+  "current_os_absence_verified": true
+}

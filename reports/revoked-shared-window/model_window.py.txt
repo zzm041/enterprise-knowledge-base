@@ -1,0 +1,580 @@
+"""One authorized 24-call local window; never imported by the product runtime.
+
+The upstream shared OS byte lock and exact runtime stop helper are reused.
+All experiment artifacts live in this project. No upstream config is written.
+"""
+
+import ctypes
+import hashlib
+import json
+import msvcrt
+import os
+import subprocess
+import sys
+import threading
+import time
+import uuid
+from datetime import UTC, datetime
+from pathlib import Path
+
+import httpx
+
+ROOT = Path(__file__).resolve().parents[1]
+UPSTREAM = Path("D:/property-ai")
+SHARED = UPSTREAM / "tmp/delivery-ai-shared"
+MODELS = {
+    "candidate_4b": dict(
+        port=11438,
+        tag="qwen3.5:4b",
+        context=4096,
+        timeout=60,
+        digest="2a654d98e6fba55d452b7043684e9b57a947e393bbffa62485a7aac05ee4eefd",
+        receipt="delivery-rag-ollama-runtime",
+    ),
+    "candidate_27b": dict(
+        port=11435,
+        tag="qwen38-27b-q3km-g55-ctx8192:7af3b8f",
+        context=8192,
+        timeout=180,
+        digest="06385258e076e9b22102da888a1593daef1dd1d679d863e5cc94c7c674ffed86",
+        receipt="delivery-ollama-runtime",
+    ),
+}
+
+
+def stamp():
+    return datetime.now(UTC).isoformat()
+
+
+def require_resources(ram, gpu, *, cold):
+    if ram < 4500 or gpu < (6000 if cold else 2000):
+        raise RuntimeError("RESOURCE_FLOOR")
+
+
+def require_residency(active, other, expected):
+    if (
+        other
+        or len(active) > 1
+        or any(
+            x["name"] != expected["tag"]
+            or x["digest"] != expected["digest"]
+            or x["context_length"] != expected["context"]
+            for x in active
+        )
+    ):
+        raise RuntimeError("MODEL_RESIDENCY_CHANGED")
+
+
+CASE_IDS = frozenset(
+    ("S1", "S2", "S3", "M1", "M2", "M3", "M4", "N1", "N2", "N3", "A1", "B1")
+)
+
+
+def save_exclusive(path, value):
+    with path.open("x", encoding="utf8") as f:
+        json.dump(value, f, ensure_ascii=False)
+        f.flush()
+        os.fsync(f.fileno())
+
+
+def reserve_call(folder, candidate, case_id, manifest_hash):
+    if candidate not in MODELS or case_id not in CASE_IDS:
+        raise RuntimeError("UNAUTHORIZED_CASE")
+    folder.mkdir(parents=True, exist_ok=True)
+    binding = folder / "authorization.json"
+    try:
+        save_exclusive(binding, {"manifest_sha256": manifest_hash, "maximum_calls": 24})
+    except FileExistsError:
+        if json.loads(binding.read_text())["manifest_sha256"] != manifest_hash:
+            raise RuntimeError("MANIFEST_CHANGED") from None
+    try:
+        save_exclusive(
+            folder / f"{candidate}-{case_id}.json",
+            {"status": "RESERVED_NO_REPLAY", "utc": stamp()},
+        )
+    except FileExistsError:
+        raise RuntimeError("ALREADY_RESERVED") from None
+
+
+def create_barrier(path, owner, evidence):
+    save_exclusive(
+        path,
+        {
+            "status": "UNKNOWN_UNTIL_CONFIRMED",
+            "utc": stamp(),
+            "owner": owner,
+            "evidence": evidence,
+        },
+    )
+
+
+def clear_barrier(path, owner):
+    if json.loads(path.read_text())["owner"] != owner:
+        raise RuntimeError("BARRIER_OWNER_CHANGED")
+    path.unlink()
+
+
+def command(args, timeout=20):
+    value = subprocess.run(
+        args,
+        capture_output=True,
+        text=True,
+        encoding="utf8",
+        errors="replace",
+        timeout=timeout,
+        creationflags=subprocess.CREATE_NO_WINDOW,
+    )
+    if value.returncode:
+        raise RuntimeError("CONTROL_COMMAND_FAILED")
+    return value.stdout.strip()
+
+
+def resources():
+    class Mem(ctypes.Structure):
+        _fields_ = [("length", ctypes.c_ulong), ("load", ctypes.c_ulong)] + [
+            (x, ctypes.c_ulonglong)
+            for x in (
+                "total",
+                "available",
+                "page",
+                "available_page",
+                "virtual",
+                "available_virtual",
+                "extended",
+            )
+        ]
+
+    s = Mem()
+    s.length = ctypes.sizeof(s)
+    if not ctypes.windll.kernel32.GlobalMemoryStatusEx(ctypes.byref(s)):
+        raise RuntimeError("RAM_OBSERVATION_FAILED")
+    raw = command(
+        [
+            "nvidia-smi",
+            "--query-gpu=memory.free,memory.used,utilization.gpu",
+            "--format=csv,noheader,nounits",
+        ],
+        timeout=3,
+    )
+    if len(raw.splitlines()) != 1:
+        raise RuntimeError("GPU_OBSERVATION_FAILED")
+    free, used, utilization = map(int, raw.split(","))
+    return dict(
+        utc=stamp(),
+        ram_free_mib=s.available // 1048576,
+        gpu_free_mib=free,
+        gpu_used_mib=used,
+        gpu_utilization_percent=utilization,
+    )
+
+
+def get(url, headers=None):
+    with httpx.Client(trust_env=False, follow_redirects=False, timeout=5) as client:
+        response = client.get(url, headers=headers)
+        response.raise_for_status()
+        return response.json()
+
+
+def health(barrier_owner=None):
+    result = {}
+    for route in ("healthz", "readyz"):
+        result[route] = get("http://127.0.0.1:8093/api/v1/" + route)["data"]
+    if result["healthz"]["status"] != "ok" or result["readyz"]["status"] != "ready":
+        raise RuntimeError("PROPERTY_HEALTH_FAILED")
+    if any(
+        x["status"] not in ("up", "not_checked")
+        for x in result["readyz"]["dependencies"].values()
+    ):
+        raise RuntimeError("PROPERTY_DEPENDENCY_FAILED")
+    for port, folder in [
+        (11436, "delivery-rag-runtime"),
+        (11437, "delivery-work-ai-runtime"),
+    ]:
+        token = (UPSTREAM / "tmp" / folder / "internal-token.txt").read_text().strip()
+        try:
+            item = get(
+                f"http://127.0.0.1:{port}/healthz", {"Authorization": "Bearer " + token}
+            )
+        finally:
+            token = None
+        result[str(port)] = item
+        if (
+            item["status"] != "ready"
+            or item["reservation_gate"] != "READY"
+            or not item["accepting_requests"]
+        ):
+            raise RuntimeError("ADAPTER_HEALTH_FAILED")
+        if item["request_active"]:
+            raise RuntimeError("BUSINESS_REQUEST_ACTIVE")
+    barrier = SHARED / "completion-unknown.json"
+    if barrier.exists() and (
+        barrier_owner is None
+        or json.loads(barrier.read_text()).get("owner") != barrier_owner
+    ):
+        raise RuntimeError("SHARED_COMPLETION_UNKNOWN")
+    return result
+
+
+def workers():
+    source = "import json; from app.worker.celery_app import celery_app; i=celery_app.control.inspect(timeout=3); print(json.dumps({k:{n:len(v) for n,v in (getattr(i,k)() or {}).items()} for k in ('active','reserved','scheduled')}))"
+    result = json.loads(
+        command(
+            [
+                "docker",
+                "exec",
+                "-e",
+                "PYTHONDONTWRITEBYTECODE=1",
+                "property-ai-delivery-check-worker-1",
+                "python",
+                "-c",
+                source,
+            ],
+            timeout=20,
+        )
+    )
+    if any(not nodes or any(nodes.values()) for nodes in result.values()):
+        raise RuntimeError("WORKER_BUSY_OR_UNKNOWN")
+    source = "import json; from sqlalchemy import text; from app.core.database import get_engine; from app.core.config import get_settings; c=get_engine(get_settings().active_database_url).connect(); print(json.dumps([dict(r._mapping) for r in c.execute(text('SELECT status, COUNT(*) AS count FROM task_intents GROUP BY status'))])); c.rollback(); c.close()"
+    statuses = json.loads(
+        command(
+            [
+                "docker",
+                "exec",
+                "-e",
+                "PYTHONDONTWRITEBYTECODE=1",
+                "property-ai-delivery-check-api-1",
+                "python",
+                "-c",
+                source,
+            ]
+        )
+    )
+    if any(
+        x["status"] not in ("SUCCEEDED", "FAILED", "CANCELLED") and x["count"]
+        for x in statuses
+    ):
+        raise RuntimeError("BUSINESS_TASK_PENDING")
+    return dict(worker=result, task_counts=statuses)
+
+
+def residents():
+    return {
+        str(m["port"]): get(f"http://127.0.0.1:{m['port']}/api/ps")["models"]
+        for m in MODELS.values()
+    }
+
+
+class Window:
+    def __init__(self):
+        self.folder = (
+            ROOT
+            / "reports"
+            / ("model-window-" + datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ"))
+        )
+        self.folder.mkdir(exist_ok=False)
+        self.path = self.folder / "events.jsonl"
+        self.completed = 0
+
+    def record(self, event, **data):
+        with self.path.open("a", encoding="utf8") as f:
+            f.write(
+                json.dumps(dict(utc=stamp(), event=event, **data), ensure_ascii=False)
+                + "\n"
+            )
+            f.flush()
+            os.fsync(f.fileno())
+        print(
+            json.dumps(
+                dict(
+                    event=event,
+                    **{
+                        k: v
+                        for k, v in data.items()
+                        if k
+                        in (
+                            "candidate",
+                            "case_id",
+                            "status",
+                            "reason",
+                            "completed",
+                            "seconds",
+                        )
+                    },
+                )
+            ),
+            flush=True,
+        )
+
+    def wait_empty(self):
+        start = time.monotonic()
+        while True:
+            state = residents()
+            if not any(state.values()):
+                self.record(
+                    "UNLOAD_CONFIRMED",
+                    state=state,
+                    method="existing 30s idle expiry; no process stop",
+                    seconds=time.monotonic() - start,
+                )
+                return
+            if time.monotonic() - start > 40:
+                raise RuntimeError("IDLE_UNLOAD_UNCONFIRMED")
+            time.sleep(1)
+
+    def call(self, request, model, binding, control):
+        candidate, case_id = request["candidate"], request["case_id"]
+        self.record(
+            "CALL_PRESTATE", candidate=candidate, case_id=case_id, health=health()
+        )
+        state = residents()
+        active = state[str(model["port"])]
+        other = [
+            x
+            for port, items in state.items()
+            if port != str(model["port"])
+            for x in items
+        ]
+        require_residency(active, other, model)
+        point = resources()
+        require_resources(point["ram_free_mib"], point["gpu_free_mib"], cold=not active)
+        control.bound_runtime_identity(binding)
+        if control.loopback_listener_pid(model["port"]) != binding["pid"]:
+            raise RuntimeError("LISTENER_CHANGED")
+        self.record(
+            "RESERVATION",
+            candidate=candidate,
+            case_id=case_id,
+            cold=not active,
+            state=state,
+            baseline=point,
+        )
+        reserve_call(
+            ROOT / "runtime/model-window-authorization-20261005",
+            candidate,
+            case_id,
+            self.manifest_hash,
+        )
+        owner = str(uuid.uuid4())
+        barrier = SHARED / "completion-unknown.json"
+        create_barrier(barrier, owner, str(self.path))
+        box = {}
+        samples = [point]
+        start = time.monotonic()
+
+        def infer():
+            try:
+                with httpx.Client(
+                    trust_env=False, follow_redirects=False, timeout=model["timeout"]
+                ) as client:
+                    response = client.post(request["endpoint"], json=request["body"])
+                    response.raise_for_status()
+                    box["response"] = response.json()
+            except Exception as exc:
+                box["error"] = type(exc).__name__
+            finally:
+                box["elapsed"] = time.monotonic() - start
+
+        task = threading.Thread(target=infer, daemon=True)
+        failure = "NOT_CONFIRMED"
+        try:
+            task.start()
+            while task.is_alive():
+                time.sleep(0.25)
+                point = resources()
+                samples.append(point)
+                require_resources(
+                    point["ram_free_mib"], point["gpu_free_mib"], cold=False
+                )
+                if time.monotonic() - start > model["timeout"]:
+                    raise RuntimeError("INFERENCE_TIMEOUT")
+            if "error" in box:
+                raise RuntimeError("REMOTE_CLIENT_FAILED")
+            choices = box["response"].get("choices", [])
+            if len(choices) != 1 or choices[0].get("finish_reason") not in (
+                "stop",
+                "length",
+            ):
+                raise RuntimeError("REMOTE_COMPLETION_UNKNOWN")
+            clear_barrier(barrier, owner)
+            failure = None
+        except BaseException as exc:
+            failure = str(exc) if isinstance(exc, RuntimeError) else type(exc).__name__
+            try:
+                stopped = control.terminate_bound_runtime(
+                    binding, listener_port=model["port"]
+                )
+                self.record("EXACT_RUNTIME_STOP", candidate=candidate, result=stopped)
+                self.record(
+                    "CALL_ABORT",
+                    candidate=candidate,
+                    case_id=case_id,
+                    reason=failure,
+                    samples=samples,
+                )
+            except Exception as stop_exc:
+                self.record("EXACT_RUNTIME_STOP_FAILED", reason=type(stop_exc).__name__)
+                # The durable barrier was created before sending; retain it.
+            if task.ident is not None:
+                task.join(timeout=10)
+        finally:
+            result = dict(
+                candidate=candidate,
+                case_id=case_id,
+                cold=not active,
+                status="FAILED" if failure else "COMPLETED",
+                failure=failure,
+                latency_seconds=box.get("elapsed"),
+                response=box.get("response"),
+                samples=samples,
+            )
+            (self.folder / f"{candidate}-{case_id}.json").write_text(
+                json.dumps(result, ensure_ascii=False, indent=2), encoding="utf8"
+            )
+        if failure:
+            raise RuntimeError(failure)
+        self.completed += 1
+        self.record(
+            "CALL_COMPLETE",
+            candidate=candidate,
+            case_id=case_id,
+            completed=self.completed,
+            seconds=box["elapsed"],
+            loaded=residents(),
+            health=health(),
+        )
+
+    def run(self):
+        raise RuntimeError(
+            "EXECUTION_DISABLED_PENDING_RESTORATION_AUTHORIZATION_AND_REVIEW"
+        )
+
+    def _unreleased_run(self):
+        # Developer-only import: source is read-only, no pycache, no product dependency.
+        sys.dont_write_bytecode = True
+        sys.path.insert(0, str(UPSTREAM / "scripts/ops"))
+        import local_ai_runtime_control as control
+
+        raw = (ROOT / "reports/model-selection-manifest.json").read_bytes()
+        self.manifest_hash = hashlib.sha256(raw).hexdigest()
+        manifest = json.loads(raw)
+        if len(manifest["requests"]) != 24:
+            raise RuntimeError("MANIFEST_BUDGET_CHANGED")
+        tracked = command(
+            [
+                "git",
+                "--no-optional-locks",
+                "-C",
+                str(UPSTREAM),
+                "ls-files",
+                "--",
+                "tmp/delivery-ai-shared",
+            ]
+        )
+        if tracked:
+            raise RuntimeError("TRACKED_COORDINATION_PATH")
+        self.record(
+            "PREFLIGHT",
+            health=health(),
+            workers=workers(),
+            state=residents(),
+            resource=resources(),
+            manifest_sha256=hashlib.sha256(raw).hexdigest(),
+        )
+        if any(residents().values()):
+            raise RuntimeError("MODEL_ALREADY_RESIDENT_WAIT_REQUIRED")
+        bindings = {}
+        for candidate, model in MODELS.items():
+            receipt = json.loads(
+                (UPSTREAM / "tmp" / model["receipt"] / "current.json").read_text(
+                    encoding="utf-8-sig"
+                )
+            )
+            binding = dict(
+                pid=receipt["pid"],
+                executable=receipt["executable"],
+                launched_at_utc=receipt["started_at_utc"],
+            )
+            control.bound_runtime_identity(binding)
+            if control.loopback_listener_pid(model["port"]) != binding["pid"]:
+                raise RuntimeError("LISTENER_CHANGED")
+            base = f"http://127.0.0.1:{model['port']}"
+            if get(base + "/api/version")["version"] != "0.34.4" or not any(
+                x["name"] == model["tag"] and x["digest"] == model["digest"]
+                for x in get(base + "/api/tags")["models"]
+            ):
+                raise RuntimeError("RUNTIME_OR_MODEL_CHANGED")
+            bindings[candidate] = binding
+        handle = (SHARED / "model.lock").open("r+b")
+        locked = False
+        try:
+            handle.seek(0)
+            msvcrt.locking(handle.fileno(), msvcrt.LK_NBLCK, 1)
+            locked = True
+            self.record(
+                "LOCK_ACQUIRED",
+                method="same OS byte range; existing file contents unchanged",
+                health=health(),
+                workers=workers(),
+            )
+            for candidate, model in MODELS.items():
+                self.record(
+                    "SWITCH_PRESTATE",
+                    candidate=candidate,
+                    state=residents(),
+                    health=health(),
+                    workers=workers(),
+                )
+                self.wait_empty()
+                for request in manifest["requests"]:
+                    if request["candidate"] == candidate:
+                        if (
+                            request["body"]["model"] != model["tag"]
+                            or request["endpoint"]
+                            != f"http://127.0.0.1:{model['port']}/v1/chat/completions"
+                        ):
+                            raise RuntimeError("MANIFEST_TARGET_CHANGED")
+                        self.call(request, model, bindings[candidate], control)
+                self.record(
+                    "GROUP_COMPLETE", candidate=candidate, completed=self.completed
+                )
+                self.wait_empty()
+                self.record(
+                    "GROUP_RESTORED",
+                    candidate=candidate,
+                    state=residents(),
+                    health=health(),
+                    workers=workers(),
+                )
+            self.record(
+                "COMPLETE", completed=self.completed, status="24_CALLS_COMPLETED"
+            )
+        except Exception as exc:
+            self.record(
+                "STOPPED",
+                completed=self.completed,
+                reason=str(exc)
+                if isinstance(exc, RuntimeError)
+                else type(exc).__name__,
+            )
+            # No retries, no continued switches. Restoration is inspected separately.
+            raise
+        finally:
+            if locked:
+                handle.seek(0)
+                msvcrt.locking(handle.fileno(), msvcrt.LK_UNLCK, 1)
+            handle.close()
+            self.record("LOCK_RELEASED")
+
+
+if __name__ == "__main__":
+    window = Window()
+    print(str(window.folder), flush=True)
+    try:
+        window.run()
+    except Exception as exc:
+        window.record(
+            "WINDOW_ABORTED",
+            completed=window.completed,
+            reason=str(exc) if isinstance(exc, RuntimeError) else type(exc).__name__,
+        )
+        raise SystemExit(1)

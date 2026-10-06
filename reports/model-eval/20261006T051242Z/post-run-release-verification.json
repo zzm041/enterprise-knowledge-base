@@ -1,0 +1,12 @@
+{
+  "status": "GPU_RELEASE_CONFIRMED",
+  "scope": "Independent local OS check immediately after E-owned runner exit, before HAND_BACK; no property-ai service operation",
+  "root_pid": 39136,
+  "root_exists": false,
+  "live_recorded_owned_tree_pids": [],
+  "port_11535_listener_pids": [],
+  "new_gpu_process_ids_vs_run_baseline": [],
+  "foreign_model_process": false,
+  "gpu_free_mib_samples": [14028, 14038, 13990],
+  "upstream_restore_owner": "property-ai original thread/owner"
+}

@@ -1,0 +1,13 @@
+{
+  "observed_at_utc": "2026-10-06T03:47:39.5360520+00:00",
+  "window_established_at_utc": "2026-10-05T16:55:26.0000000+00:00",
+  "window_age_minutes": 652.2,
+  "gate": "WINDOW_CONFIRMATION_STALE",
+  "actual_generation_calls": 0,
+  "budget_case_records": 0,
+  "project_service_started": false,
+  "relevant_listeners": [],
+  "gpu_raw_csv": "13983, 2013, 10",
+  "upstream_baseline_reference": "D:\\property-ai\\tmp\\exclusive-gpu-window-20261006-0051-baseline.json",
+  "next_step": "FRESH_OWNER_WINDOW_REAUTHORIZATION_REQUIRED"
+}

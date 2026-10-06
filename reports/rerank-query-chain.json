@@ -1,0 +1,18 @@
+{
+  "test": "tests/test_rerank_query_chain.py::test_rerank_changes_query_order_without_crossing_scopes",
+  "baseline_document_order": [
+    1,
+    2
+  ],
+  "reranked_document_order": [
+    2,
+    1
+  ],
+  "citation_document_id": 2,
+  "tenant_a_public_candidate_count": 2,
+  "tenant_a_internal_candidate_count": 3,
+  "tenant_b_candidate_count": 1,
+  "forbidden_workspace_status": 403,
+  "transport": "HTTP MockTransport, no model service",
+  "result": "PASS"
+}

@@ -1,3 +1,13 @@
+# Current verification — 2026-10-06
+Active project: E:/enterprise-knowledge-base. D:/property-ai remained read-only. The accepted E-owned real generation run stopped at **17/24** on the first strict citation-ID schema failure: 4B 12/12, 27B 5/12; success/failure/unknown 16/1/0. E service, listener and GPU residency were released, and HAND_BACK completed. See `reports/model-eval/20261006T051242Z/summary.json`, `comparison.md` and `post-run-release-verification.json`. No new GPU window, replay, routing or holdout is planned.
+
+Portfolio closeout verification: full pytest suite **74 passed**; Ruff check and formatting check passed. `scripts/demo.py` passed ten checks through a separate localhost Uvicorn process, including a known lexical bad case, and refreshed `reports/http-demo.json` with E-root paths. `tests/test_rerank_query_chain.py` passed through the FastAPI `/query` route: an HTTP fixture changed order `[1,2]` to `[2,1]`, the citation followed document 2, and tenant/workspace/audience constraints held; see `reports/rerank-query-chain.json`. `python -m ekb.evaluate` refreshed `reports/eval-20261006T052813Z-f8a060/results.json`: 28 synthetic cases, Recall@4/MRR@4/nDCG@4=.90, negative refusal 8/8, bad cases `multi` and `paraphrase-hard`. These are inspected development data, not blind or production metrics. The API demo is extractive; the 17-call model experiment used fixed gold evidence outside that API.
+
+# Historical boundary update — 2026-10-05
+The following lines preserve the earlier migration/phase snapshot. Its 0/24 and metadata-only statements are historical, superseded by the current verification above.
+
+Migration preserved Git HEAD 8b2d82bfbf7cb062ffc06f734fe6878cab8bbb6b and project artifacts; venv was rebuilt offline. Fresh post-migration suite: 36 passed, Ruff passed. The older 40-test count included four pure-function tests for the now-retired shared runner; they are archived with its inert source, not represented as retained active coverage. One active regression ensures the legacy execution path is absent and entry fails closed. Historical records below retain their original paths and scope.
+
 # Verification snapshot — 2026-10-05
 Lifecycle: OFFLINE_CORE_VERIFIED. MODEL_COMPARISON_PREPARED_NOT_RUN. PRODUCTION_NOT_ACCEPTED.
 This is a phase delivery, not a claim the full live-model selection objective is complete.

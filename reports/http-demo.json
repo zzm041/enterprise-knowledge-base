@@ -6,7 +6,9 @@
     "anonymous denial",
     "create/ingest",
     "citation",
+    "cross-tenant read denial",
     "reader write denial",
+    "known lexical paraphrase bad case",
     "unsupported format",
     "process restart persistence",
     "archive exclusion"
@@ -39,10 +41,18 @@
         17
       ],
       "permission_recheck": "passed",
-      "total_ms": 2.367
+      "total_ms": 2.07
     },
-    "request_id": "da524d8b0575423abeb1a13e2d95736a"
+    "request_id": "c108a858d10c48a9978f88519d904a66"
   },
+  "bad_case": {
+    "dataset_id": "paraphrase-hard",
+    "question": "I forgot my login secret; where can I regain access?",
+    "expected_source": "Account recovery",
+    "actual_status": "insufficient_knowledge",
+    "limitation": "lexical retrieval misses a supported paraphrase"
+  },
+  "cross_tenant_read_status": 404,
   "after_archive": {
     "status": "insufficient_knowledge",
     "answer": "",
@@ -56,10 +66,12 @@
       "min_lexical_coverage": 0.45,
       "max_lexical_coverage": 0.0,
       "ranked_document_ids": [],
-      "total_ms": 1.337
+      "total_ms": 1.431
     },
-    "request_id": "9a0cbf002d234bf7a6707304ddb428af"
+    "request_id": "10818801021840cb989000da60c1d2f3"
   },
-  "database": "D:\\enterprise-knowledge-base\\runtime\\http-demo-9b38a629\\knowledge.db",
-  "credentials": "omitted; synthetic runtime credentials ignored by Git"
+  "database": "E:\\enterprise-knowledge-base\\runtime\\http-demo-a06b5a9d\\knowledge.db",
+  "credentials": "omitted; synthetic runtime credentials ignored by Git",
+  "server_stopped": true,
+  "elapsed_seconds": 1.438
 }

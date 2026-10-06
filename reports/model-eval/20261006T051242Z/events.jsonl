@@ -1,0 +1,39 @@
+{"utc": "2026-10-06T05:12:44.451442+00:00", "event": "WINDOW_VERIFIED", "observation": {"utc": "2026-10-06T05:12:44.388878+00:00", "gpu": {"free_mib": 14029, "used_mib": 1967, "utilization_percent": 5}, "ram_free_mib": 13287, "ports_empty": true, "foreign_model": false, "gpu_quiet_samples": [{"free_mib": 14029, "used_mib": 1967, "utilization_percent": 5}, {"free_mib": 14029, "used_mib": 1967, "utilization_percent": 4}, {"free_mib": 14034, "used_mib": 1962, "utilization_percent": 4}]}, "baseline_gpu_pids": [2908, 3464, 5408, 8384, 8948, 10320, 10564, 10844, 15484, 16896, 18840, 20464, 21436, 21528, 24372, 26704, 28568, 29384, 30456, 30844, 31216, 31548, 32664, 35156, 35440, 36912, 41240, 44908, 45496, 46400, 49680, 51192]}
+{"utc": "2026-10-06T05:12:48.728822+00:00", "event": "OWN_SERVICE_READY", "receipt": {"pid": 39136, "start": "2026-10-06T05:12:44.4553167Z", "executable": "C:\\Users\\lmj\\AppData\\Local\\Programs\\Ollama\\ollama.exe", "port": 11535, "utc": "2026-10-06T05:12:44.646038+00:00", "stdout_log": "E:\\enterprise-knowledge-base\\runtime\\model-eval\\services\\ollama-1791263564453441600.stdout.log", "stderr_log": "E:\\enterprise-knowledge-base\\runtime\\model-eval\\services\\ollama-1791263564453441600.stderr.log", "tree": [{"pid": 39136, "path": "C:\\Users\\lmj\\AppData\\Local\\Programs\\Ollama\\ollama.exe", "start": "2026-10-06T05:12:44.4553167Z"}, {"pid": 18472, "path": "C:\\WINDOWS\\system32\\conhost.exe", "start": "2026-10-06T05:12:44.4695767Z"}], "tree_verified": true, "readiness": {"status": "READY", "policy": {"readiness_timeout_seconds": 60, "connect_timeout_seconds": 2}, "launch_requested_utc": "2026-10-06T05:12:44.454441+00:00", "process_start_utc": "2026-10-06T05:12:44.4553167Z", "gpu_probe": {"start_utc": "2026-10-06T05:12:44.525000+00:00", "end_utc": "2026-10-06T05:12:47.912000+00:00", "wait_seconds": 3.387, "source": "E:\\enterprise-knowledge-base\\runtime\\model-eval\\services\\ollama-1791263564453441600.stderr.log"}, "listener_ready_utc": "2026-10-06T05:12:44.674740+00:00", "listener_ready_elapsed_seconds": 0.234, "version_request_start_utc": "2026-10-06T05:12:46.109917+00:00", "version_wait_end_utc": "2026-10-06T05:12:47.913599+00:00", "version_wait_elapsed_seconds": 1.813, "version_request_end_utc": "2026-10-06T05:12:47.913599+00:00", "version_request_elapsed_seconds": 1.813, "ready_utc": "2026-10-06T05:12:48.727820+00:00", "total_elapsed_seconds": 4.281}}}
+{"utc": "2026-10-06T05:12:49.029624+00:00", "event": "RESERVED", "candidate": "candidate_4b", "case": "S1"}
+{"utc": "2026-10-06T05:12:55.010441+00:00", "event": "RESULT", "candidate": "candidate_4b", "case": "S1", "status": "SUCCESS", "reason": null, "seconds": 4.859000000054948}
+{"utc": "2026-10-06T05:12:55.011359+00:00", "event": "RESERVED", "candidate": "candidate_4b", "case": "S2"}
+{"utc": "2026-10-06T05:12:57.299055+00:00", "event": "RESULT", "candidate": "candidate_4b", "case": "S2", "status": "SUCCESS", "reason": null, "seconds": 1.172000000020489}
+{"utc": "2026-10-06T05:12:57.300094+00:00", "event": "RESERVED", "candidate": "candidate_4b", "case": "S3"}
+{"utc": "2026-10-06T05:12:59.616262+00:00", "event": "RESULT", "candidate": "candidate_4b", "case": "S3", "status": "SUCCESS", "reason": null, "seconds": 1.1709999999729916}
+{"utc": "2026-10-06T05:12:59.618267+00:00", "event": "RESERVED", "candidate": "candidate_4b", "case": "M1"}
+{"utc": "2026-10-06T05:13:01.940591+00:00", "event": "RESULT", "candidate": "candidate_4b", "case": "M1", "status": "SUCCESS", "reason": null, "seconds": 1.187999999965541}
+{"utc": "2026-10-06T05:13:01.941597+00:00", "event": "RESERVED", "candidate": "candidate_4b", "case": "M2"}
+{"utc": "2026-10-06T05:13:04.443500+00:00", "event": "RESULT", "candidate": "candidate_4b", "case": "M2", "status": "SUCCESS", "reason": null, "seconds": 1.234000000054948}
+{"utc": "2026-10-06T05:13:04.444500+00:00", "event": "RESERVED", "candidate": "candidate_4b", "case": "M3"}
+{"utc": "2026-10-06T05:13:06.741753+00:00", "event": "RESULT", "candidate": "candidate_4b", "case": "M3", "status": "SUCCESS", "reason": null, "seconds": 1.1869999999180436}
+{"utc": "2026-10-06T05:13:06.743819+00:00", "event": "RESERVED", "candidate": "candidate_4b", "case": "M4"}
+{"utc": "2026-10-06T05:13:09.076174+00:00", "event": "RESULT", "candidate": "candidate_4b", "case": "M4", "status": "SUCCESS", "reason": null, "seconds": 1.2040000000270084}
+{"utc": "2026-10-06T05:13:09.078202+00:00", "event": "RESERVED", "candidate": "candidate_4b", "case": "N1"}
+{"utc": "2026-10-06T05:13:11.356457+00:00", "event": "RESULT", "candidate": "candidate_4b", "case": "N1", "status": "SUCCESS", "reason": null, "seconds": 1.1709999999729916}
+{"utc": "2026-10-06T05:13:11.358458+00:00", "event": "RESERVED", "candidate": "candidate_4b", "case": "N2"}
+{"utc": "2026-10-06T05:13:13.666263+00:00", "event": "RESULT", "candidate": "candidate_4b", "case": "N2", "status": "SUCCESS", "reason": null, "seconds": 1.187000000034459}
+{"utc": "2026-10-06T05:13:13.667357+00:00", "event": "RESERVED", "candidate": "candidate_4b", "case": "N3"}
+{"utc": "2026-10-06T05:13:16.030640+00:00", "event": "RESULT", "candidate": "candidate_4b", "case": "N3", "status": "SUCCESS", "reason": null, "seconds": 1.187000000034459}
+{"utc": "2026-10-06T05:13:16.031472+00:00", "event": "RESERVED", "candidate": "candidate_4b", "case": "A1"}
+{"utc": "2026-10-06T05:13:18.294354+00:00", "event": "RESULT", "candidate": "candidate_4b", "case": "A1", "status": "SUCCESS", "reason": null, "seconds": 1.1400000000139698}
+{"utc": "2026-10-06T05:13:18.295233+00:00", "event": "RESERVED", "candidate": "candidate_4b", "case": "B1"}
+{"utc": "2026-10-06T05:13:20.615707+00:00", "event": "RESULT", "candidate": "candidate_4b", "case": "B1", "status": "SUCCESS", "reason": null, "seconds": 1.2179999999934807}
+{"utc": "2026-10-06T05:13:50.466115+00:00", "event": "OWN_MODEL_UNLOADED", "candidate": "candidate_4b"}
+{"utc": "2026-10-06T05:13:50.467649+00:00", "event": "RESERVED", "candidate": "candidate_27b", "case": "S1"}
+{"utc": "2026-10-06T05:14:02.996526+00:00", "event": "RESULT", "candidate": "candidate_27b", "case": "S1", "status": "SUCCESS", "reason": null, "seconds": 11.390999999945052}
+{"utc": "2026-10-06T05:14:02.997528+00:00", "event": "RESERVED", "candidate": "candidate_27b", "case": "S2"}
+{"utc": "2026-10-06T05:14:08.012515+00:00", "event": "RESULT", "candidate": "candidate_27b", "case": "S2", "status": "SUCCESS", "reason": null, "seconds": 3.937000000034459}
+{"utc": "2026-10-06T05:14:08.013515+00:00", "event": "RESERVED", "candidate": "candidate_27b", "case": "S3"}
+{"utc": "2026-10-06T05:14:11.909676+00:00", "event": "RESULT", "candidate": "candidate_27b", "case": "S3", "status": "SUCCESS", "reason": null, "seconds": 2.73499999998603}
+{"utc": "2026-10-06T05:14:11.910602+00:00", "event": "RESERVED", "candidate": "candidate_27b", "case": "M1"}
+{"utc": "2026-10-06T05:14:17.119204+00:00", "event": "RESULT", "candidate": "candidate_27b", "case": "M1", "status": "SUCCESS", "reason": null, "seconds": 4.061999999918044}
+{"utc": "2026-10-06T05:14:17.121197+00:00", "event": "RESERVED", "candidate": "candidate_27b", "case": "M2"}
+{"utc": "2026-10-06T05:14:23.819657+00:00", "event": "RESULT", "candidate": "candidate_27b", "case": "M2", "status": "FAILURE", "reason": "CITATION_OR_REFUSAL_CONTRACT", "seconds": 5.547000000020489}
+{"utc": "2026-10-06T05:14:23.819657+00:00", "event": "RUN_STOPPED", "reason": "CALL_FAILURE_STOP", "count": 17}
+{"utc": "2026-10-06T05:14:29.789631+00:00", "event": "OWN_SERVICE_STOPPED", "cleanup": {"status": "GPU_RELEASE_CONFIRMED", "utc": "2026-10-06T05:14:29.789631+00:00", "own_listener_closed": true, "own_process_exited": true, "verified_children": [18472, 40980, 50412], "gpu": {"free_mib": 14013, "used_mib": 1983, "utilization_percent": 5}}}

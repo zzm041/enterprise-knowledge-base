@@ -1,0 +1,144 @@
+{
+  "utc": "2026-10-05T14:10:01.759279+00:00",
+  "status": "PREFLIGHT_PASSED_EXECUTION_BLOCKED_BY_RESTORATION_CONFIG_SCOPE",
+  "inference_calls": 0,
+  "health": {
+    "healthz": {
+      "status": "ok"
+    },
+    "readyz": {
+      "status": "ready",
+      "dependencies": {
+        "mysql": {
+          "status": "up",
+          "critical": true,
+          "latency_ms": 5.36,
+          "checked_at": "2026-10-05T14:10:02.411597Z"
+        },
+        "redis": {
+          "status": "up",
+          "critical": false,
+          "latency_ms": 5.77,
+          "checked_at": "2026-10-05T14:10:02.412165Z"
+        },
+        "rabbitmq": {
+          "status": "up",
+          "critical": false,
+          "latency_ms": 10.84,
+          "checked_at": "2026-10-05T14:10:02.413559Z"
+        },
+        "llm": {
+          "status": "not_checked",
+          "critical": false,
+          "checked_at": null,
+          "reason": "live_vendor_not_probed"
+        },
+        "vlm": {
+          "status": "not_checked",
+          "critical": false,
+          "checked_at": null,
+          "reason": "live_vendor_not_probed"
+        },
+        "asr": {
+          "status": "not_checked",
+          "critical": false,
+          "checked_at": null,
+          "reason": "live_vendor_not_probed"
+        },
+        "embedding": {
+          "status": "not_checked",
+          "critical": false,
+          "checked_at": null,
+          "reason": "live_vendor_not_probed"
+        },
+        "reranker": {
+          "status": "not_checked",
+          "critical": false,
+          "checked_at": null,
+          "reason": "live_vendor_not_probed"
+        },
+        "storage": {
+          "status": "not_checked",
+          "critical": false,
+          "checked_at": null,
+          "reason": "live_vendor_not_probed"
+        },
+        "milvus": {
+          "status": "up",
+          "critical": false,
+          "latency_ms": 212.37,
+          "checked_at": "2026-10-05T14:10:02.418281Z"
+        }
+      }
+    },
+    "11436": {
+      "status": "ready",
+      "inference": false,
+      "scope": "rag_only",
+      "models": {
+        "asr": "Qwen3-ASR-0.6B",
+        "embedding": "bge-m3",
+        "reranker": "bge-reranker-v2-m3",
+        "qwen": "qwen3.5:4b"
+      },
+      "reservation_gate": "READY",
+      "accepting_requests": true,
+      "request_active": false
+    },
+    "11437": {
+      "status": "ready",
+      "inference": false,
+      "scope": "work_order_only",
+      "models": {
+        "asr": "Qwen3-ASR-0.6B",
+        "embedding": "bge-m3",
+        "reranker": "bge-reranker-v2-m3",
+        "qwen": "qwen38-27b-q3km-g55:7af3b8f"
+      },
+      "reservation_gate": "READY",
+      "accepting_requests": true,
+      "request_active": false
+    }
+  },
+  "workers": {
+    "worker": {
+      "active": {
+        "celery@1ebfd6462b4a": 0
+      },
+      "reserved": {
+        "celery@1ebfd6462b4a": 0
+      },
+      "scheduled": {
+        "celery@1ebfd6462b4a": 0
+      }
+    },
+    "task_counts": [
+      {
+        "status": "CANCELLED",
+        "count": 29
+      },
+      {
+        "status": "FAILED",
+        "count": 29
+      },
+      {
+        "status": "SUCCEEDED",
+        "count": 316
+      }
+    ]
+  },
+  "resident_models": {
+    "11438": [],
+    "11435": []
+  },
+  "resources": {
+    "utc": "2026-10-05T14:10:14.273985+00:00",
+    "ram_free_mib": 9425,
+    "gpu_free_mib": 14094,
+    "gpu_used_mib": 1902,
+    "gpu_utilization_percent": 12
+  },
+  "shared_lock_git_tracked": false,
+  "source_config_db_modified": false,
+  "reason": "Native restart changes PID/start-time. Adapter caches receipt binding and verifies binding SHA from runtime config. Recovery requires narrowly authorized runtime binding config updates."
+}

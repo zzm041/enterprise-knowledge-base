@@ -1,0 +1,9 @@
+{
+  "utc": "2026-10-05T16:17:52.448781+00:00",
+  "status": "LEGACY_RECEIPT_RETIRED",
+  "receipt": "E:\\enterprise-knowledge-base\\runtime\\model-eval\\services\\retired-legacy-20261005T153403Z.json",
+  "proof": "E:\\enterprise-knowledge-base\\reports\\model-eval\\20261005T153403Z\\post-abort-release-verification.json",
+  "old_pid_absent_now": true,
+  "own_port_closed_now": true,
+  "old_pid_absent_from_gpu_now": true
+}

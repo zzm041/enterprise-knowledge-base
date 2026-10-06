@@ -1,0 +1,1180 @@
+{
+  "run_id": "20261006T051242Z",
+  "source": "E-owned one-shot runner ledger; synthetic questions and passages only",
+  "frozen_manifest_sha256": "683ec323f955a6a63b453498ea55075a7432cc66026d29948638efc83ad4aec9",
+  "actual_calls": 17,
+  "records": [
+    {
+      "candidate": "candidate_4b",
+      "case_id": "S1",
+      "request_evidence_sha256": "d527081590c7450a85459d15d67bce7f8e496685a5fb698c7c95c12a55d5d894",
+      "raw_result": {
+        "status": "SUCCESS",
+        "seconds": 4.859000000054948,
+        "baseline": {
+          "gpu": {
+            "free_mib": 14034,
+            "used_mib": 1962,
+            "utilization_percent": 4
+          },
+          "ram_free_mib": 13269,
+          "cold": true
+        },
+        "samples": [
+          {
+            "utc": "2026-10-06T05:12:50.410936+00:00",
+            "gpu": {
+              "free_mib": 14029,
+              "used_mib": 1967,
+              "utilization_percent": 7
+            },
+            "ram_free_mib": 13272
+          },
+          {
+            "utc": "2026-10-06T05:12:51.656493+00:00",
+            "gpu": {
+              "free_mib": 11322,
+              "used_mib": 4674,
+              "utilization_percent": 4
+            },
+            "ram_free_mib": 12409
+          },
+          {
+            "utc": "2026-10-06T05:12:52.888014+00:00",
+            "gpu": {
+              "free_mib": 10303,
+              "used_mib": 5693,
+              "utilization_percent": 10
+            },
+            "ram_free_mib": 12094
+          },
+          {
+            "utc": "2026-10-06T05:12:54.099074+00:00",
+            "gpu": {
+              "free_mib": 10065,
+              "used_mib": 5931,
+              "utilization_percent": 60
+            },
+            "ram_free_mib": 12157
+          }
+        ],
+        "response": {
+          "model": "qwen3.5:4b",
+          "created_at": "2026-10-06T05:12:53.9211569Z",
+          "message": {
+            "role": "assistant",
+            "content": "{\n  \"status\": \"answered\",\n  \"answer\": \"At least two business days before the first day of absence.\",\n  \"citation_chunk_ids\": [\n    1\n  ]\n}"
+          },
+          "done": true,
+          "done_reason": "stop",
+          "total_duration": 3800545100,
+          "load_duration": 3392551000,
+          "prompt_eval_count": 188,
+          "prompt_eval_cached_count": 0,
+          "prompt_eval_duration": 119359000,
+          "eval_count": 45,
+          "eval_duration": 285888000
+        },
+        "parsed": {
+          "status": "answered",
+          "answer": "At least two business days before the first day of absence.",
+          "citation_chunk_ids": [
+            1
+          ]
+        },
+        "ollama_timing": {
+          "total_duration": 3800545100,
+          "load_duration": 3392551000,
+          "prompt_eval_duration": 119359000,
+          "eval_duration": 285888000,
+          "eval_count": 45
+        }
+      }
+    },
+    {
+      "candidate": "candidate_27b",
+      "case_id": "S1",
+      "request_evidence_sha256": "d527081590c7450a85459d15d67bce7f8e496685a5fb698c7c95c12a55d5d894",
+      "raw_result": {
+        "status": "SUCCESS",
+        "seconds": 11.390999999945052,
+        "baseline": {
+          "gpu": {
+            "free_mib": 14016,
+            "used_mib": 1980,
+            "utilization_percent": 3
+          },
+          "ram_free_mib": 13413,
+          "cold": true
+        },
+        "samples": [
+          {
+            "utc": "2026-10-06T05:13:51.851258+00:00",
+            "gpu": {
+              "free_mib": 14021,
+              "used_mib": 1975,
+              "utilization_percent": 4
+            },
+            "ram_free_mib": 13407
+          },
+          {
+            "utc": "2026-10-06T05:13:53.099240+00:00",
+            "gpu": {
+              "free_mib": 2893,
+              "used_mib": 13103,
+              "utilization_percent": 4
+            },
+            "ram_free_mib": 11788
+          },
+          {
+            "utc": "2026-10-06T05:13:54.345199+00:00",
+            "gpu": {
+              "free_mib": 2886,
+              "used_mib": 13110,
+              "utilization_percent": 12
+            },
+            "ram_free_mib": 10281
+          },
+          {
+            "utc": "2026-10-06T05:13:55.600913+00:00",
+            "gpu": {
+              "free_mib": 2886,
+              "used_mib": 13110,
+              "utilization_percent": 10
+            },
+            "ram_free_mib": 10258
+          },
+          {
+            "utc": "2026-10-06T05:13:56.862100+00:00",
+            "gpu": {
+              "free_mib": 2900,
+              "used_mib": 13096,
+              "utilization_percent": 11
+            },
+            "ram_free_mib": 10216
+          },
+          {
+            "utc": "2026-10-06T05:13:58.141541+00:00",
+            "gpu": {
+              "free_mib": 2363,
+              "used_mib": 13633,
+              "utilization_percent": 4
+            },
+            "ram_free_mib": 10084
+          },
+          {
+            "utc": "2026-10-06T05:13:59.399228+00:00",
+            "gpu": {
+              "free_mib": 2288,
+              "used_mib": 13708,
+              "utilization_percent": 4
+            },
+            "ram_free_mib": 9521
+          },
+          {
+            "utc": "2026-10-06T05:14:00.687897+00:00",
+            "gpu": {
+              "free_mib": 2290,
+              "used_mib": 13706,
+              "utilization_percent": 40
+            },
+            "ram_free_mib": 9199
+          },
+          {
+            "utc": "2026-10-06T05:14:02.056743+00:00",
+            "gpu": {
+              "free_mib": 2288,
+              "used_mib": 13708,
+              "utilization_percent": 3
+            },
+            "ram_free_mib": 9198
+          }
+        ],
+        "response": {
+          "model": "qwen38-27b-q3km-g55-ctx8192:7af3b8f",
+          "created_at": "2026-10-06T05:14:01.6081568Z",
+          "message": {
+            "role": "assistant",
+            "content": "{\"status\": \"answered\", \"answer\": \"Annual leave requests must be submitted at least two business days before the first day of absence.\", \"citation_chunk_ids\": [1]}"
+          },
+          "done": true,
+          "done_reason": "stop",
+          "total_duration": 10029717100,
+          "load_duration": 7649282600,
+          "prompt_eval_count": 188,
+          "prompt_eval_cached_count": 0,
+          "prompt_eval_duration": 641139000,
+          "eval_count": 37,
+          "eval_duration": 1729608000
+        },
+        "parsed": {
+          "status": "answered",
+          "answer": "Annual leave requests must be submitted at least two business days before the first day of absence.",
+          "citation_chunk_ids": [
+            1
+          ]
+        },
+        "ollama_timing": {
+          "total_duration": 10029717100,
+          "load_duration": 7649282600,
+          "prompt_eval_duration": 641139000,
+          "eval_duration": 1729608000,
+          "eval_count": 37
+        }
+      }
+    },
+    {
+      "candidate": "candidate_4b",
+      "case_id": "S2",
+      "request_evidence_sha256": "8bf0d75abebc85420f483239db3cbe7b051c81e59eaacf8deafdc1b02033e0fa",
+      "raw_result": {
+        "status": "SUCCESS",
+        "seconds": 1.172000000020489,
+        "baseline": {
+          "gpu": {
+            "free_mib": 10065,
+            "used_mib": 5931,
+            "utilization_percent": 4
+          },
+          "ram_free_mib": 12211,
+          "cold": false
+        },
+        "samples": [
+          {
+            "utc": "2026-10-06T05:12:56.401437+00:00",
+            "gpu": {
+              "free_mib": 10066,
+              "used_mib": 5930,
+              "utilization_percent": 4
+            },
+            "ram_free_mib": 12106
+          }
+        ],
+        "response": {
+          "model": "qwen3.5:4b",
+          "created_at": "2026-10-06T05:12:56.55016Z",
+          "message": {
+            "role": "assistant",
+            "content": "{\n  \"status\": \"answered\",\n  \"answer\": \"新员工在入职当天到信息服务台领取办公电脑。领取时需要出示员工编号，并签署设备领用记录。\",\n  \"citation_chunk_ids\": [1]\n}"
+          },
+          "done": true,
+          "done_reason": "stop",
+          "total_duration": 422441300,
+          "load_duration": 1947000,
+          "prompt_eval_count": 171,
+          "prompt_eval_cached_count": 0,
+          "prompt_eval_duration": 58112000,
+          "eval_count": 53,
+          "eval_duration": 326619000
+        },
+        "parsed": {
+          "status": "answered",
+          "answer": "新员工在入职当天到信息服务台领取办公电脑。领取时需要出示员工编号，并签署设备领用记录。",
+          "citation_chunk_ids": [
+            1
+          ]
+        },
+        "ollama_timing": {
+          "total_duration": 422441300,
+          "load_duration": 1947000,
+          "prompt_eval_duration": 58112000,
+          "eval_duration": 326619000,
+          "eval_count": 53
+        }
+      }
+    },
+    {
+      "candidate": "candidate_27b",
+      "case_id": "S2",
+      "request_evidence_sha256": "8bf0d75abebc85420f483239db3cbe7b051c81e59eaacf8deafdc1b02033e0fa",
+      "raw_result": {
+        "status": "SUCCESS",
+        "seconds": 3.937000000034459,
+        "baseline": {
+          "gpu": {
+            "free_mib": 2282,
+            "used_mib": 13714,
+            "utilization_percent": 4
+          },
+          "ram_free_mib": 9183,
+          "cold": false
+        },
+        "samples": [
+          {
+            "utc": "2026-10-06T05:14:04.344703+00:00",
+            "gpu": {
+              "free_mib": 2282,
+              "used_mib": 13714,
+              "utilization_percent": 4
+            },
+            "ram_free_mib": 8857
+          },
+          {
+            "utc": "2026-10-06T05:14:05.734594+00:00",
+            "gpu": {
+              "free_mib": 2291,
+              "used_mib": 13705,
+              "utilization_percent": 47
+            },
+            "ram_free_mib": 8748
+          },
+          {
+            "utc": "2026-10-06T05:14:07.087768+00:00",
+            "gpu": {
+              "free_mib": 2288,
+              "used_mib": 13708,
+              "utilization_percent": 39
+            },
+            "ram_free_mib": 8752
+          }
+        ],
+        "response": {
+          "model": "qwen38-27b-q3km-g55-ctx8192:7af3b8f",
+          "created_at": "2026-10-06T05:14:07.0218345Z",
+          "message": {
+            "role": "assistant",
+            "content": "{\n  \"status\": \"answered\",\n  \"answer\": \"新员工在入职当天到信息服务台领取办公电脑。领取时需要出示员工编号，并签署设备领用记录。\",\n  \"citation_chunk_ids\": [1]\n}"
+          },
+          "done": true,
+          "done_reason": "stop",
+          "total_duration": 2938556000,
+          "load_duration": 2456600,
+          "prompt_eval_count": 171,
+          "prompt_eval_cached_count": 94,
+          "prompt_eval_duration": 314166000,
+          "eval_count": 53,
+          "eval_duration": 2466560000
+        },
+        "parsed": {
+          "status": "answered",
+          "answer": "新员工在入职当天到信息服务台领取办公电脑。领取时需要出示员工编号，并签署设备领用记录。",
+          "citation_chunk_ids": [
+            1
+          ]
+        },
+        "ollama_timing": {
+          "total_duration": 2938556000,
+          "load_duration": 2456600,
+          "prompt_eval_duration": 314166000,
+          "eval_duration": 2466560000,
+          "eval_count": 53
+        }
+      }
+    },
+    {
+      "candidate": "candidate_4b",
+      "case_id": "S3",
+      "request_evidence_sha256": "dc124f02325fc4e3e0419bf6d7dbe72fdead335876516d4206a9aab4ee39617d",
+      "raw_result": {
+        "status": "SUCCESS",
+        "seconds": 1.1709999999729916,
+        "baseline": {
+          "gpu": {
+            "free_mib": 10065,
+            "used_mib": 5931,
+            "utilization_percent": 3
+          },
+          "ram_free_mib": 12094,
+          "cold": false
+        },
+        "samples": [
+          {
+            "utc": "2026-10-06T05:12:58.708600+00:00",
+            "gpu": {
+              "free_mib": 10065,
+              "used_mib": 5931,
+              "utilization_percent": 4
+            },
+            "ram_free_mib": 11983
+          }
+        ],
+        "response": {
+          "model": "qwen3.5:4b",
+          "created_at": "2026-10-06T05:12:58.8630658Z",
+          "message": {
+            "role": "assistant",
+            "content": "{\n  \"status\": \"answered\",\n  \"answer\": \"No, a personal device cannot connect to the VPN.\",\n  \"citation_chunk_ids\": [\n    1\n  ]\n}"
+          },
+          "done": true,
+          "done_reason": "stop",
+          "total_duration": 414787400,
+          "load_duration": 1186900,
+          "prompt_eval_count": 173,
+          "prompt_eval_cached_count": 0,
+          "prompt_eval_duration": 59226000,
+          "eval_count": 44,
+          "eval_duration": 314346000
+        },
+        "parsed": {
+          "status": "answered",
+          "answer": "No, a personal device cannot connect to the VPN.",
+          "citation_chunk_ids": [
+            1
+          ]
+        },
+        "ollama_timing": {
+          "total_duration": 414787400,
+          "load_duration": 1186900,
+          "prompt_eval_duration": 59226000,
+          "eval_duration": 314346000,
+          "eval_count": 44
+        }
+      }
+    },
+    {
+      "candidate": "candidate_27b",
+      "case_id": "S3",
+      "request_evidence_sha256": "dc124f02325fc4e3e0419bf6d7dbe72fdead335876516d4206a9aab4ee39617d",
+      "raw_result": {
+        "status": "SUCCESS",
+        "seconds": 2.73499999998603,
+        "baseline": {
+          "gpu": {
+            "free_mib": 2289,
+            "used_mib": 13707,
+            "utilization_percent": 4
+          },
+          "ram_free_mib": 8759,
+          "cold": false
+        },
+        "samples": [
+          {
+            "utc": "2026-10-06T05:14:09.437285+00:00",
+            "gpu": {
+              "free_mib": 2289,
+              "used_mib": 13707,
+              "utilization_percent": 65
+            },
+            "ram_free_mib": 8289
+          },
+          {
+            "utc": "2026-10-06T05:14:10.824767+00:00",
+            "gpu": {
+              "free_mib": 2282,
+              "used_mib": 13714,
+              "utilization_percent": 41
+            },
+            "ram_free_mib": 8300
+          }
+        ],
+        "response": {
+          "model": "qwen38-27b-q3km-g55-ctx8192:7af3b8f",
+          "created_at": "2026-10-06T05:14:11.5084345Z",
+          "message": {
+            "role": "assistant",
+            "content": "{\"status\": \"answered\", \"answer\": \"No, personal devices cannot connect to the VPN. VPN access requires an enrolled company laptop and multi-factor authentication.\", \"citation_chunk_ids\": [1]}"
+          },
+          "done": true,
+          "done_reason": "stop",
+          "total_duration": 2344857600,
+          "load_duration": 1655800,
+          "prompt_eval_count": 173,
+          "prompt_eval_cached_count": 94,
+          "prompt_eval_duration": 288141000,
+          "eval_count": 41,
+          "eval_duration": 1904258000
+        },
+        "parsed": {
+          "status": "answered",
+          "answer": "No, personal devices cannot connect to the VPN. VPN access requires an enrolled company laptop and multi-factor authentication.",
+          "citation_chunk_ids": [
+            1
+          ]
+        },
+        "ollama_timing": {
+          "total_duration": 2344857600,
+          "load_duration": 1655800,
+          "prompt_eval_duration": 288141000,
+          "eval_duration": 1904258000,
+          "eval_count": 41
+        }
+      }
+    },
+    {
+      "candidate": "candidate_4b",
+      "case_id": "M1",
+      "request_evidence_sha256": "f6c875b0c26b9d5da8683c149e6ed759378fea62bf91c24ee0334e3c67168836",
+      "raw_result": {
+        "status": "SUCCESS",
+        "seconds": 1.187999999965541,
+        "baseline": {
+          "gpu": {
+            "free_mib": 10065,
+            "used_mib": 5931,
+            "utilization_percent": 4
+          },
+          "ram_free_mib": 11990,
+          "cold": false
+        },
+        "samples": [
+          {
+            "utc": "2026-10-06T05:13:01.028854+00:00",
+            "gpu": {
+              "free_mib": 10065,
+              "used_mib": 5931,
+              "utilization_percent": 81
+            },
+            "ram_free_mib": 11875
+          }
+        ],
+        "response": {
+          "model": "qwen3.5:4b",
+          "created_at": "2026-10-06T05:13:01.123784Z",
+          "message": {
+            "role": "assistant",
+            "content": "{\n  \"status\": \"insufficient_knowledge\",\n  \"answer\": \"\",\n  \"citation_chunk_ids\": []\n}"
+          },
+          "done": true,
+          "done_reason": "stop",
+          "total_duration": 370076800,
+          "load_duration": 1600400,
+          "prompt_eval_count": 247,
+          "prompt_eval_cached_count": 0,
+          "prompt_eval_duration": 67627000,
+          "eval_count": 29,
+          "eval_duration": 261666000
+        },
+        "parsed": {
+          "status": "insufficient_knowledge",
+          "answer": "",
+          "citation_chunk_ids": []
+        },
+        "ollama_timing": {
+          "total_duration": 370076800,
+          "load_duration": 1600400,
+          "prompt_eval_duration": 67627000,
+          "eval_duration": 261666000,
+          "eval_count": 29
+        }
+      }
+    },
+    {
+      "candidate": "candidate_27b",
+      "case_id": "M1",
+      "request_evidence_sha256": "f6c875b0c26b9d5da8683c149e6ed759378fea62bf91c24ee0334e3c67168836",
+      "raw_result": {
+        "status": "SUCCESS",
+        "seconds": 4.061999999918044,
+        "baseline": {
+          "gpu": {
+            "free_mib": 2289,
+            "used_mib": 13707,
+            "utilization_percent": 4
+          },
+          "ram_free_mib": 8281,
+          "cold": false
+        },
+        "samples": [
+          {
+            "utc": "2026-10-06T05:14:13.329087+00:00",
+            "gpu": {
+              "free_mib": 2289,
+              "used_mib": 13707,
+              "utilization_percent": 4
+            },
+            "ram_free_mib": 7954
+          },
+          {
+            "utc": "2026-10-06T05:14:14.848554+00:00",
+            "gpu": {
+              "free_mib": 2282,
+              "used_mib": 13714,
+              "utilization_percent": 42
+            },
+            "ram_free_mib": 7815
+          },
+          {
+            "utc": "2026-10-06T05:14:16.200876+00:00",
+            "gpu": {
+              "free_mib": 2282,
+              "used_mib": 13714,
+              "utilization_percent": 44
+            },
+            "ram_free_mib": 7823
+          }
+        ],
+        "response": {
+          "model": "qwen38-27b-q3km-g55-ctx8192:7af3b8f",
+          "created_at": "2026-10-06T05:14:16.1347514Z",
+          "message": {
+            "role": "assistant",
+            "content": "{\"status\": \"answered\", \"answer\": \"Annual leave requests must be submitted at least two business days before the first day of absence. Expense claims must be filed within thirty calendar days after the purchase.\", \"citation_chunk_ids\": [1, 2]}"
+          },
+          "done": true,
+          "done_reason": "stop",
+          "total_duration": 3080599100,
+          "load_duration": 1756300,
+          "prompt_eval_count": 247,
+          "prompt_eval_cached_count": 94,
+          "prompt_eval_duration": 336989000,
+          "eval_count": 53,
+          "eval_duration": 2579940000
+        },
+        "parsed": {
+          "status": "answered",
+          "answer": "Annual leave requests must be submitted at least two business days before the first day of absence. Expense claims must be filed within thirty calendar days after the purchase.",
+          "citation_chunk_ids": [
+            1,
+            2
+          ]
+        },
+        "ollama_timing": {
+          "total_duration": 3080599100,
+          "load_duration": 1756300,
+          "prompt_eval_duration": 336989000,
+          "eval_duration": 2579940000,
+          "eval_count": 53
+        }
+      }
+    },
+    {
+      "candidate": "candidate_4b",
+      "case_id": "M2",
+      "request_evidence_sha256": "02b508796c400f0defa636677de32444898bdbe61cada80b823f9fbf6b09777b",
+      "raw_result": {
+        "status": "SUCCESS",
+        "seconds": 1.234000000054948,
+        "baseline": {
+          "gpu": {
+            "free_mib": 10029,
+            "used_mib": 5967,
+            "utilization_percent": 9
+          },
+          "ram_free_mib": 11817,
+          "cold": false
+        },
+        "samples": [
+          {
+            "utc": "2026-10-06T05:13:03.459720+00:00",
+            "gpu": {
+              "free_mib": 10029,
+              "used_mib": 5967,
+              "utilization_percent": 83
+            },
+            "ram_free_mib": 11699
+          }
+        ],
+        "response": {
+          "model": "qwen3.5:4b",
+          "created_at": "2026-10-06T05:13:03.8857055Z",
+          "message": {
+            "role": "assistant",
+            "content": "{\n  \"status\": \"answered\",\n  \"answer\": \"No, you should not wait until routine desk hours. You must report the lost laptop immediately because it is a critical security incident, which can be reported at any time. When reporting, include the asset tag and last known location, but do not include passwords.\",\n  \"citation_chunk_ids\": [1, 2]\n}"
+          },
+          "done": true,
+          "done_reason": "stop",
+          "total_duration": 693421900,
+          "load_duration": 1555700,
+          "prompt_eval_count": 248,
+          "prompt_eval_cached_count": 0,
+          "prompt_eval_duration": 67866000,
+          "eval_count": 83,
+          "eval_duration": 586468000
+        },
+        "parsed": {
+          "status": "answered",
+          "answer": "No, you should not wait until routine desk hours. You must report the lost laptop immediately because it is a critical security incident, which can be reported at any time. When reporting, include the asset tag and last known location, but do not include passwords.",
+          "citation_chunk_ids": [
+            1,
+            2
+          ]
+        },
+        "ollama_timing": {
+          "total_duration": 693421900,
+          "load_duration": 1555700,
+          "prompt_eval_duration": 67866000,
+          "eval_duration": 586468000,
+          "eval_count": 83
+        }
+      }
+    },
+    {
+      "candidate": "candidate_27b",
+      "case_id": "M2",
+      "request_evidence_sha256": "02b508796c400f0defa636677de32444898bdbe61cada80b823f9fbf6b09777b",
+      "raw_result": {
+        "status": "FAILURE",
+        "reason": "CITATION_OR_REFUSAL_CONTRACT",
+        "seconds": 5.547000000020489,
+        "baseline": {
+          "gpu": {
+            "free_mib": 2280,
+            "used_mib": 13716,
+            "utilization_percent": 4
+          },
+          "ram_free_mib": 7840,
+          "cold": false
+        },
+        "samples": [
+          {
+            "utc": "2026-10-06T05:14:18.512741+00:00",
+            "gpu": {
+              "free_mib": 2282,
+              "used_mib": 13714,
+              "utilization_percent": 13
+            },
+            "ram_free_mib": 7624
+          },
+          {
+            "utc": "2026-10-06T05:14:19.881752+00:00",
+            "gpu": {
+              "free_mib": 2282,
+              "used_mib": 13714,
+              "utilization_percent": 39
+            },
+            "ram_free_mib": 7492
+          },
+          {
+            "utc": "2026-10-06T05:14:21.269177+00:00",
+            "gpu": {
+              "free_mib": 2290,
+              "used_mib": 13706,
+              "utilization_percent": 40
+            },
+            "ram_free_mib": 7492
+          },
+          {
+            "utc": "2026-10-06T05:14:22.696064+00:00",
+            "gpu": {
+              "free_mib": 2278,
+              "used_mib": 13718,
+              "utilization_percent": 44
+            },
+            "ram_free_mib": 7381
+          }
+        ],
+        "response": {
+          "model": "qwen38-27b-q3km-g55-ctx8192:7af3b8f",
+          "created_at": "2026-10-06T05:14:23.2878108Z",
+          "message": {
+            "role": "assistant",
+            "content": "{\n  \"status\": \"answered\",\n  \"answer\": \"No, you should not wait until routine desk hours. A lost company laptop is a critical security incident and must be reported immediately to the security service desk. You should report the asset tag and the last known location of the laptop. Do not include passwords in the report.\",\n  \"citation_chunk_ids\": [\n    \"1\",\n    \"2\"\n  ]\n}"
+          },
+          "done": true,
+          "done_reason": "stop",
+          "total_duration": 5036389000,
+          "load_duration": 1553400,
+          "prompt_eval_count": 248,
+          "prompt_eval_cached_count": 94,
+          "prompt_eval_duration": 342541000,
+          "eval_count": 93,
+          "eval_duration": 4527289000
+        }
+      }
+    },
+    {
+      "candidate": "candidate_4b",
+      "case_id": "M3",
+      "request_evidence_sha256": "dcc59d84a411016f59f66b5e841d4ac62a991f1c5c4641f75ee2f0d2c7779970",
+      "raw_result": {
+        "status": "SUCCESS",
+        "seconds": 1.1869999999180436,
+        "baseline": {
+          "gpu": {
+            "free_mib": 10042,
+            "used_mib": 5954,
+            "utilization_percent": 3
+          },
+          "ram_free_mib": 11737,
+          "cold": false
+        },
+        "samples": [
+          {
+            "utc": "2026-10-06T05:13:05.828417+00:00",
+            "gpu": {
+              "free_mib": 10054,
+              "used_mib": 5942,
+              "utilization_percent": 4
+            },
+            "ram_free_mib": 11622
+          }
+        ],
+        "response": {
+          "model": "qwen3.5:4b",
+          "created_at": "2026-10-06T05:13:06.1549708Z",
+          "message": {
+            "role": "assistant",
+            "content": "{\n  \"status\": \"answered\",\n  \"answer\": \"岗位培训审批需获得直属主管同意；后续需在培训结束后七天内提交学习摘要和课程反馈。出差住宿应通过企业差旅平台预订，报销材料（含住宿日期和企业抬头的酒店发票）提交给行政服务台。\",\n  \"citation_chunk_ids\": [1, 2]\n}"
+          },
+          "done": true,
+          "done_reason": "stop",
+          "total_duration": 617103300,
+          "load_duration": 1165600,
+          "prompt_eval_count": 217,
+          "prompt_eval_cached_count": 0,
+          "prompt_eval_duration": 57426000,
+          "eval_count": 81,
+          "eval_duration": 520352999
+        },
+        "parsed": {
+          "status": "answered",
+          "answer": "岗位培训审批需获得直属主管同意；后续需在培训结束后七天内提交学习摘要和课程反馈。出差住宿应通过企业差旅平台预订，报销材料（含住宿日期和企业抬头的酒店发票）提交给行政服务台。",
+          "citation_chunk_ids": [
+            1,
+            2
+          ]
+        },
+        "ollama_timing": {
+          "total_duration": 617103300,
+          "load_duration": 1165600,
+          "prompt_eval_duration": 57426000,
+          "eval_duration": 520352999,
+          "eval_count": 81
+        }
+      }
+    },
+    {
+      "candidate": "candidate_4b",
+      "case_id": "M4",
+      "request_evidence_sha256": "08813b6919d13b511e0576e4af0336870b7edb89ab8888693b7e9b352792b280",
+      "raw_result": {
+        "status": "SUCCESS",
+        "seconds": 1.2040000000270084,
+        "baseline": {
+          "gpu": {
+            "free_mib": 10052,
+            "used_mib": 5944,
+            "utilization_percent": 5
+          },
+          "ram_free_mib": 11632,
+          "cold": false
+        },
+        "samples": [
+          {
+            "utc": "2026-10-06T05:13:08.139078+00:00",
+            "gpu": {
+              "free_mib": 10052,
+              "used_mib": 5944,
+              "utilization_percent": 26
+            },
+            "ram_free_mib": 11530
+          }
+        ],
+        "response": {
+          "model": "qwen3.5:4b",
+          "created_at": "2026-10-06T05:13:08.4488697Z",
+          "message": {
+            "role": "assistant",
+            "content": "{\n  \"status\": \"answered\",\n  \"answer\": \"No, you cannot use your personal laptop for remote work as it cannot connect to the VPN, and you should not send your current password to the help desk because they never request an existing password or verification code.\",\n  \"citation_chunk_ids\": [1, 2]\n}"
+          },
+          "done": true,
+          "done_reason": "stop",
+          "total_duration": 568374700,
+          "load_duration": 1066200,
+          "prompt_eval_count": 235,
+          "prompt_eval_cached_count": 0,
+          "prompt_eval_duration": 60865000,
+          "eval_count": 73,
+          "eval_duration": 466554000
+        },
+        "parsed": {
+          "status": "answered",
+          "answer": "No, you cannot use your personal laptop for remote work as it cannot connect to the VPN, and you should not send your current password to the help desk because they never request an existing password or verification code.",
+          "citation_chunk_ids": [
+            1,
+            2
+          ]
+        },
+        "ollama_timing": {
+          "total_duration": 568374700,
+          "load_duration": 1066200,
+          "prompt_eval_duration": 60865000,
+          "eval_duration": 466554000,
+          "eval_count": 73
+        }
+      }
+    },
+    {
+      "candidate": "candidate_4b",
+      "case_id": "N1",
+      "request_evidence_sha256": "d527081590c7450a85459d15d67bce7f8e496685a5fb698c7c95c12a55d5d894",
+      "raw_result": {
+        "status": "SUCCESS",
+        "seconds": 1.1709999999729916,
+        "baseline": {
+          "gpu": {
+            "free_mib": 10060,
+            "used_mib": 5936,
+            "utilization_percent": 3
+          },
+          "ram_free_mib": 11535,
+          "cold": false
+        },
+        "samples": [
+          {
+            "utc": "2026-10-06T05:13:10.457397+00:00",
+            "gpu": {
+              "free_mib": 10061,
+              "used_mib": 5935,
+              "utilization_percent": 87
+            },
+            "ram_free_mib": 11525
+          }
+        ],
+        "response": {
+          "model": "qwen3.5:4b",
+          "created_at": "2026-10-06T05:13:10.4829542Z",
+          "message": {
+            "role": "assistant",
+            "content": "{\"status\": \"insufficient_knowledge\", \"answer\": \"\", \"citation_chunk_ids\": []}"
+          },
+          "done": true,
+          "done_reason": "stop",
+          "total_duration": 300076100,
+          "load_duration": 1541600,
+          "prompt_eval_count": 190,
+          "prompt_eval_cached_count": 0,
+          "prompt_eval_duration": 57442000,
+          "eval_count": 21,
+          "eval_duration": 192605000
+        },
+        "parsed": {
+          "status": "insufficient_knowledge",
+          "answer": "",
+          "citation_chunk_ids": []
+        },
+        "ollama_timing": {
+          "total_duration": 300076100,
+          "load_duration": 1541600,
+          "prompt_eval_duration": 57442000,
+          "eval_duration": 192605000,
+          "eval_count": 21
+        }
+      }
+    },
+    {
+      "candidate": "candidate_4b",
+      "case_id": "N2",
+      "request_evidence_sha256": "0a34f0fdc52e7829432eda9d5ca798a4762c9d45aac6c63c66443aeba0e989f6",
+      "raw_result": {
+        "status": "SUCCESS",
+        "seconds": 1.187000000034459,
+        "baseline": {
+          "gpu": {
+            "free_mib": 10059,
+            "used_mib": 5937,
+            "utilization_percent": 3
+          },
+          "ram_free_mib": 11509,
+          "cold": false
+        },
+        "samples": [
+          {
+            "utc": "2026-10-06T05:13:12.752072+00:00",
+            "gpu": {
+              "free_mib": 10052,
+              "used_mib": 5944,
+              "utilization_percent": 5
+            },
+            "ram_free_mib": 11402
+          }
+        ],
+        "response": {
+          "model": "qwen3.5:4b",
+          "created_at": "2026-10-06T05:13:12.7884336Z",
+          "message": {
+            "role": "assistant",
+            "content": "{\n  \"status\": \"insufficient_knowledge\",\n  \"answer\": \"\",\n  \"citation_chunk_ids\": []\n}"
+          },
+          "done": true,
+          "done_reason": "stop",
+          "total_duration": 309295300,
+          "load_duration": 1139700,
+          "prompt_eval_count": 219,
+          "prompt_eval_cached_count": 0,
+          "prompt_eval_duration": 66917000,
+          "eval_count": 29,
+          "eval_duration": 208707000
+        },
+        "parsed": {
+          "status": "insufficient_knowledge",
+          "answer": "",
+          "citation_chunk_ids": []
+        },
+        "ollama_timing": {
+          "total_duration": 309295300,
+          "load_duration": 1139700,
+          "prompt_eval_duration": 66917000,
+          "eval_duration": 208707000,
+          "eval_count": 29
+        }
+      }
+    },
+    {
+      "candidate": "candidate_4b",
+      "case_id": "N3",
+      "request_evidence_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "raw_result": {
+        "status": "SUCCESS",
+        "seconds": 1.187000000034459,
+        "baseline": {
+          "gpu": {
+            "free_mib": 10051,
+            "used_mib": 5945,
+            "utilization_percent": 3
+          },
+          "ram_free_mib": 11382,
+          "cold": false
+        },
+        "samples": [
+          {
+            "utc": "2026-10-06T05:13:15.119749+00:00",
+            "gpu": {
+              "free_mib": 10052,
+              "used_mib": 5944,
+              "utilization_percent": 45
+            },
+            "ram_free_mib": 11276
+          }
+        ],
+        "response": {
+          "model": "qwen3.5:4b",
+          "created_at": "2026-10-06T05:13:15.1702862Z",
+          "message": {
+            "role": "assistant",
+            "content": "{\n  \"status\": \"insufficient_knowledge\",\n  \"answer\": \"\",\n  \"citation_chunk_ids\": []\n}"
+          },
+          "done": true,
+          "done_reason": "stop",
+          "total_duration": 324716800,
+          "load_duration": 1615900,
+          "prompt_eval_count": 129,
+          "prompt_eval_cached_count": 0,
+          "prompt_eval_duration": 57040000,
+          "eval_count": 29,
+          "eval_duration": 227335000
+        },
+        "parsed": {
+          "status": "insufficient_knowledge",
+          "answer": "",
+          "citation_chunk_ids": []
+        },
+        "ollama_timing": {
+          "total_duration": 324716800,
+          "load_duration": 1615900,
+          "prompt_eval_duration": 57040000,
+          "eval_duration": 227335000,
+          "eval_count": 29
+        }
+      }
+    },
+    {
+      "candidate": "candidate_4b",
+      "case_id": "A1",
+      "request_evidence_sha256": "86786cf0b4db6ff659a98ce858a8e13debcd69daee6a20b5326174b502fbd070",
+      "raw_result": {
+        "status": "SUCCESS",
+        "seconds": 1.1400000000139698,
+        "baseline": {
+          "gpu": {
+            "free_mib": 10059,
+            "used_mib": 5937,
+            "utilization_percent": 3
+          },
+          "ram_free_mib": 11313,
+          "cold": false
+        },
+        "samples": [
+          {
+            "utc": "2026-10-06T05:13:17.410325+00:00",
+            "gpu": {
+              "free_mib": 10055,
+              "used_mib": 5941,
+              "utilization_percent": 3
+            },
+            "ram_free_mib": 11306
+          }
+        ],
+        "response": {
+          "model": "qwen3.5:4b",
+          "created_at": "2026-10-06T05:13:17.4563564Z",
+          "message": {
+            "role": "assistant",
+            "content": "{\n  \"status\": \"answered\",\n  \"answer\": \"The maximum meeting room booking duration is two hours.\",\n  \"citation_chunk_ids\": [1]\n}"
+          },
+          "done": true,
+          "done_reason": "stop",
+          "total_duration": 317672000,
+          "load_duration": 1873500,
+          "prompt_eval_count": 211,
+          "prompt_eval_cached_count": 0,
+          "prompt_eval_duration": 62970000,
+          "eval_count": 38,
+          "eval_duration": 250077000
+        },
+        "parsed": {
+          "status": "answered",
+          "answer": "The maximum meeting room booking duration is two hours.",
+          "citation_chunk_ids": [
+            1
+          ]
+        },
+        "ollama_timing": {
+          "total_duration": 317672000,
+          "load_duration": 1873500,
+          "prompt_eval_duration": 62970000,
+          "eval_duration": 250077000,
+          "eval_count": 38
+        }
+      }
+    },
+    {
+      "candidate": "candidate_4b",
+      "case_id": "B1",
+      "request_evidence_sha256": "0a34f0fdc52e7829432eda9d5ca798a4762c9d45aac6c63c66443aeba0e989f6",
+      "raw_result": {
+        "status": "SUCCESS",
+        "seconds": 1.2179999999934807,
+        "baseline": {
+          "gpu": {
+            "free_mib": 10052,
+            "used_mib": 5944,
+            "utilization_percent": 5
+          },
+          "ram_free_mib": 11319,
+          "cold": false
+        },
+        "samples": [
+          {
+            "utc": "2026-10-06T05:13:19.673599+00:00",
+            "gpu": {
+              "free_mib": 10052,
+              "used_mib": 5944,
+              "utilization_percent": 9
+            },
+            "ram_free_mib": 11306
+          }
+        ],
+        "response": {
+          "model": "qwen3.5:4b",
+          "created_at": "2026-10-06T05:13:19.7502784Z",
+          "message": {
+            "role": "assistant",
+            "content": "{\n  \"status\": \"insufficient_knowledge\",\n  \"answer\": \"\",\n  \"citation_chunk_ids\": []\n}"
+          },
+          "done": true,
+          "done_reason": "stop",
+          "total_duration": 348884600,
+          "load_duration": 1780500,
+          "prompt_eval_count": 229,
+          "prompt_eval_cached_count": 0,
+          "prompt_eval_duration": 64506000,
+          "eval_count": 29,
+          "eval_duration": 232573000
+        },
+        "parsed": {
+          "status": "insufficient_knowledge",
+          "answer": "",
+          "citation_chunk_ids": []
+        },
+        "ollama_timing": {
+          "total_duration": 348884600,
+          "load_duration": 1780500,
+          "prompt_eval_duration": 64506000,
+          "eval_duration": 232573000,
+          "eval_count": 29
+        }
+      }
+    }
+  ]
+}

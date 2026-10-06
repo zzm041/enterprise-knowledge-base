@@ -1,0 +1,22 @@
+{
+  "established": true,
+  "source": "user message NEW_EXCLUSIVE_GPU_WINDOW_ESTABLISHED",
+  "window_id": "20261006-1302-ekb-window",
+  "established_at_utc": "2026-10-06T05:02:00Z",
+  "established_time_basis": "13:02 Asia/Shanghai minute inferred from owner-provided window ID; exact seconds not asserted",
+  "owner_holds_until_hand_back": true,
+  "owner_reported_worker_active_reserved_scheduled": [
+    0,
+    0,
+    0
+  ],
+  "owner_reported_main_queue_ready_unacknowledged": [
+    0,
+    0
+  ],
+  "owner_reported_original_ports_listening": false,
+  "owner_reported_own_port_listening": false,
+  "owner_reported_unfinished_model_or_ingestion_jobs": false,
+  "owner_reported_other_active_gpu_compute": false,
+  "owner_reported_restore_baseline_recorded": true
+}

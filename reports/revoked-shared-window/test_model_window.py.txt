@@ -1,0 +1,58 @@
+import pytest
+
+from scripts.model_window import require_residency, require_resources
+
+
+def test_resource_floors_preserved():
+    require_resources(4500, 6000, cold=True)
+    for ram, gpu, cold in [(4499, 9000, True), (8000, 5999, True), (8000, 1999, False)]:
+        with pytest.raises(RuntimeError):
+            require_resources(ram, gpu, cold=cold)
+
+
+def test_no_foreign_or_concurrent_residency():
+    expected = {"tag": "allowed", "digest": "digest", "context": 4096}
+    good = {"name": "allowed", "digest": "digest", "context_length": 4096}
+    require_residency([good], [], expected)
+    for active, other in [
+        ([good], [good]),
+        ([good, good], []),
+        ([dict(good, context_length=8192)], []),
+        ([dict(good, digest="other")], []),
+    ]:
+        with pytest.raises(RuntimeError):
+            require_residency(active, other, expected)
+
+
+def test_authorization_reservation_survives_restart(tmp_path):
+    from scripts.model_window import reserve_call
+
+    reserve_call(tmp_path, "candidate_4b", "S1", "manifest")
+    with pytest.raises(RuntimeError, match="ALREADY_RESERVED"):
+        reserve_call(tmp_path, "candidate_4b", "S1", "manifest")
+    with pytest.raises(RuntimeError, match="MANIFEST_CHANGED"):
+        reserve_call(tmp_path, "candidate_27b", "S1", "different")
+    with pytest.raises(RuntimeError, match="UNAUTHORIZED_CASE"):
+        reserve_call(tmp_path, "candidate_4b", "S99", "manifest")
+
+
+def test_shared_barrier_has_owner_and_cannot_clear_another(tmp_path):
+    from scripts.model_window import clear_barrier, create_barrier
+
+    path = tmp_path / "completion-unknown.json"
+    create_barrier(path, "owner-a", "synthetic-test")
+    with pytest.raises(FileExistsError):
+        create_barrier(path, "owner-b", "synthetic-test")
+    with pytest.raises(RuntimeError, match="BARRIER_OWNER_CHANGED"):
+        clear_barrier(path, "owner-b")
+    assert path.exists()
+    clear_barrier(path, "owner-a")
+    assert not path.exists()
+
+
+def test_unreleased_window_cannot_execute():
+    from scripts.model_window import Window
+
+    window = Window.__new__(Window)
+    with pytest.raises(RuntimeError, match="EXECUTION_DISABLED"):
+        window.run()

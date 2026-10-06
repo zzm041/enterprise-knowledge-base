@@ -1,0 +1,3 @@
+{"utc": "2026-10-05T15:34:03.737063+00:00", "event": "WINDOW_VERIFIED", "observation": {"utc": "2026-10-05T15:34:03.672479+00:00", "gpu": {"free_mib": 13767, "used_mib": 2229, "utilization_percent": 4}, "ram_free_mib": 8641, "ports_empty": true, "foreign_model": false}, "baseline_gpu_pids": [2908, 3464, 5408, 8384, 8948, 10320, 10564, 10844, 15484, 16896, 18840, 20464, 21436, 21528, 24372, 26704, 28568, 29384, 29468, 30456, 30844, 31216, 31548, 35156, 35440, 36912, 41240, 43636, 44908, 45496, 46400, 49680, 51192]}
+{"utc": "2026-10-05T15:34:08.557157+00:00", "event": "RUN_STOPPED", "reason": "OBSERVATION_COMMAND_FAILED", "count": 0}
+{"utc": "2026-10-05T15:34:08.588157+00:00", "event": "CLEANUP_UNCONFIRMED", "reason": "RuntimeError"}

@@ -1,4 +1,10 @@
 # Engineering notes for read-only reuse by Codex A/B
+
+## 2026-10-06 local model operating choice after the stopped real run
+Why/problem: this single 16 GB GPU host needs a usable default without treating an incomplete 4B/27B comparison as a global quality ranking.
+Decision: when self-hosted generation is explicitly enabled, qwen3.5 4B is the local default; the standalone no-model demo remains extractive. 27B stays configurable as an experimental/high-quality candidate. Do not implement routing, replay failed M2, request another GPU window or add a holdout during this closeout.
+Evidence: 17 real frozen-evidence calls, 4B 12/12 and 27B 5/12; 27B was more complete on paired S3/M1, but M2 violated the strict citation-ID type contract and stopped the run. The 27B calls were slower and left only 2,278 MiB sampled free VRAM at minimum. 4B had incomplete S3/M4 and false refusals M1/B1. See `reports/model-eval/20261006T051242Z/comparison.md`.
+Trade-off/limit: this is a local resource and contract decision, not proof that 4B answers better. Seven 27B cases, including refusal and injection, are unknown. The run isolated generation from fixed evidence and did not verify the optional API's real embedding/reranker/generator path. A future holdout is only considered if final portfolio review finds it required for a truthful resume claim.
 ## Independent embedded catalog
 Why/problem: upstream knowledge repository also handles WeChat and notifications, and requires business IAM/MySQL/task stack.
 Design: fresh SQLite catalog with neutral tenant/workspace/audience; version activation owns a transaction.

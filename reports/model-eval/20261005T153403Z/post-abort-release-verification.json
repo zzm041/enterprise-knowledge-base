@@ -1,0 +1,22 @@
+{
+  "utc": "2026-10-05T15:36:35.903730+00:00",
+  "handoff": "GPU_RELEASE_CONFIRMED",
+  "actual_calls": 0,
+  "success": 0,
+  "failure": 0,
+  "unknown": 0,
+  "own_service_pid": 46772,
+  "own_service_pid_absent": true,
+  "all_five_ports_closed": true,
+  "foreign_model_processes": 0,
+  "new_gpu_pids_since_window_preflight": [],
+  "gpu": {
+    "free_mib": 13989,
+    "used_mib": 2007,
+    "utilization_percent": 4
+  },
+  "ram_free_mib": 8630,
+  "own_service_stopped": true,
+  "reason_for_early_stop": "OBSERVATION_COMMAND_FAILED during service startup; 0 inference requests sent; initial automatic cleanup could not confirm release synchronously; post-abort independent OS/GPU check confirms it.",
+  "upstream_restore_owner": "property-ai original thread/owner"
+}

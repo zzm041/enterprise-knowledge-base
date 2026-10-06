@@ -1,0 +1,21 @@
+{
+  "utc": "2026-10-05T14:26:53.008183+00:00",
+  "active_project_root": "E:\\enterprise-knowledge-base",
+  "previous_root": "D:/enterprise-knowledge-base",
+  "old_root_exists": false,
+  "migrated_file_count": 3056,
+  "migration": "First Move-Item partially transferred 1346 files, then remaining 1710 files were copied and byte-verified before old tree removal. No claim of a saved pre-move hash manifest for first batch.",
+  "python_environment": "recreated offline from existing cache; frozen lockfile; old venv preserved under .cache/migration-venv",
+  "runtime_config_paths_updated": 0,
+  "shared_window_authorization": "REVOKED",
+  "inference_calls": 0,
+  "upstream_actions_this_turn": "source reads and non-locking git status only; no HTTP requests, shared locks, binding/config edits, database calls or service actions",
+  "verification": {
+    "tests_passed": 36,
+    "ruff": "PASS",
+    "legacy_execution_removed": true,
+    "active_root_verified": true,
+    "default_database_within_project": true,
+    "git_head_preserved": true
+  }
+}

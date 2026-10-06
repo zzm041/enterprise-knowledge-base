@@ -1,0 +1,10 @@
+{
+  "actual_calls": 0,
+  "success": 0,
+  "failure": 0,
+  "unknown": 0,
+  "own_service": "CLEANUP_UNCONFIRMED",
+  "gpu_release_confirmed": false,
+  "report": "E:\\enterprise-knowledge-base\\reports\\model-eval\\20261006T035312Z",
+  "utc": "2026-10-06T03:53:23.397737+00:00"
+}

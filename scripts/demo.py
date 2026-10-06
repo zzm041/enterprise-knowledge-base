@@ -17,6 +17,7 @@ from ekb.cli import initialize
 
 
 def run():
+    started = time.monotonic()
     run_dir = ROOT / "runtime" / ("http-demo-" + uuid4().hex[:8])
     config_path = initialize(run_dir)
     credentials = json.loads(
@@ -111,6 +112,23 @@ def run():
                 answer["status"] == "answered"
                 and answer["citations"][0]["document_id"] == did
             )
+            bad_case = client.post(
+                "/query",
+                headers=reader,
+                json={
+                    "workspace": "handbook",
+                    "question": "I forgot my login secret; where can I regain access?",
+                },
+            ).json()
+            assert (
+                bad_case["status"] == "insufficient_knowledge"
+                and bad_case["citations"] == []
+            )
+            cross_tenant = client.get(
+                f"/documents/{did}",
+                headers={"Authorization": "Bearer " + credentials["other-reader"]},
+            )
+            assert cross_tenant.status_code == 404
             assert (
                 client.post(
                     f"/documents/{did}/archive",
@@ -154,6 +172,8 @@ def run():
                 },
             ).json()
             assert after["status"] == "insufficient_knowledge"
+            stop(proc)
+            proc = None
             report = {
                 "status": "PASS",
                 "transport": "real localhost HTTP, separate Uvicorn process",
@@ -162,15 +182,27 @@ def run():
                     "anonymous denial",
                     "create/ingest",
                     "citation",
+                    "cross-tenant read denial",
                     "reader write denial",
+                    "known lexical paraphrase bad case",
                     "unsupported format",
                     "process restart persistence",
                     "archive exclusion",
                 ],
                 "answer": answer,
+                "bad_case": {
+                    "dataset_id": "paraphrase-hard",
+                    "question": "I forgot my login secret; where can I regain access?",
+                    "expected_source": "Account recovery",
+                    "actual_status": bad_case["status"],
+                    "limitation": "lexical retrieval misses a supported paraphrase",
+                },
+                "cross_tenant_read_status": cross_tenant.status_code,
                 "after_archive": after,
                 "database": str(run_dir / "knowledge.db"),
                 "credentials": "omitted; synthetic runtime credentials ignored by Git",
+                "server_stopped": True,
+                "elapsed_seconds": round(time.monotonic() - started, 3),
             }
             (ROOT / "reports" / "http-demo.json").write_text(
                 json.dumps(report, ensure_ascii=False, indent=2), encoding="utf8"
