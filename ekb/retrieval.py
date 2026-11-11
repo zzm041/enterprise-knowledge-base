@@ -80,16 +80,30 @@ class Engine:
         self.top_k, self.candidate_k = top_k, candidate_k
         self.min_lexical_coverage = 0.45
 
-    def query(self, actor, workspace, question, mode="bm25"):
+    def resolve_mode(self, mode):
+        """Return the retrieval path a request really uses.
+
+        "auto" is the honest default: a configured embedder makes the hybrid
+        (RRF) path reachable, while a deployment without one can only do BM25.
+        Resolving here keeps the strict modes strict -- asking for "dense" or
+        "hybrid" without an embedder still fails instead of silently degrading.
+        """
+        if mode == "auto":
+            return "hybrid" if self.embedder is not None else "bm25"
+        return mode
+
+    def query(self, actor, workspace, question, mode="auto"):
         start = perf_counter()
         if (
-            mode not in ("bm25", "dense", "hybrid")
+            mode not in ("auto", "bm25", "dense", "hybrid")
             or not question.strip()
             or len(question) > 2000
         ):
             raise KBError("KB.INVALID_INPUT", 422)
+        requested, mode = mode, self.resolve_mode(mode)
         trace = {
             "retrieval_mode": mode,
+            "requested_mode": requested,
             "rerank": "disabled",
             "eligible_chunks": 0,
             "ranked_chunk_ids": [],
@@ -149,6 +163,10 @@ class Engine:
                 if mode == "dense"
                 else rrf([lexical[: self.candidate_k], dense[: self.candidate_k]])
             )
+            if mode == "hybrid":
+                trace["fusion"] = "rrf"
+                trace["lexical_candidates"] = len(lexical[: self.candidate_k])
+                trace["dense_candidates"] = len(dense[: self.candidate_k])
         candidates = [rows[i] for i in ranking[: self.candidate_k]]
         if self.reranker and candidates:
             try:

@@ -28,6 +28,8 @@ class ModelHTTP:
         timeout=30.0,
         api_key="",
         client=None,
+        headers=None,
+        messages="split",
     ):
         parsed = urlparse(base_url)
         if (
@@ -39,12 +41,21 @@ class ModelHTTP:
             raise KBError("KB.LOCAL_ENDPOINT_REQUIRED", 422)
         if not model or not 1 <= dimensions <= 8192 or not 0 < timeout <= 120:
             raise KBError("KB.INVALID_CONFIG", 422)
+        extra = {} if headers is None else headers
+        if not isinstance(extra, dict) or any(
+            not isinstance(k, str) or not isinstance(v, str) for k, v in extra.items()
+        ):
+            raise KBError("KB.INVALID_CONFIG", 422)
+        if messages not in ("split", "single"):
+            raise KBError("KB.INVALID_CONFIG", 422)
         self.base_url, self.model, self.dimensions = (
             base_url.rstrip("/"),
             model,
             dimensions,
         )
         self.timeout, self.api_key, self.client = timeout, api_key, client
+        self.headers = dict(extra)
+        self.message_layout = messages
         self.fingerprint = f"{model}@{revision}:dim={dimensions}:cosine"
 
     def _post(self, route, payload):
@@ -52,7 +63,9 @@ class ModelHTTP:
         client = self.client or httpx.Client(
             timeout=self.timeout, trust_env=False, follow_redirects=False
         )
-        headers = {"Authorization": f"Bearer {self.api_key}"} if self.api_key else {}
+        headers = dict(self.headers)
+        if self.api_key:
+            headers["Authorization"] = f"Bearer {self.api_key}"
         try:
             with client.stream(
                 "POST",
@@ -119,6 +132,11 @@ class ModelHTTP:
             "/rerank", {"model": self.model, "query": question, "documents": documents}
         )
         try:
+            if "scores" in payload:
+                scores = [self._number(x) for x in payload["scores"]]
+                if len(scores) != len(documents):
+                    raise ValueError()
+                return scores
             rows = payload["results"]
             if len(rows) != len(documents) or any(
                 type(x["index"]) is not int for x in rows
@@ -134,29 +152,42 @@ class ModelHTTP:
             raise KBError("KB.INVALID_PROVIDER_OUTPUT", 502) from None
 
     def generate(self, question, evidence):
+        """Ask the local runtime to answer from the supplied evidence.
+
+        "split" keeps the instructions in a system role and the untrusted data in
+        a user role, which is the safe default any OpenAI-compatible endpoint
+        accepts. "single" folds both into one user message for adapters that
+        refuse multi-message requests; the instructions still open the message and
+        the evidence is explicitly labelled as data.
+        """
+        request = json.dumps(
+            {
+                "question": question,
+                "evidence": [
+                    {"chunk_id": x["id"], "text": x["text"]} for x in evidence
+                ],
+            },
+            ensure_ascii=False,
+        )
+        if self.message_layout == "single":
+            content = SYSTEM + "\n\n" + request
+            if len(content) > 10000:
+                raise KBError("KB.INVALID_INPUT", 422)
+            messages = [{"role": "user", "content": content}]
+        else:
+            messages = [
+                {"role": "system", "content": SYSTEM},
+                {"role": "user", "content": request},
+            ]
         payload = self._post(
             "/chat/completions",
             {
                 "model": self.model,
                 "temperature": 0,
-                "max_tokens": 700,
+                "reasoning_effort": "none",
+                "max_tokens": 512,
                 "response_format": {"type": "json_object"},
-                "messages": [
-                    {"role": "system", "content": SYSTEM},
-                    {
-                        "role": "user",
-                        "content": json.dumps(
-                            {
-                                "question": question,
-                                "evidence": [
-                                    {"chunk_id": x["id"], "text": x["text"]}
-                                    for x in evidence
-                                ],
-                            },
-                            ensure_ascii=False,
-                        ),
-                    },
-                ],
+                "messages": messages,
             },
         )
         try:

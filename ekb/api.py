@@ -88,7 +88,7 @@ class Archive(StrictBody):
 class Question(StrictBody):
     workspace: str = Field(pattern=r"^[a-zA-Z0-9_-]{1,64}$")
     question: str = Field(min_length=1, max_length=2000)
-    mode: Literal["bm25", "dense", "hybrid"] = "bm25"
+    mode: Literal["auto", "bm25", "dense", "hybrid"] = "auto"
 
 
 def create_app(config: Config | None = None) -> FastAPI:
@@ -178,6 +178,7 @@ def create_app(config: Config | None = None) -> FastAPI:
             "status": "ok",
             "generation": "self_hosted_llm" if config.generation else "extractive",
             "embedding_configured": bool(config.embedding),
+            "reranking_configured": bool(config.reranking),
         }
 
     @app.post("/documents", status_code=201)
