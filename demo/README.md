@@ -25,6 +25,34 @@
 - 端口被占用时脚本会直接提示「port 8810 is already in use」并退出，不会糊里糊涂起一个随机端口。
 - 关掉那个黑窗口，四个子进程一起停。
 
+### 模型并发档位（启动时自动开到 4 slot）
+
+启动脚本在起 console 之前会先跑 `scripts\ensure_ollama.py`，把本机 Ollama 的 `OLLAMA_NUM_PARALLEL` 定到 **4** 再让窗口起来。
+不这么做，默认是 **1 个 slot**：请求在模型侧排队，加并发不提吞吐，只把尾延迟拖长。
+
+同一张卡（RTX 5070 Ti 16 GB）、同一个 `qwen3:8b-q4km`、64 输出 token 的实测：
+
+| 配置 | 并发 4 | 输出速率 | 端到端（含检索 + 重排） |
+| --- | --- | --- | --- |
+| 默认 1 slot | 1.75 rps | 112 tok/s | C8 **2.51 rps** |
+| 4 slot | **6.00 rps** | **384 tok/s** | C8 **2.66 rps**（重排开）／**4.48 rps**（重排关） |
+
+- 生成侧拿到 **3.43×**，但端到端只涨一点：瓶颈随之落到跑在 CPU 上的重排（`bge-reranker-v2-m3`，全局锁，k=12 约 395 ms）。这是当前这台机器的真实上限，不是配置没调对。
+- 显存：4 个 slot 常驻约 15.3 GB / 16.3 GB，本机 16 GB 卡**刚好放下**；再多会掉到 CPU 或换出。
+- 只影响本机 Ollama，不下载任何东西；模型仍是本地 `qwen3:8b-q4km`。
+
+不想要这个行为、或想自己管 Ollama：
+
+```powershell
+.\.venv\Scripts\python.exe scripts\ensure_ollama.py --check       # 只看状态，不动进程
+.\.venv\Scripts\python.exe scripts\ensure_ollama.py --no-restart  # 已经在跑就不重启
+$env:EKB_OLLAMA_NUM_PARALLEL = "2"                                   # 换档位再启动
+```
+
+细节：脚本发现 11434 上跑的不是它自己起的那个服务时，才 `taskkill` 托盘 `ollama app.exe` 与 `ollama.exe` 后用带环境变量
+的 `ollama serve` 重新拉起（状态写在 `runtime\ollama-serve-state.json`，日志 `runtime\ollama-serve.log`）；
+已经是它自己起的就只打印一行，不重启。想彻底回到默认行为：关掉演示窗口，重新打开 Ollama 应用即可。
+
 手工起（调试用）：
 
 ```powershell

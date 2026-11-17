@@ -16,6 +16,10 @@ if not errorlevel 1 (
   exit /b 1
 )
 
+echo [EKB] ollama: 4 slots (OLLAMA_NUM_PARALLEL=4); restarted only if it was running default
+".venv\Scripts\python.exe" scripts\ensure_ollama.py
+if errorlevel 1 echo [EKB] ollama is not ready; the window will still open, answers may fail
+
 echo [EKB] http://127.0.0.1:8810/   account: editor / reader / staff / other-reader
 echo [EKB] demo password: ekb-demo-2026
 echo [EKB] data dir: runtime\console-live  (documents survive restarts)
