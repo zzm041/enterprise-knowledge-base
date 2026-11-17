@@ -21,6 +21,7 @@ Nothing here fabricates evidence: /rerank only reorders what it is given and
 import argparse
 import json
 import math
+import os
 import re
 import sys
 import threading
@@ -63,14 +64,19 @@ def load_models(embed_dir, rerank_dir):
     global EMBEDDER, RERANKER
     from sentence_transformers import CrossEncoder, SentenceTransformer
 
+    # Device is env-driven so the same script can be benchmarked on CPU or GPU
+    # without touching code: EKB_EMBED_DEVICE / EKB_RERANK_DEVICE (default cpu).
+    embed_device = os.environ.get("EKB_EMBED_DEVICE", "cpu")
+    rerank_device = os.environ.get("EKB_RERANK_DEVICE", "cpu")
     started = time.perf_counter()
-    EMBEDDER = SentenceTransformer(embed_dir, device="cpu")
+    EMBEDDER = SentenceTransformer(embed_dir, device=embed_device)
     STATE["embedding"] = "ready"
     mid = time.perf_counter()
-    RERANKER = CrossEncoder(rerank_dir, device="cpu")
+    RERANKER = CrossEncoder(rerank_dir, device=rerank_device)
     STATE["rerank"] = "ready"
     STATE["detail"] = (
-        f"embed {mid - started:.1f}s, rerank {time.perf_counter() - mid:.1f}s"
+        f"embed {mid - started:.1f}s ({embed_device}), "
+        f"rerank {time.perf_counter() - mid:.1f}s ({rerank_device})"
     )
     print(json.dumps({"models_ready": STATE}, ensure_ascii=False), flush=True)
 
