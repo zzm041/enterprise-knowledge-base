@@ -1,6 +1,8 @@
 > Active project root: `E:\enterprise-knowledge-base`. `D:\property-ai` remains strictly read-only. The E-owned model comparison stopped after 17 real calls and completed GPU_RELEASE_CONFIRMED / HAND_BACK; there is no active GPU window or model service. The accepted local model choice and limits are below. See the [17-call evidence](reports/model-eval/20261006T051242Z/comparison.md).
 
 # Enterprise Knowledge Base
+
+**在线证据页（GitHub Pages，只读、静态，由仓库内 reports/ 与 evaluation/ 生成）：https://zzm041.github.io/enterprise-knowledge-base/**
 基于 property-ai 已实现知识服务能力进一步抽象的独立企业知识库专项；去除物业领域耦合，针对知识版本管理、权限检索、检索实验和评测重新工程化。不是第二个独立商业交付案例，也不是生产 SaaS。
 
 Standalone Enterprise RAG system derived and generalized from the knowledge-service capability originally implemented in property-ai, then extended with independent knowledge management, retrieval experimentation and evaluation. Upstream validation is attributed to the source project; this repo's evidence is separately measured.
