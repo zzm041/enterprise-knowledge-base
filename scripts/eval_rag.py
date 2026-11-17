@@ -75,7 +75,7 @@ def populate(catalog: Catalog, corpus: list, embedder) -> dict:
     return ids
 
 
-def run_mode(mode: str, conf, corpus: list, questions: list) -> dict:
+def run_mode(mode: str, conf, corpus: list, questions: list, candidate_k: int = 12) -> dict:
     embedder = conf.provider(conf.embedding) if conf.embedding else None
     generator = conf.provider(conf.generation) if conf.generation else None
     reranker = conf.provider(conf.reranking) if conf.reranking else None
@@ -84,7 +84,7 @@ def run_mode(mode: str, conf, corpus: list, questions: list) -> dict:
         db.unlink()
     catalog = Catalog(db)
     ids = populate(catalog, corpus, embedder)
-    engine = Engine(catalog, embedder, generator, reranker)
+    engine = Engine(catalog, embedder, generator, reranker, candidate_k=candidate_k)
     rows = []
     started = time.perf_counter()
     for case in questions:
@@ -133,6 +133,8 @@ def main() -> int:
     ap.add_argument("--chat-model", default="")
     ap.add_argument("--gen-base", default="",
                     help="generation endpoint; defaults to --rag (set http://127.0.0.1:11434/v1 to bypass the gateway)")
+    ap.add_argument("--candidate-k", type=int, default=12,
+                    help="retrieval candidates handed to the reranker (upstream default 12)")
     ap.add_argument("--out", default="evals-rag")
     args = ap.parse_args()
 
@@ -155,13 +157,13 @@ def main() -> int:
     reports = []
     for mode in modes:
         print(f"[eval] mode={mode} start", flush=True)
-        report = run_mode(mode, conf, corpus, questions)
+        report = run_mode(mode, conf, corpus, questions, args.candidate_k)
         report.update({
             "run_id": stamp,
             "dataset_kind": "hand-authored synthetic validation, not independent blind benchmark",
             "corpus_sha256": hashlib.sha256(corpus_path.read_bytes()).hexdigest(),
             "cases_sha256": hashlib.sha256(cases_path.read_bytes()).hexdigest(),
-            "candidate_k": 12,
+            "candidate_k": args.candidate_k,
             "top_k": 4,
             "python": platform.python_version(),
         })
