@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Enterprise Knowledge Base · 可验证演示入口</title>
+<style>
+  :root{
+    --ink:#14161a; --ink-2:#3d434d; --ink-3:#6b7280; --line:#e3e3dd;
+    --bg:#faf9f6; --panel:#ffffff; --dark:#12161c; --dark-2:#1b2129;
+    --acc:#0b6b53; --acc-soft:#e8f2ee; --warn:#8a5a00; --warn-soft:#fdf3e0;
+    --bad:#8f2d2d; --bad-soft:#fbeaea; --mono:ui-monospace,SFMono-Regular,"Cascadia Mono",Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    font-size:15px;line-height:1.62;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+  h1,h2,h3{margin:0;font-weight:650;letter-spacing:-.01em}
+  h2{font-size:19px}
+  h3{font-size:15px}
+  p{margin:.5em 0}
+  code,.mono{font-family:var(--mono);font-size:.88em}
+  .num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+  /* header */
+  header{background:var(--dark);color:#eef1f4;padding:44px 0 38px}
+  .kicker{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#8fa3b5}
+  header h1{font-size:31px;margin:10px 0 12px;color:#fff;line-height:1.24}
+  header .lede{color:#b9c4cf;max-width:78ch;font-size:15px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+  .chip{font-family:var(--mono);font-size:11.5px;padding:4px 9px;border-radius:3px;
+    border:1px solid #33404d;color:#c9d4de;background:#1a2230}
+  .chip.ok{border-color:#2f6b57;color:#9fd8c4;background:#14251f}
+  .meta-line{margin-top:18px;font-family:var(--mono);font-size:11.5px;color:#7d8b99;word-break:break-all}
+
+  /* layout */
+  section{padding:38px 0 6px}
+  .sec-head{display:flex;align-items:baseline;gap:12px;border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:20px}
+  .sec-head .n{font-family:var(--mono);font-size:12px;color:var(--ink-3)}
+  .sec-head .hint{margin-left:auto;font-size:12.5px;color:var(--ink-3)}
+  .grid{display:grid;gap:16px}
+  .g2{grid-template-columns:1fr 1fr}
+  .g3{grid-template-columns:repeat(3,1fr)}
+  @media(max-width:860px){.g2,.g3{grid-template-columns:1fr}}
+  .g2>*,.g3>*{min-width:0}
+
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:18px 20px}
+  .card.tight{padding:14px 16px}
+  .card h3{margin-bottom:10px;display:flex;align-items:center;gap:8px}
+  .card h3 .tag{font-family:var(--mono);font-size:10.5px;font-weight:400;color:var(--ink-3);
+    border:1px solid var(--line);border-radius:3px;padding:1px 6px}
+  .muted{color:var(--ink-3)}
+  .small{font-size:13px}
+  .xs{font-size:12px}
+
+  /* code block */
+  pre{margin:0;background:var(--dark-2);color:#dfe6ec;border-radius:5px;padding:13px 15px;
+    font-family:var(--mono);font-size:12.4px;line-height:1.65;overflow:auto}
+  pre .k{color:#8ec7ff}
+  pre .s{color:#a9d99a}
+  pre .c{color:#7f8b98}
+  .cmd{position:relative}
+  .cmd button{position:absolute;top:8px;right:8px;font-family:var(--mono);font-size:11px;
+    background:#2b3540;color:#c8d3de;border:1px solid #3c4854;border-radius:3px;padding:3px 8px;cursor:pointer}
+  .cmd button:hover{background:#36424f}
+
+  /* kv table */
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+  tr:last-child td{border-bottom:none}
+  td.mono,th.mono{font-family:var(--mono);font-size:12.3px}
+  .rt{text-align:right}
+  .pill{display:inline-block;font-family:var(--mono);font-size:11px;padding:1px 7px;border-radius:99px}
+  .pill.ok{background:var(--acc-soft);color:var(--acc)}
+  .pill.warn{background:var(--warn-soft);color:var(--warn)}
+  .pill.bad{background:var(--bad-soft);color:var(--bad)}
+
+  /* metrics */
+  .metric{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px 18px}
+  .metric .v{font-family:var(--mono);font-size:30px;line-height:1.1;letter-spacing:-.02em}
+  .metric .l{font-size:12.5px;color:var(--ink-3);margin-top:6px}
+  .metric .sub{font-size:11.5px;color:var(--ink-3);font-family:var(--mono);margin-top:4px}
+
+  /* checks */
+  ul.checks{list-style:none;margin:0;padding:0}
+  ul.checks li{display:flex;align-items:center;gap:9px;padding:5px 0;border-bottom:1px dashed #ededE7;font-size:13.5px}
+  ul.checks li:last-child{border-bottom:none}
+  ul.checks li .tick{color:var(--acc);font-family:var(--mono);font-size:12px;width:34px;flex:none}
+
+  /* pipeline */
+  .pipe{display:flex;flex-wrap:wrap;gap:8px;align-items:stretch}
+  .pipe .step{flex:1 1 150px;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:12px 13px;position:relative}
+  .pipe .step .t{font-size:13px;font-weight:600;margin-bottom:5px}
+  .pipe .step .d{font-size:11.8px;color:var(--ink-3);line-height:1.5}
+  .pipe .step .ix{position:absolute;top:-9px;left:11px;background:var(--bg);padding:0 5px;
+    font-family:var(--mono);font-size:10.5px;color:var(--ink-3)}
+  .pipe .step.opt{border-style:dashed}
+  .arrow{align-self:center;color:#c3c7cc;font-family:var(--mono);font-size:14px;flex:none}
+
+  /* quote */
+  blockquote{margin:10px 0 0;padding:10px 14px;border-left:3px solid var(--acc);background:var(--acc-soft);
+    font-size:13.5px;color:#1d4b3e;border-radius:0 4px 4px 0}
+  .note{border:1px solid var(--warn-soft);background:var(--warn-soft);border-radius:5px;padding:11px 14px;font-size:13px;color:#5d4100}
+  .honest{border:1px solid var(--bad-soft);background:var(--bad-soft);border-radius:5px;padding:11px 14px;font-size:13px;color:#6b2323}
+
+  footer{margin-top:46px;padding:26px 0 44px;border-top:1px solid var(--line);color:var(--ink-3);font-size:12px}
+  footer .mono{font-size:11.3px}
+  .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:var(--dark);color:#eaf0f5;
+    font-family:var(--mono);font-size:12px;padding:8px 14px;border-radius:4px;opacity:0;transition:.25s;pointer-events:none}
+  .toast.show{opacity:1}
+  @media print{
+    header{background:#fff;color:#000;border-bottom:1px solid #000}
+    header h1{color:#000}header .lede,.meta-line{color:#333}
+    .chip{color:#333;border-color:#999;background:#fff}
+    body{font-size:12px}.card{break-inside:avoid}
+    pre{background:#f2f2f2;color:#111}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="kicker">Enterprise Knowledge Base · 可验证演示入口</div>
+    <h1>一个本地可跑、结果可核的企业知识库服务</h1>
+    <p class="lede">FastAPI + SQLite：文本/Markdown 入库与版本归档、租户/工作区/可见范围三层权限、BM25 检索与显式覆盖门槛、<strong>抽取式回答</strong>（非 LLM 生成）与精确到字符偏移的版本化引用。本页所有数字都从仓库内的报告文件生成，可逐项复算。</p>
+    <div class="chips" id="chips"></div>
+    <div class="meta-line" id="meta-line"></div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section>
+    <div class="sec-head"><span class="n">01</span><h2>一次真实调用</h2>
+      <span class="hint">独立 Uvicorn 进程 · 真 localhost HTTP · 合成数据</span></div>
+    <div class="grid g2">
+      <div class="card">
+        <h3>请求 <span class="tag">POST /query</span></h3>
+        <pre id="req-block"></pre>
+        <h3 style="margin-top:16px">运行检查 <span class="tag" id="demo-checks-count"></span></h3>
+        <ul class="checks" id="demo-checks"></ul>
+      </div>
+      <div class="card">
+        <h3>响应 <span class="tag" id="demo-tag"></span></h3>
+        <pre id="resp-block"></pre>
+        <h3 style="margin-top:16px">引用可回溯 <span class="tag">citations[0]</span></h3>
+        <table id="cit-table"></table>
+      </div>
+    </div>
+    <div class="grid g2" style="margin-top:16px">
+      <div class="card tight">
+        <h3>检索轨迹 <span class="tag">trace</span></h3>
+        <table id="trace-table"></table>
+      </div>
+      <div class="card tight">
+        <h3>同一次运行里的失败样本 <span class="tag">坏例</span></h3>
+        <div id="badcase"></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="n">02</span><h2>链路与默认配置</h2>
+      <span class="hint">虚线为可选适配器，默认不启动模型</span></div>
+    <div class="pipe" id="pipe"></div>
+    <div class="note" style="margin-top:14px">
+      <strong>默认路径不加载模型。</strong>检索用 BM25 加显式词法覆盖门槛（低于门槛即不入选）；回答是抽取式，直接从命中片段摘录并附偏移量。
+      向量（dense）、混合 RRF、rerank 都是可替换的适配器，经 HTTP 合同测试，需要显式配置才启用——所以本页的 0.90 是<em>词法检索</em>的数字，不是 embedding 质量。
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="n">03</span><h2>权限边界</h2>
+      <span class="hint">这些不是文档承诺，是同一次运行里被断言的 HTTP 状态码</span></div>
+    <div class="card tight"><table id="perm-table"></table></div>
+    <blockquote id="perm-quote"></blockquote>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="n">04</span><h2>28 题检索评测</h2>
+      <span class="hint" id="eval-run-id"></span></div>
+    <div class="grid g3" id="metrics"></div>
+    <div class="grid g2" style="margin-top:16px">
+      <div class="card tight">
+        <h3>数据集构成</h3>
+        <table id="dataset-table"></table>
+      </div>
+      <div class="card tight">
+        <h3>已知坏例 <span class="tag">不藏</span></h3>
+        <table id="badcase-table"></table>
+      </div>
+    </div>
+    <div class="card tight" style="margin-top:16px">
+      <h3>覆盖门槛开关的消融 <span class="tag">同数据集 · 两次真实运行</span></h3>
+      <table id="ablation-table"></table>
+      <p class="xs muted" id="ablation-note" style="margin-top:10px"></p>
+    </div>
+    <div class="grid g2" style="margin-top:16px">
+      <div class="card tight">
+        <h3>逐题轨迹（节选）</h3>
+        <table id="cases-table"></table>
+      </div>
+      <div class="card tight">
+        <h3>两次独立运行的对照</h3>
+        <table id="repeat-table"></table>
+        <p class="xs muted" style="margin-top:10px">同脚本、同数据集、不同时间两次运行指标一致，说明结果可复现；不等于泛化能力。</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="n">05</span><h2>怎么自己验证</h2>
+      <span class="hint">三级：看 → 跑 → 核</span></div>
+    <div class="grid">
+      <div class="card">
+        <h3>L1 · 不装环境也能核对</h3>
+        <p class="small muted">下面每个数字都写清了出处文件与字段；打开文件搜字段名即可对上。</p>
+        <div class="cmd"><pre id="cmd-l1"></pre><button data-copy="cmd-l1">复制</button></div>
+      </div>
+      <div class="card">
+        <h3>L2 · 无模型一键复算</h3>
+        <p class="small muted">只装 Python 依赖，不下载模型、不起 Docker：跑测试、跑评测、跑 HTTP 演示，再与本页数字比对。</p>
+        <div class="cmd"><pre id="cmd-l2"></pre><button data-copy="cmd-l2">复制</button></div>
+      </div>
+    </div>
+    <div class="honest" style="margin-top:14px">
+      <strong>L3 未做，也不声称：</strong>没有盲测集、没有真实客户数据、没有并发/QPS 压测、没有 SSO/TLS/限流/HA，也没有把"抽取式演示 + fixture rerank + 28 题开发集 + 17 次固定证据生成"拼成"端到端 LLM-RAG 准确率"。
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="n">06</span><h2>每个数字的出处</h2>
+      <span class="hint">值 ← 文件 ← 字段</span></div>
+    <div class="card tight"><table id="prov-table"></table></div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="n">07</span><h2>边界声明</h2>
+      <span class="hint">写清楚做不到什么，比写做到了什么更可信</span></div>
+    <div class="grid g2">
+      <div class="card tight"><h3>评测口径</h3><ul class="checks" id="limits"></ul></div>
+      <div class="card tight"><h3>系统边界</h3><ul class="checks" id="bounds"></ul></div>
+    </div>
+  </section>
+
+  <footer>
+    <div id="foot-lines"></div>
+    <p class="mono" id="foot-sha"></p>
+  </footer>
+</main>
+<div class="toast" id="toast">已复制</div>
+
+<script>
+const DATA = {
+  "meta": {
+    "chips": [
+      {
+        "text": "本地单机 · FastAPI + SQLite",
+        "tone": "ok"
+      },
+      {
+        "text": "合成数据 · 无云调用 · 无付费 API",
+        "tone": ""
+      },
+      {
+        "text": "抽取式回答（非 LLM 生成）",
+        "tone": ""
+      },
+      {
+        "text": "离线页面 · 零外部依赖",
+        "tone": ""
+      },
+      {
+        "text": "所有数字可回溯到仓库文件",
+        "tone": "ok"
+      }
+    ],
+    "line": "基线提交 b2d99f18f946（2026-11-11 16:03）· 分支 codex/ekb-handoff-20261110 · 证据 run 20261028T184235Z-6e6351 · 页面数字与 data.json 同源、可复算"
+  },
+  "demo": {
+    "status": "PASS",
+    "request": {
+      "method": "POST",
+      "path": "/query",
+      "body": {
+        "workspace": "handbook",
+        "question": "restoration checksum review"
+      }
+    },
+    "checks": [
+      "startup",
+      "anonymous denial",
+      "create/ingest",
+      "citation",
+      "cross-tenant read denial",
+      "reader write denial",
+      "known lexical paraphrase bad case",
+      "unsupported format",
+      "process restart persistence",
+      "archive exclusion"
+    ],
+    "answer": {
+      "status": "answered",
+      "answer": "Demo restoration checks require a checksum review.",
+      "answer_mode": "extractive",
+      "citations": [
+        {
+          "chunk_id": 18,
+          "document_id": 17,
+          "title": "Demo restoration",
+          "version": 1,
+          "start": 0,
+          "end": 50,
+          "excerpt": "Demo restoration checks require a checksum review."
+        }
+      ],
+      "trace": {
+        "retrieval_mode": "bm25",
+        "rerank": "disabled",
+        "eligible_chunks": 14,
+        "ranked_chunk_ids": [
+          18
+        ],
+        "min_lexical_coverage": 0.45,
+        "max_lexical_coverage": 1.0,
+        "ranked_document_ids": [
+          17
+        ],
+        "permission_recheck": "passed",
+        "total_ms": 2.07
+      },
+      "request_id": "c108a858d10c48a9978f88519d904a66"
+    },
+    "bad_case": {
+      "dataset_id": "paraphrase-hard",
+      "question": "I forgot my login secret; where can I regain access?",
+      "expected_source": "Account recovery",
+      "actual_status": "insufficient_knowledge",
+      "limitation": "lexical retrieval misses a supported paraphrase"
+    },
+    "after_archive": {
+      "status": "insufficient_knowledge",
+      "citations": []
+    },
+    "cross_tenant_read_status": 404,
+    "server_stopped": true,
+    "elapsed_seconds": 1.438
+  },
+  "pipeline": [
+    {
+      "title": "入库与版本",
+      "detail": "文本 / Markdown 提交；不可变 revision、归档、显式可重试入索引",
+      "optional": false
+    },
+    {
+      "title": "切块",
+      "detail": "按段落边界切分，保留字符偏移，供引用回指原文",
+      "optional": false
+    },
+    {
+      "title": "租户 / 工作区 / 可见范围过滤",
+      "detail": "授权在打分之前生效：不属于当前主体的片段根本进不了候选",
+      "optional": false
+    },
+    {
+      "title": "BM25 + 覆盖门槛",
+      "detail": "词法打分；候选词法覆盖率 < 0.45 直接不入选，宁缺毋滥",
+      "optional": false
+    },
+    {
+      "title": "dense / hybrid / rerank",
+      "detail": "可选适配器：向量余弦、RRF 融合、索引重排；默认不加载模型",
+      "optional": true
+    },
+    {
+      "title": "抽取式回答",
+      "detail": "从命中片段直接摘录，不做自由生成，不允许编造句子",
+      "optional": false
+    },
+    {
+      "title": "生成后复核 + 引用",
+      "detail": "回答前后各复核一次可见性；引用带 document_id / version / 字符偏移",
+      "optional": false
+    }
+  ],
+  "permissions": [
+    {
+      "action": "匿名列文档",
+      "actor": "无 Authorization",
+      "result": "401",
+      "tone": "ok",
+      "meaning": "默认拒绝，没有匿名读通道"
+    },
+    {
+      "action": "跨租户直读文档",
+      "actor": "租户 A 令牌读租户 B 文档",
+      "result": "404",
+      "tone": "ok",
+      "meaning": "不泄漏资源是否存在（不是 403）"
+    },
+    {
+      "action": "reader 归档文档",
+      "actor": "只读角色写操作",
+      "result": "403",
+      "tone": "ok",
+      "meaning": "读写角色分离，写路径独立校验"
+    },
+    {
+      "action": "错工作区检索",
+      "actor": "令牌无该 workspace 授权",
+      "result": "403",
+      "tone": "ok",
+      "meaning": "工作区边界在检索前生效"
+    },
+    {
+      "action": "归档后再次检索",
+      "actor": "同一 reader 令牌",
+      "result": "insufficient_knowledge",
+      "tone": "warn",
+      "meaning": "归档即退出召回，返回空引用而不是旧答案"
+    }
+  ],
+  "perm_note": "四条越权路径在同一次 HTTP 运行里被断言：匿名 401、跨租户 404、只读角色写 403、归档后检索退回 insufficient_knowledge。检索之前先鉴权，是架构选择而不是事后过滤。",
+  "eval": {
+    "run_id": "20261028T184235Z-6e6351",
+    "retrieval_mode": "bm25",
+    "answer_mode": "extractive",
+    "metrics": {
+      "k": 4,
+      "answerable_count": 20,
+      "negative_count": 8,
+      "recall_at_k": 0.9,
+      "mrr_at_k": 0.9,
+      "ndcg_at_k": 0.9,
+      "negative_refusal_rate": 1.0
+    },
+    "latency_ms": {
+      "median": 1.1535,
+      "max": 3.316
+    },
+    "candidate_k": 12,
+    "top_k": 4,
+    "cases_total": 28,
+    "corpus_docs": 16,
+    "corpus_sha256": "fc346fcda08a85275836823f8e52a5dcbf58d8ae29314ab4727841e465fb5bde",
+    "cases_sha256": "f8389b7047e0c2c03ff3f4c92f65de8617b8ed93343713242990606c0dd59fb9",
+    "dataset_kind": "hand-authored synthetic validation, not independent blind benchmark",
+    "bad_cases": [
+      {
+        "id": "multi",
+        "reason": "多意图：一句话里同时要求两件事，抽取式回答只覆盖其一"
+      },
+      {
+        "id": "paraphrase-hard",
+        "reason": "口语改写过深：词法覆盖低于 0.45 门槛，召回为空，漏答"
+      }
+    ],
+    "sample_cases": [
+      {
+        "id": "leave-direct",
+        "status": "answered",
+        "ranked": [
+          "leave"
+        ],
+        "total_ms": 3.316
+      },
+      {
+        "id": "leave-carry",
+        "status": "answered",
+        "ranked": [
+          "leave"
+        ],
+        "total_ms": 1.421
+      },
+      {
+        "id": "expenses",
+        "status": "answered",
+        "ranked": [
+          "expenses"
+        ],
+        "total_ms": 1.471
+      },
+      {
+        "id": "expenses-deadline",
+        "status": "answered",
+        "ranked": [
+          "expenses"
+        ],
+        "total_ms": 1.362
+      },
+      {
+        "id": "multi",
+        "status": "insufficient_knowledge",
+        "ranked": [],
+        "total_ms": 0.492
+      },
+      {
+        "id": "paraphrase-hard",
+        "status": "insufficient_knowledge",
+        "ranked": [],
+        "total_ms": 0.453
+      },
+      {
+        "id": "negative-unknown-policy",
+        "status": "insufficient_knowledge",
+        "ranked": [],
+        "total_ms": 0.441
+      },
+      {
+        "id": "negative-tenant",
+        "status": "insufficient_knowledge",
+        "ranked": [],
+        "total_ms": 0.493
+      }
+    ],
+    "repeat_runs": [
+      {
+        "run_id": "20261006T052813Z-f8a060",
+        "recall": 0.9,
+        "mrr": 0.9,
+        "ndcg": 0.9,
+        "refusal": 1.0
+      },
+      {
+        "run_id": "20261028T184235Z-6e6351",
+        "recall": 0.9,
+        "mrr": 0.9,
+        "ndcg": 0.9,
+        "refusal": 1.0
+      }
+    ],
+    "ablation": {
+      "rows": [
+        {
+          "label": "覆盖门槛关闭（无门槛基线）",
+          "run_id": "20261005T132700Z-fa0a73",
+          "recall": 0.95,
+          "mrr": 0.95,
+          "ndcg": 0.95,
+          "refusal": 0.125
+        },
+        {
+          "label": "覆盖门槛 0.45（当前默认）",
+          "run_id": "20261005T132810Z-ea6738",
+          "recall": 0.9,
+          "mrr": 0.9,
+          "ndcg": 0.9,
+          "refusal": 1.0
+        }
+      ],
+      "note": "同一份 28 题：关掉覆盖门槛时召回更高、但 8 道负例几乎全答；打开 0.45 门槛后召回略降、负例 8/8 拒答。这是可解释的取舍，不能读成“准确率提升”。"
+    }
+  },
+  "test_suite": {
+    "passed": 74
+  },
+  "limits": [
+    "词法检索不等于语义 embedding 质量",
+    "引用存在不等于事实蕴含正确",
+    "单进程小合成语料，不作并发性能结论",
+    "题目与语料由同一人同时编写，不声称无偏泛化"
+  ],
+  "bounds": [
+    "只接收文本 / Markdown；PDF、扫描件与 OCR 属于未实现的 Future Work",
+    "单机 SQLite，小规模语料；没有并发、QPS 或容量结论",
+    "静态本地凭证；无 SSO、无 TLS 周界、无限流、无多副本高可用",
+    "抽取式回答在多意图与深度改写处会漏答（见第 04 节坏例）",
+    "引用保证出处形式（文档 / 版本 / 字符偏移），不保证自然语言推理正确",
+    "未做真实 reranker / embedding 质量消融，也没有独立盲测集"
+  ],
+  "commands": {
+    "l1": "cd E:\\enterprise-knowledge-base\n# 只要 PowerShell / 文本编辑器，不装任何依赖\nGet-Content reports\\http-demo.json -Raw | ConvertFrom-Json |\n  Select-Object status, cross_tenant_read_status, server_stopped\nGet-Content reports\\eval-20261028T184235Z-6e6351\\results.json -Raw |\n  ConvertFrom-Json | Select-Object -ExpandProperty metrics\nGet-FileHash evaluation\\corpus.json -Algorithm SHA256   # 应等于报告里的 corpus_sha256",
+    "l2": "cd E:\\enterprise-knowledge-base\n$env:TEMP=\"$PWD\\.cache\\temp\"; $env:TMP=$env:TEMP\n$env:UV_CACHE_DIR=\"$PWD\\.cache\\uv\"; $env:UV_PYTHON_DOWNLOADS=\"never\"\nuv sync --frozen\n.\\\\.venv\\\\Scripts\\\\python.exe -m pytest                        # 74 项全部通过\n.\\\\.venv\\\\Scripts\\\\python.exe -m ekb.evaluate              # 打印 metrics 与坏例\n.\\\\.venv\\\\Scripts\\\\python.exe scripts\\\\demo.py             # 10 checks, status PASS\n.\\\\.venv\\\\Scripts\\\\python.exe scripts\\\\build_showcase.py --check   # 页面对不上就非零退出"
+  },
+  "provenance": [
+    {
+      "claim": "10 项 HTTP 检查通过",
+      "value": "PASS · 10 checks",
+      "source": "reports/http-demo.json",
+      "field": "status, checks[]"
+    },
+    {
+      "claim": "引用精确到字符偏移",
+      "value": "0–50 · v1",
+      "source": "reports/http-demo.json",
+      "field": "answer.citations[0].start/end/version"
+    },
+    {
+      "claim": "生成后权限复核",
+      "value": "passed",
+      "source": "reports/http-demo.json",
+      "field": "answer.trace.permission_recheck"
+    },
+    {
+      "claim": "跨租户读取",
+      "value": "404",
+      "source": "reports/http-demo.json",
+      "field": "cross_tenant_read_status"
+    },
+    {
+      "claim": "归档后不再召回",
+      "value": "insufficient_knowledge · citations=0",
+      "source": "reports/http-demo.json",
+      "field": "after_archive.status/citations"
+    },
+    {
+      "claim": "rerank 只改顺序不改权限",
+      "value": "[1, 2] → [2, 1]",
+      "source": "reports/rerank-query-chain.json",
+      "field": "baseline_document_order, reranked_document_order, forbidden_workspace_status"
+    },
+    {
+      "claim": "Recall@4",
+      "value": "0.90",
+      "source": "reports/eval-20261028T184235Z-6e6351/results.json",
+      "field": "metrics.recall_at_k"
+    },
+    {
+      "claim": "MRR@4 / nDCG@4",
+      "value": "0.90 / 0.90",
+      "source": "reports/eval-20261028T184235Z-6e6351/results.json",
+      "field": "metrics.mrr_at_k, metrics.ndcg_at_k"
+    },
+    {
+      "claim": "负向拒答",
+      "value": "1.00（8 题）",
+      "source": "reports/eval-20261028T184235Z-6e6351/results.json",
+      "field": "metrics.negative_refusal_rate"
+    },
+    {
+      "claim": "题量与可答/负例拆分",
+      "value": "28 / 20 / 8",
+      "source": "evaluation/cases.json",
+      "field": "len(cases), cases[].relevant 非空计数"
+    },
+    {
+      "claim": "语料文档数",
+      "value": "16",
+      "source": "evaluation/corpus.json",
+      "field": "len(corpus)"
+    },
+    {
+      "claim": "语料指纹",
+      "value": "fc346fcda08a8527…",
+      "source": "evaluation/corpus.json",
+      "field": "sha256（与报告 corpus_sha256 比对）"
+    },
+    {
+      "claim": "门槛开/关消融",
+      "value": "0.95·拒 0.125 → 0.90·拒 1.00",
+      "source": "reports/eval-20261005T132700Z-fa0a73/results.json",
+      "field": "metrics（对照组）"
+    },
+    {
+      "claim": "测试与静态检查",
+      "value": "74 项通过 · ruff check/format 通过",
+      "source": "reports/takeover-verification-20261029-01/summary.json",
+      "field": "pytest.tests, ruff_check, ruff_format"
+    }
+  ],
+  "footer": {
+    "lines": [
+      "本页由 scripts/build_showcase.py 生成：只读 reports/ 与 evaluation/，不修改任何冻结文件，不联网。",
+      "基线分支 codex/ekb-handoff-20261110 · HEAD b2d99f18f9464e5caf26c27cc3f4ba6759598ba9 · 冻结提交 9f3993b8b038（Portfolio Freeze）",
+      "复算入口：showcase/README.md · 一键核验：scripts/verify_showcase.py"
+    ],
+    "sha": "证据指纹 corpus fc346fcda08a8527… · cases f8389b7047e0c2c0… （可 Get-FileHash 复算）"
+  }
+};
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+
+function chips(){
+  const c = DATA.meta.chips || [];
+  $('chips').innerHTML = c.map(x => `<span class="chip ${x.tone||''}">${esc(x.text)}</span>`).join('');
+  $('meta-line').textContent = DATA.meta.line;
+}
+
+function reqBlock(){
+  const r = DATA.demo.request;
+  $('req-block').textContent = r.method + ' ' + r.path + '\n'
+    + 'Authorization: Bearer <本地随机令牌，runtime/ 内生成，Git 忽略>\n'
+    + 'Content-Type: application/json\n\n'
+    + JSON.stringify(r.body, null, 2);
+  $('demo-tag').textContent = DATA.demo.status + ' · ' + DATA.demo.checks.length + ' 项';
+  $('demo-checks-count').textContent = DATA.demo.checks.length + ' checks';
+  $('demo-checks').innerHTML = DATA.demo.checks.map(c =>
+    `<li><span class="tick">PASS</span><span>${esc(c)}</span></li>`).join('');
+}
+
+function respBlock(){
+  const a = DATA.demo.answer;
+  const obj = {
+    status: a.status, answer_mode: a.answer_mode, answer: a.answer,
+    citations: a.citations, trace: a.trace, request_id: '<omitted>'
+  };
+  $('resp-block').textContent = JSON.stringify(obj, null, 2);
+  const c = a.citations[0] || {};
+  $('cit-table').innerHTML = [
+    ['document_id / chunk_id', c.document_id + ' / ' + c.chunk_id],
+    ['标题 · 版本', c.title + ' · v' + c.version],
+    ['字符偏移', c.start + ' – ' + c.end],
+    ['原文摘录', c.excerpt],
+    ['权限复核', a.trace.permission_recheck],
+  ].map(([k,v]) => `<tr><th style="width:38%">${esc(k)}</th><td class="mono">${esc(v)}</td></tr>`).join('');
+}
+
+function traceTable(){
+  const t = DATA.demo.answer.trace;
+  const rows = [
+    ['retrieval_mode', t.retrieval_mode],
+    ['rerank', t.rerank],
+    ['eligible_chunks', t.eligible_chunks],
+    ['ranked_chunk_ids', JSON.stringify(t.ranked_chunk_ids)],
+    ['词法覆盖 min / max', t.min_lexical_coverage + ' / ' + t.max_lexical_coverage],
+    ['permission_recheck', t.permission_recheck],
+    ['total_ms', t.total_ms],
+  ];
+  $('trace-table').innerHTML = rows.map(([k,v]) =>
+    `<tr><th style="width:46%">${esc(k)}</th><td class="mono">${esc(v)}</td></tr>`).join('');
+}
+
+function badcase(){
+  const b = DATA.demo.bad_case;
+  $('badcase').innerHTML = `
+    <table>
+      <tr><th style="width:34%">问题</th><td>${esc(b.question)}</td></tr>
+      <tr><th>文档里存在答案</th><td class="mono">${esc(b.expected_source)}</td></tr>
+      <tr><th>系统实际返回</th><td><span class="pill warn">${esc(b.actual_status)}</span></td></tr>
+      <tr><th>性质</th><td>${esc(b.limitation)}</td></tr>
+    </table>
+    <p class="xs muted" style="margin-top:10px">这是<strong>词法检索的漏答</strong>，不是"正确地拒绝了不支持的问题"。把它放在这里而不是删掉，是因为它界定了这套系统的能力上限。</p>`;
+  const arch = DATA.demo.after_archive;
+  $('badcase').innerHTML += `<p class="xs muted">归档后同一问题：<span class="pill ok">${esc(arch.status)}</span> 且 citations 为空 — 归档即退出召回，这条是被断言过的。<span class="pill ok">server_stopped: ${esc(String(DATA.demo.server_stopped))}</span></p>`;
+}
+
+function pipeline(){
+  $('pipe').innerHTML = DATA.pipeline.map((s,i) => `
+    <div class="step ${s.optional?'opt':''}"><span class="ix">${String(i+1).padStart(2,'0')}</span>
+      <div class="t">${esc(s.title)}</div><div class="d">${esc(s.detail)}</div></div>`).join('');
+}
+
+function perms(){
+  $('perm-table').innerHTML = '<tr><th>动作</th><th>主体</th><th class="rt">结果</th><th>含义</th></tr>'
+    + DATA.permissions.map(p => `<tr><td>${esc(p.action)}</td><td class="mono">${esc(p.actor)}</td>
+        <td class="rt"><span class="pill ${p.tone}">${esc(p.result)}</span></td><td class="muted xs">${esc(p.meaning)}</td></tr>`).join('');
+  $('perm-quote').textContent = DATA.perm_note;
+}
+
+function metrics(){
+  const m = DATA.eval.metrics;
+  const items = [
+    ['Recall@4', m.recall_at_k.toFixed(2), '20 个可答题里前 4 命中率'],
+    ['MRR@4', m.mrr_at_k.toFixed(2), '首个相关结果的平均倒数排名'],
+    ['nDCG@4', m.ndcg_at_k.toFixed(2), '排序质量（含位置折扣）'],
+    ['负向拒答', (m.negative_refusal_rate*100).toFixed(0)+'%', m.negative_count + ' 道不该答的题，全部拒答'],
+  ];
+  $('metrics').innerHTML = items.map(([l,v,s]) =>
+    `<div class="metric"><div class="v">${esc(v)}</div><div class="l">${esc(l)}</div><div class="sub">${esc(s)}</div></div>`).join('');
+  $('eval-run-id').textContent = 'run ' + DATA.eval.run_id + ' · ' + DATA.eval.retrieval_mode + ' / ' + DATA.eval.answer_mode;
+  $('dataset-table').innerHTML = [
+    ['题目总数', DATA.eval.cases_total + '（可答 ' + DATA.eval.metrics.answerable_count + ' / 负例 ' + DATA.eval.metrics.negative_count + '）'],
+    ['知识库文档', DATA.eval.corpus_docs + ' 篇（含跨租户、错工作区、内部可见三类干扰项）'],
+    ['candidate_k → top_k', DATA.eval.candidate_k + ' → ' + DATA.eval.top_k],
+    ['延迟 中位 / 最大', DATA.eval.latency_ms.median + ' ms / ' + DATA.eval.latency_ms.max + ' ms'],
+    ['corpus sha256', DATA.eval.corpus_sha256.slice(0,16) + '…'],
+    ['cases sha256', DATA.eval.cases_sha256.slice(0,16) + '…'],
+    ['数据集性质', DATA.eval.dataset_kind],
+  ].map(([k,v]) => `<tr><th style="width:38%">${esc(k)}</th><td class="mono">${esc(v)}</td></tr>`).join('');
+  $('badcase-table').innerHTML = '<tr><th>题号</th><th>为什么坏</th></tr>'
+    + DATA.eval.bad_cases.map(b => `<tr><td class="mono">${esc(b.id)}</td><td class="muted xs">${esc(b.reason)}</td></tr>`).join('');
+  $('cases-table').innerHTML = '<tr><th>题号</th><th>状态</th><th class="rt">ranked</th><th class="rt">ms</th></tr>'
+    + DATA.eval.sample_cases.map(c => `<tr><td class="mono">${esc(c.id)}</td>
+        <td><span class="pill ${c.status==='answered'?'ok':'warn'}">${esc(c.status)}</span></td>
+        <td class="rt mono">${esc(JSON.stringify(c.ranked))}</td><td class="rt mono">${c.total_ms}</td></tr>`).join('');
+  const ab = DATA.eval.ablation;
+  $('ablation-table').innerHTML = '<tr><th>配置</th><th class="rt">Recall@4</th><th class="rt">MRR@4</th><th class="rt">nDCG@4</th><th class="rt">负向拒答</th><th>运行</th></tr>'
+    + ab.rows.map(r => `<tr><td>${esc(r.label)}</td><td class="rt mono">${r.recall.toFixed(2)}</td>
+        <td class="rt mono">${r.mrr.toFixed(2)}</td><td class="rt mono">${r.ndcg.toFixed(2)}</td>
+        <td class="rt mono">${r.refusal.toFixed(3)}</td><td class="mono xs">${esc(r.run_id)}</td></tr>`).join('');
+  $('ablation-note').textContent = ab.note;
+  $('repeat-table').innerHTML = '<tr><th>运行</th><th class="rt">Recall</th><th class="rt">MRR</th><th class="rt">nDCG</th><th class="rt">拒答</th></tr>'
+    + DATA.eval.repeat_runs.map(r => `<tr><td class="mono">${esc(r.run_id)}</td>
+        <td class="rt mono">${r.recall.toFixed(2)}</td><td class="rt mono">${r.mrr.toFixed(2)}</td>
+        <td class="rt mono">${r.ndcg.toFixed(2)}</td><td class="rt mono">${r.refusal.toFixed(2)}</td></tr>`).join('');
+}
+
+function checks_lists(){
+  $('limits').innerHTML = DATA.limits.map(x => `<li><span class="tick">·</span><span>${esc(x)}</span></li>`).join('');
+  $('bounds').innerHTML = DATA.bounds.map(x => `<li><span class="tick">·</span><span>${esc(x)}</span></li>`).join('');
+}
+
+function cmds(){
+  $('cmd-l1').textContent = DATA.commands.l1;
+  $('cmd-l2').textContent = DATA.commands.l2;
+  $('prov-table').innerHTML = '<tr><th>指标 / 事实</th><th>值</th><th>出处（文件 · 字段）</th></tr>'
+    + DATA.provenance.map(p => `<tr><td class="xs">${esc(p.claim)}</td>
+        <td class="mono">${esc(p.value)}</td>
+        <td class="mono xs">${esc(p.source)}<br><span class="muted">${esc(p.field)}</span></td></tr>`).join('');
+}
+
+function footer(){
+  $('foot-lines').innerHTML = DATA.footer.lines.map(l => `<p class="mono">${esc(l)}</p>`).join('');
+  $('foot-sha').textContent = DATA.footer.sha;
+}
+
+document.addEventListener('click', (e) => {
+  const b = e.target.closest('[data-copy]');
+  if(!b) return;
+  navigator.clipboard.writeText($(b.dataset.copy).textContent).then(() => {
+    const t = $('toast'); t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'), 1100);
+  });
+});
+
+[chips, reqBlock, respBlock, traceTable, badcase, pipeline, perms, metrics, checks_lists, cmds, footer].forEach(f => f());
+</script>
+</body>
+</html>

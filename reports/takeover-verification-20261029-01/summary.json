@@ -1,0 +1,34 @@
+{
+  "observed_at_utc": "2026-10-28T18:46:57.393759+00:00",
+  "head": "9f3993b8b038ffd9a5046e62489e7190943b265c",
+  "pytest": {
+    "name": "pytest",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "tests": "74",
+    "time": "4.890",
+    "timestamp": "2026-10-29T02:40:33.624682+08:00",
+    "hostname": "DESKTOP-8NHSE12"
+  },
+  "ruff_check": "PASS",
+  "ruff_format": "PASS; 35 files already formatted",
+  "evaluation": "E:\\enterprise-knowledge-base\\reports\\eval-20261028T184235Z-6e6351\\results.json",
+  "metrics": {
+    "k": 4,
+    "answerable_count": 20,
+    "negative_count": 8,
+    "recall_at_k": 0.9,
+    "mrr_at_k": 0.9,
+    "ndcg_at_k": 0.9,
+    "negative_refusal_rate": 1.0
+  },
+  "http_checks": 10,
+  "http_result": "PASS",
+  "test_http_server_stopped": true,
+  "model_inference": false,
+  "product_source_modified": false,
+  "historical_reports_preserved": true,
+  "harness": "run-isolated-checks.py",
+  "note": "Harness redirects only legacy http-demo.json and latest-evaluation.txt writes into this new directory; console demo report path is historical literal, actual report is here."
+}

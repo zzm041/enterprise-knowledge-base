@@ -1,0 +1,2 @@
+{"report": "E:\\enterprise-knowledge-base\\reports\\eval-20261028T184235Z-6e6351\\results.json", "metrics": {"k": 4, "answerable_count": 20, "negative_count": 8, "recall_at_k": 0.9, "mrr_at_k": 0.9, "ndcg_at_k": 0.9, "negative_refusal_rate": 1.0}, "bad_case_ids": ["multi", "paraphrase-hard"]}
+{"status": "PASS", "checks": 10, "report": "reports/http-demo.json"}

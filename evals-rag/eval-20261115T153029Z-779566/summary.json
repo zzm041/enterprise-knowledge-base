@@ -1,0 +1,24 @@
+{
+  "run_id": "20261115T153029Z-779566",
+  "corpus_sha256": "fc346fcda08a85275836823f8e52a5dcbf58d8ae29314ab4727841e465fb5bde",
+  "cases_sha256": "f8389b7047e0c2c03ff3f4c92f65de8617b8ed93343713242990606c0dd59fb9",
+  "answer_mode": "self_hosted_llm",
+  "reranker_model": "bge-reranker-v2-m3",
+  "rows": [
+    {
+      "mode": "hybrid",
+      "recall_at_4": 1.0,
+      "mrr_at_4": 1.0,
+      "ndcg_at_4": 1.0,
+      "negative_refusal_rate": 1.0,
+      "answered": 19,
+      "bad_cases": 1,
+      "median_ms": 1829.9795
+    }
+  ],
+  "limits": [
+    "Same 28 hand-authored cases; questions and corpus authored together, not a blind benchmark.",
+    "Recall/MRR/nDCG measure retrieval order only; citation presence is not factual entailment.",
+    "Single process SQLite, small corpus: no concurrency or scale claim."
+  ]
+}

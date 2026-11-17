@@ -1,0 +1,20 @@
+[
+  {
+    "name": "本地制度·差旅标准（采集样例）",
+    "kind": "file",
+    "path": "demo/zh-docs/handbook/差旅标准与预订流程.md",
+    "workspace": "handbook",
+    "audience": "all",
+    "category": "行政·差旅",
+    "title": "差旅标准与预订流程（采集副本）"
+  },
+  {
+    "name": "本地制度·信息安全事件上报（采集样例）",
+    "kind": "file",
+    "path": "demo/zh-docs/handbook/信息安全事件上报.md",
+    "workspace": "handbook",
+    "audience": "all",
+    "category": "IT·安全",
+    "title": "信息安全事件上报（采集副本）"
+  }
+]

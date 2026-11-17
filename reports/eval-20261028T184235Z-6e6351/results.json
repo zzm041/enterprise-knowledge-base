@@ -1,0 +1,843 @@
+{
+  "run_id": "20261028T184235Z-6e6351",
+  "dataset_kind": "hand-authored synthetic validation, not independent blind benchmark",
+  "retrieval_mode": "bm25",
+  "answer_mode": "extractive",
+  "embedding_fingerprint": null,
+  "reranker_model": null,
+  "corpus_sha256": "fc346fcda08a85275836823f8e52a5dcbf58d8ae29314ab4727841e465fb5bde",
+  "cases_sha256": "f8389b7047e0c2c03ff3f4c92f65de8617b8ed93343713242990606c0dd59fb9",
+  "python": "3.12.10",
+  "candidate_k": 12,
+  "top_k": 4,
+  "metrics": {
+    "k": 4,
+    "answerable_count": 20,
+    "negative_count": 8,
+    "recall_at_k": 0.9,
+    "mrr_at_k": 0.9,
+    "ndcg_at_k": 0.9,
+    "negative_refusal_rate": 1.0
+  },
+  "latency_ms": {
+    "median": 1.1535,
+    "max": 3.316
+  },
+  "bad_case_ids": [
+    "multi",
+    "paraphrase-hard"
+  ],
+  "cases": [
+    {
+      "id": "leave-direct",
+      "question": "How much notice is required for annual leave?",
+      "relevant": [
+        "leave"
+      ],
+      "audience": "all",
+      "split": "validation",
+      "ranked": [
+        "leave"
+      ],
+      "status": "answered",
+      "citations": [
+        "leave"
+      ],
+      "answer": "Unused annual leave may be carried forward until March 31 of the following year.",
+      "trace": {
+        "retrieval_mode": "bm25",
+        "rerank": "disabled",
+        "eligible_chunks": 13,
+        "ranked_chunk_ids": [
+          2,
+          1
+        ],
+        "min_lexical_coverage": 0.45,
+        "max_lexical_coverage": 0.5,
+        "ranked_document_ids": [
+          1,
+          1
+        ],
+        "permission_recheck": "passed",
+        "total_ms": 3.316
+      }
+    },
+    {
+      "id": "leave-carry",
+      "question": "When does carried forward annual leave expire?",
+      "relevant": [
+        "leave"
+      ],
+      "audience": "all",
+      "split": "validation",
+      "ranked": [
+        "leave"
+      ],
+      "status": "answered",
+      "citations": [
+        "leave"
+      ],
+      "answer": "Unused annual leave may be carried forward until March 31 of the following year.",
+      "trace": {
+        "retrieval_mode": "bm25",
+        "rerank": "disabled",
+        "eligible_chunks": 13,
+        "ranked_chunk_ids": [
+          2
+        ],
+        "min_lexical_coverage": 0.45,
+        "max_lexical_coverage": 0.8,
+        "ranked_document_ids": [
+          1
+        ],
+        "permission_recheck": "passed",
+        "total_ms": 1.421
+      }
+    },
+    {
+      "id": "expenses",
+      "question": "What must I attach to an expense claim?",
+      "relevant": [
+        "expenses"
+      ],
+      "audience": "all",
+      "split": "validation",
+      "ranked": [
+        "expenses"
+      ],
+      "status": "answered",
+      "citations": [
+        "expenses"
+      ],
+      "answer": "Expense claims must be filed within thirty calendar days after the purchase. Attach the itemized receipt and the project code. Claims missing receipts are returned for correction.",
+      "trace": {
+        "retrieval_mode": "bm25",
+        "rerank": "disabled",
+        "eligible_chunks": 13,
+        "ranked_chunk_ids": [
+          3
+        ],
+        "min_lexical_coverage": 0.45,
+        "max_lexical_coverage": 0.6666666666666666,
+        "ranked_document_ids": [
+          2
+        ],
+        "permission_recheck": "passed",
+        "total_ms": 1.471
+      }
+    },
+    {
+      "id": "expenses-deadline",
+      "question": "What is the deadline for filing expense claims?",
+      "relevant": [
+        "expenses"
+      ],
+      "audience": "all",
+      "split": "validation",
+      "ranked": [
+        "expenses"
+      ],
+      "status": "answered",
+      "citations": [
+        "expenses"
+      ],
+      "answer": "Expense claims must be filed within thirty calendar days after the purchase. Attach the itemized receipt and the project code. Claims missing receipts are returned for correction.",
+      "trace": {
+        "retrieval_mode": "bm25",
+        "rerank": "disabled",
+        "eligible_chunks": 13,
+        "ranked_chunk_ids": [
+          3
+        ],
+        "min_lexical_coverage": 0.45,
+        "max_lexical_coverage": 0.5,
+        "ranked_document_ids": [
+          2
+        ],
+        "permission_recheck": "passed",
+        "total_ms": 1.362
+      }
+    },
+    {
+      "id": "vpn",
+      "question": "Can personal devices connect to VPN?",
+      "relevant": [
+        "vpn"
+      ],
+      "audience": "all",
+      "split": "validation",
+      "ranked": [
+        "vpn"
+      ],
+      "status": "answered",
+      "citations": [
+        "vpn"
+      ],
+      "answer": "VPN access requires an enrolled company laptop and multi-factor authentication. Contact the IT service desk to request remote access. Personal devices cannot connect to the VPN.",
+      "trace": {
+        "retrieval_mode": "bm25",
+        "rerank": "disabled",
+        "eligible_chunks": 13,
+        "ranked_chunk_ids": [
+          4
+        ],
+        "min_lexical_coverage": 0.45,
+        "max_lexical_coverage": 1.0,
+        "ranked_document_ids": [
+          3
+        ],
+        "permission_recheck": "passed",
+        "total_ms": 1.182
+      }
+    },
+    {
+      "id": "vpn-paraphrase",
+      "question": "How do I get remote access?",
+      "relevant": [
+        "vpn"
+      ],
+      "audience": "all",
+      "split": "challenge",
+      "ranked": [
+        "vpn"
+      ],
+      "status": "answered",
+      "citations": [
+        "vpn"
+      ],
+      "answer": "VPN access requires an enrolled company laptop and multi-factor authentication. Contact the IT service desk to request remote access. Personal devices cannot connect to the VPN.",
+      "trace": {
+        "retrieval_mode": "bm25",
+        "rerank": "disabled",
+        "eligible_chunks": 13,
+        "ranked_chunk_ids": [
+          4
+        ],
+        "min_lexical_coverage": 0.45,
+        "max_lexical_coverage": 1.0,
+        "ranked_document_ids": [
+          3
+        ],
+        "permission_recheck": "passed",
+        "total_ms": 1.181
+      }
+    },
+    {
+      "id": "password",
+      "question": "How can I reset an account password?",
+      "relevant": [
+        "password"
+      ],
+      "audience": "all",
+      "split": "validation",
+      "ranked": [
+        "password"
+      ],
+      "status": "answered",
+      "citations": [
+        "password"
+      ],
+      "answer": "To reset an account password, use the identity portal and complete multi-factor verification. The service desk never requests an existing password or verification code.",
+      "trace": {
+        "retrieval_mode": "bm25",
+        "rerank": "disabled",
+        "eligible_chunks": 13,
+        "ranked_chunk_ids": [
+          5
+        ],
+        "min_lexical_coverage": 0.45,
+        "max_lexical_coverage": 1.0,
+        "ranked_document_ids": [
+          4
+        ],
+        "permission_recheck": "passed",
+        "total_ms": 1.09
+      }
+    },
+    {
+      "id": "meeting",
+      "question": "What is the meeting room booking duration?",
+      "relevant": [
+        "meeting"
+      ],
+      "audience": "all",
+      "split": "validation",
+      "ranked": [
+        "meeting"
+      ],
+      "status": "answered",
+      "citations": [
+        "meeting"
+      ],
+      "answer": "Meeting rooms can be reserved for up to two hours per booking. Cancel unused reservations at least fifteen minutes before the meeting.",
+      "trace": {
+        "retrieval_mode": "bm25",
+        "rerank": "disabled",
+        "eligible_chunks": 13,
+        "ranked_chunk_ids": [
+          6
+        ],
+        "min_lexical_coverage": 0.45,
+        "max_lexical_coverage": 0.5,
+        "ranked_document_ids": [
+          5
+        ],
+        "permission_recheck": "passed",
+        "total_ms": 1.143
+      }
+    },
+    {
+      "id": "meeting-cancel",
+      "question": "When should I cancel unused meeting reservations?",
+      "relevant": [
+        "meeting"
+      ],
+      "audience": "all",
+      "split": "validation",
+      "ranked": [
+        "meeting"
+      ],
+      "status": "answered",
+      "citations": [
+        "meeting"
+      ],
+      "answer": "Meeting rooms can be reserved for up to two hours per booking. Cancel unused reservations at least fifteen minutes before the meeting.",
+      "trace": {
+        "retrieval_mode": "bm25",
+        "rerank": "disabled",
+        "eligible_chunks": 13,
+        "ranked_chunk_ids": [
+          6
+        ],
+        "min_lexical_coverage": 0.45,
+        "max_lexical_coverage": 1.0,
+        "ranked_document_ids": [
+          5
+        ],
+        "permission_recheck": "passed",
+        "total_ms": 1.164
+      }
+    },
+    {
+      "id": "purchasing",
+      "question": "Who approves purchase requests above five thousand demo credits?",
+      "relevant": [
+        "procurement"
+      ],
+      "audience": "all",
+      "split": "validation",
+      "ranked": [
+        "procurement"
+      ],
+      "status": "answered",
+      "citations": [
+        "procurement"
+      ],
+      "answer": "Purchase requests above five thousand demo credits require department manager approval before ordering. This fictional policy applies to synthetic demonstration data only.",
+      "trace": {
+        "retrieval_mode": "bm25",
+        "rerank": "disabled",
+        "eligible_chunks": 13,
+        "ranked_chunk_ids": [
+          7
+        ],
+        "min_lexical_coverage": 0.45,
+        "max_lexical_coverage": 0.875,
+        "ranked_document_ids": [
+          6
+        ],
+        "permission_recheck": "passed",
+        "total_ms": 1.078
+      }
+    },
+    {
+      "id": "incident",
+      "question": "What should I report when a company laptop is lost?",
+      "relevant": [
+        "incidents"
+      ],
+      "audience": "all",
+      "split": "validation",
+      "ranked": [
+        "incidents",
+        "vpn"
+      ],
+      "status": "answered",
+      "citations": [
+        "incidents"
+      ],
+      "answer": "Report a lost company laptop to the security service desk immediately. Include the asset tag and last known location. Do not include passwords in the report.",
+      "trace": {
+        "retrieval_mode": "bm25",
+        "rerank": "disabled",
+        "eligible_chunks": 13,
+        "ranked_chunk_ids": [
+          8,
+          4
+        ],
+        "min_lexical_coverage": 0.45,
+        "max_lexical_coverage": 1.0,
+        "ranked_document_ids": [
+          7,
+          3
+        ],
+        "permission_recheck": "passed",
+        "total_ms": 1.378
+      }
+    },
+    {
+      "id": "cn-onboard",
+      "question": "新员工在哪里领取办公电脑？",
+      "relevant": [
+        "onboarding"
+      ],
+      "audience": "all",
+      "split": "validation",
+      "ranked": [
+        "onboarding"
+      ],
+      "status": "answered",
+      "citations": [
+        "onboarding"
+      ],
+      "answer": "新员工在入职当天到信息服务台领取办公电脑。领取时需要出示员工编号，并签署设备领用记录。",
+      "trace": {
+        "retrieval_mode": "bm25",
+        "rerank": "disabled",
+        "eligible_chunks": 13,
+        "ranked_chunk_ids": [
+          10
+        ],
+        "min_lexical_coverage": 0.45,
+        "max_lexical_coverage": 0.7272727272727273,
+        "ranked_document_ids": [
+          9
+        ],
+        "permission_recheck": "passed",
+        "total_ms": 1.379
+      }
+    },
+    {
+      "id": "cn-training",
+      "question": "培训结束后多久提交学习摘要？",
+      "relevant": [
+        "training"
+      ],
+      "audience": "all",
+      "split": "validation",
+      "ranked": [
+        "training"
+      ],
+      "status": "answered",
+      "citations": [
+        "training"
+      ],
+      "answer": "员工申请岗位培训需要先获得直属主管同意。培训结束后七天内提交学习摘要和课程反馈。",
+      "trace": {
+        "retrieval_mode": "bm25",
+        "rerank": "disabled",
+        "eligible_chunks": 13,
+        "ranked_chunk_ids": [
+          11
+        ],
+        "min_lexical_coverage": 0.45,
+        "max_lexical_coverage": 0.75,
+        "ranked_document_ids": [
+          10
+        ],
+        "permission_recheck": "passed",
+        "total_ms": 1.282
+      }
+    },
+    {
+      "id": "cn-travel",
+      "question": "出差住宿应在哪里预订？",
+      "relevant": [
+        "travel"
+      ],
+      "audience": "all",
+      "split": "validation",
+      "ranked": [
+        "travel"
+      ],
+      "status": "answered",
+      "citations": [
+        "travel"
+      ],
+      "answer": "出差住宿应通过企业差旅平台预订。酒店发票应包含住宿日期和企业抬头，报销材料提交给行政服务台。",
+      "trace": {
+        "retrieval_mode": "bm25",
+        "rerank": "disabled",
+        "eligible_chunks": 13,
+        "ranked_chunk_ids": [
+          12
+        ],
+        "min_lexical_coverage": 0.45,
+        "max_lexical_coverage": 0.5555555555555556,
+        "ranked_document_ids": [
+          11
+        ],
+        "permission_recheck": "passed",
+        "total_ms": 1.394
+      }
+    },
+    {
+      "id": "retention",
+      "question": "When are temporary project workspaces archived?",
+      "relevant": [
+        "retention"
+      ],
+      "audience": "all",
+      "split": "validation",
+      "ranked": [
+        "retention"
+      ],
+      "status": "answered",
+      "citations": [
+        "retention"
+      ],
+      "answer": "Temporary project workspaces are archived ninety days after project completion. The project owner receives a reminder seven days before archival.",
+      "trace": {
+        "retrieval_mode": "bm25",
+        "rerank": "disabled",
+        "eligible_chunks": 13,
+        "ranked_chunk_ids": [
+          14
+        ],
+        "min_lexical_coverage": 0.45,
+        "max_lexical_coverage": 1.0,
+        "ranked_document_ids": [
+          13
+        ],
+        "permission_recheck": "passed",
+        "total_ms": 1.303
+      }
+    },
+    {
+      "id": "support",
+      "question": "What are the IT service desk routine hours?",
+      "relevant": [
+        "support"
+      ],
+      "audience": "all",
+      "split": "validation",
+      "ranked": [
+        "support",
+        "password",
+        "incidents",
+        "vpn"
+      ],
+      "status": "answered",
+      "citations": [
+        "support"
+      ],
+      "answer": "The IT service desk accepts routine requests Monday through Friday from 09:00 to 18:00. Critical security incidents can be reported at any time.",
+      "trace": {
+        "retrieval_mode": "bm25",
+        "rerank": "disabled",
+        "eligible_chunks": 13,
+        "ranked_chunk_ids": [
+          15,
+          5,
+          8,
+          4
+        ],
+        "min_lexical_coverage": 0.45,
+        "max_lexical_coverage": 0.75,
+        "ranked_document_ids": [
+          14,
+          4,
+          7,
+          3
+        ],
+        "permission_recheck": "passed",
+        "total_ms": 1.264
+      }
+    },
+    {
+      "id": "multi",
+      "question": "How do I obtain VPN access and reset my password?",
+      "relevant": [
+        "vpn",
+        "password"
+      ],
+      "audience": "all",
+      "split": "validation",
+      "ranked": [],
+      "status": "insufficient_knowledge",
+      "citations": [],
+      "answer": "",
+      "trace": {
+        "retrieval_mode": "bm25",
+        "rerank": "disabled",
+        "eligible_chunks": 13,
+        "ranked_chunk_ids": [],
+        "min_lexical_coverage": 0.45,
+        "max_lexical_coverage": 0.4,
+        "ranked_document_ids": [],
+        "total_ms": 0.492
+      }
+    },
+    {
+      "id": "paraphrase-hard",
+      "question": "I forgot my login secret; where can I regain access?",
+      "relevant": [
+        "password"
+      ],
+      "audience": "all",
+      "split": "challenge",
+      "ranked": [],
+      "status": "insufficient_knowledge",
+      "citations": [],
+      "answer": "",
+      "trace": {
+        "retrieval_mode": "bm25",
+        "rerank": "disabled",
+        "eligible_chunks": 13,
+        "ranked_chunk_ids": [],
+        "min_lexical_coverage": 0.45,
+        "max_lexical_coverage": 0.2,
+        "ranked_document_ids": [],
+        "total_ms": 0.453
+      }
+    },
+    {
+      "id": "internal-allowed",
+      "question": "Who reviews the rollback plan for internal release approval?",
+      "relevant": [
+        "release"
+      ],
+      "audience": "internal",
+      "split": "validation",
+      "ranked": [
+        "release"
+      ],
+      "status": "answered",
+      "citations": [
+        "release"
+      ],
+      "answer": "Internal release approval requires a second engineer to review the rollback plan. The release steward records the approval in the change register.",
+      "trace": {
+        "retrieval_mode": "bm25",
+        "rerank": "disabled",
+        "eligible_chunks": 15,
+        "ranked_chunk_ids": [
+          9
+        ],
+        "min_lexical_coverage": 0.45,
+        "max_lexical_coverage": 0.8333333333333334,
+        "ranked_document_ids": [
+          8
+        ],
+        "permission_recheck": "passed",
+        "total_ms": 1.134
+      }
+    },
+    {
+      "id": "cn-internal",
+      "question": "备份恢复演练什么时候进行？",
+      "relevant": [
+        "backup"
+      ],
+      "audience": "internal",
+      "split": "validation",
+      "ranked": [
+        "backup"
+      ],
+      "status": "answered",
+      "citations": [
+        "backup"
+      ],
+      "answer": "内部备份恢复演练安排在每季度最后一个周五。演练负责人必须记录恢复耗时和数据完整性核对结果。",
+      "trace": {
+        "retrieval_mode": "bm25",
+        "rerank": "disabled",
+        "eligible_chunks": 15,
+        "ranked_chunk_ids": [
+          13
+        ],
+        "min_lexical_coverage": 0.45,
+        "max_lexical_coverage": 0.45454545454545453,
+        "ranked_document_ids": [
+          12
+        ],
+        "permission_recheck": "passed",
+        "total_ms": 1.38
+      }
+    },
+    {
+      "id": "negative-space",
+      "question": "What is the launch velocity of the lunar spacecraft?",
+      "relevant": [],
+      "audience": "all",
+      "split": "validation",
+      "ranked": [],
+      "status": "insufficient_knowledge",
+      "citations": [],
+      "answer": "",
+      "trace": {
+        "retrieval_mode": "bm25",
+        "rerank": "disabled",
+        "eligible_chunks": 13,
+        "ranked_chunk_ids": [],
+        "min_lexical_coverage": 0.45,
+        "max_lexical_coverage": 0.0,
+        "ranked_document_ids": [],
+        "total_ms": 0.492
+      }
+    },
+    {
+      "id": "negative-medical",
+      "question": "What medication cures migraine?",
+      "relevant": [],
+      "audience": "all",
+      "split": "validation",
+      "ranked": [],
+      "status": "insufficient_knowledge",
+      "citations": [],
+      "answer": "",
+      "trace": {
+        "retrieval_mode": "bm25",
+        "rerank": "disabled",
+        "eligible_chunks": 13,
+        "ranked_chunk_ids": [],
+        "min_lexical_coverage": 0.45,
+        "max_lexical_coverage": 0.0,
+        "ranked_document_ids": [],
+        "total_ms": 0.43
+      }
+    },
+    {
+      "id": "negative-unknown-policy",
+      "question": "How many weeks of parental leave are available?",
+      "relevant": [],
+      "audience": "all",
+      "split": "validation",
+      "ranked": [],
+      "status": "insufficient_knowledge",
+      "citations": [],
+      "answer": "",
+      "trace": {
+        "retrieval_mode": "bm25",
+        "rerank": "disabled",
+        "eligible_chunks": 13,
+        "ranked_chunk_ids": [],
+        "min_lexical_coverage": 0.45,
+        "max_lexical_coverage": 0.25,
+        "ranked_document_ids": [],
+        "total_ms": 0.441
+      }
+    },
+    {
+      "id": "negative-amount",
+      "question": "What is the exact annual salary increase percentage?",
+      "relevant": [],
+      "audience": "all",
+      "split": "validation",
+      "ranked": [],
+      "status": "insufficient_knowledge",
+      "citations": [],
+      "answer": "",
+      "trace": {
+        "retrieval_mode": "bm25",
+        "rerank": "disabled",
+        "eligible_chunks": 13,
+        "ranked_chunk_ids": [],
+        "min_lexical_coverage": 0.45,
+        "max_lexical_coverage": 0.25,
+        "ranked_document_ids": [],
+        "total_ms": 0.557
+      }
+    },
+    {
+      "id": "negative-internal",
+      "question": "Who reviews the rollback plan for internal release approval?",
+      "relevant": [],
+      "audience": "all",
+      "split": "validation",
+      "ranked": [],
+      "status": "insufficient_knowledge",
+      "citations": [],
+      "answer": "",
+      "trace": {
+        "retrieval_mode": "bm25",
+        "rerank": "disabled",
+        "eligible_chunks": 13,
+        "ranked_chunk_ids": [],
+        "min_lexical_coverage": 0.45,
+        "max_lexical_coverage": 0.16666666666666666,
+        "ranked_document_ids": [],
+        "total_ms": 0.501
+      }
+    },
+    {
+      "id": "negative-workspace",
+      "question": "What is the confidential roadmap launch date?",
+      "relevant": [],
+      "audience": "all",
+      "split": "validation",
+      "ranked": [],
+      "status": "insufficient_knowledge",
+      "citations": [],
+      "answer": "",
+      "trace": {
+        "retrieval_mode": "bm25",
+        "rerank": "disabled",
+        "eligible_chunks": 13,
+        "ranked_chunk_ids": [],
+        "min_lexical_coverage": 0.45,
+        "max_lexical_coverage": 0.0,
+        "ranked_document_ids": [],
+        "total_ms": 0.452
+      }
+    },
+    {
+      "id": "negative-tenant",
+      "question": "What are the other company's annual leave requirements?",
+      "relevant": [],
+      "audience": "all",
+      "split": "validation",
+      "ranked": [],
+      "status": "insufficient_knowledge",
+      "citations": [],
+      "answer": "",
+      "trace": {
+        "retrieval_mode": "bm25",
+        "rerank": "disabled",
+        "eligible_chunks": 13,
+        "ranked_chunk_ids": [],
+        "min_lexical_coverage": 0.45,
+        "max_lexical_coverage": 0.3333333333333333,
+        "ranked_document_ids": [],
+        "total_ms": 0.493
+      }
+    },
+    {
+      "id": "negative-cn",
+      "question": "员工健身房每月补贴金额是多少？",
+      "relevant": [],
+      "audience": "all",
+      "split": "validation",
+      "ranked": [],
+      "status": "insufficient_knowledge",
+      "citations": [],
+      "answer": "",
+      "trace": {
+        "retrieval_mode": "bm25",
+        "rerank": "disabled",
+        "eligible_chunks": 13,
+        "ranked_chunk_ids": [],
+        "min_lexical_coverage": 0.45,
+        "max_lexical_coverage": 0.07692307692307693,
+        "ranked_document_ids": [],
+        "total_ms": 0.468
+      }
+    }
+  ],
+  "limits": [
+    "Lexical retrieval is not semantic embedding quality.",
+    "Citation existence is not a measure of factual entailment.",
+    "Single process small synthetic corpus; no concurrency performance claim.",
+    "Questions and corpus authored together; no unbiased generalization claim."
+  ]
+}

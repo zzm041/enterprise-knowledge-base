@@ -1,0 +1,2545 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>EKB · 企业知识库</title>
+<style>
+:root{
+  --bg:#f5f6f8; --panel:#ffffff; --panel-2:#fbfcfd; --ink:#101828; --ink-2:#475467; --ink-3:#98a2b3;
+  --line:#e7eaef; --line-2:#eff2f6; --accent:#1f6f5c; --accent-2:#2f9d80; --accent-soft:#e9f4f0;
+  --warn:#8a5a00; --warn-soft:#fdf6e7; --danger:#a3251b; --danger-soft:#fdecea; --info:#2a5fd0; --info-soft:#eef4ff;
+  --radius:12px; --shadow:0 1px 2px rgba(16,24,40,.04),0 10px 28px rgba(16,24,40,.06);
+  --side-w:300px; --insp-w:380px;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;overflow:hidden}
+body{background:var(--bg);color:var(--ink);
+  font:14px/1.62 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  -webkit-font-smoothing:antialiased}
+button{font:inherit;cursor:pointer}
+input,textarea,select{font:inherit;color:inherit}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;font-size:12px}
+.hide{display:none!important}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:#d8dde5;border-radius:99px;border:3px solid transparent;background-clip:content-box}
+::-webkit-scrollbar-thumb:hover{background:#c3cad5;background-clip:content-box}
+::-webkit-scrollbar-track{background:transparent}
+
+/* ---------- app bar ---------- */
+.appbar{height:58px;flex:0 0 auto;display:flex;align-items:center;gap:12px;padding:0 16px;background:var(--panel);
+  border-bottom:1px solid var(--line);box-shadow:0 1px 0 rgba(16,24,40,.02);z-index:20}
+.brand{display:flex;align-items:center;gap:9px;font-weight:650;letter-spacing:.01em}
+.brand .mark{width:27px;height:27px;border-radius:9px;background:linear-gradient(140deg,#1f6f5c,#2f9d80);
+  color:#fff;display:grid;place-items:center;font-size:13px;font-weight:700;box-shadow:0 2px 6px rgba(31,111,92,.28)}
+.crumb{color:var(--ink-3);font-size:13px;display:flex;align-items:center;gap:6px}
+.crumb b{color:var(--ink-2);font-weight:600}
+.grow{flex:1}
+.dot{width:7px;height:7px;border-radius:50%;background:#22a06b;display:inline-block;margin-right:6px;
+  box-shadow:0 0 0 3px rgba(34,160,107,.14)}
+.dot.off{background:#d0d5dd;box-shadow:0 0 0 3px rgba(208,213,221,.3)}
+.status{display:flex;align-items:center;gap:6px;color:var(--ink-3);font-size:12.5px}
+.sel{border:1px solid var(--line);background:#fff;border-radius:9px;padding:7px 10px;color:var(--ink-2);transition:border-color .12s}
+.sel:hover{border-color:#cfd6e0}
+.iconbtn{width:34px;height:34px;border:1px solid var(--line);background:#fff;border-radius:10px;
+  display:grid;place-items:center;color:var(--ink-2);font-size:15px;line-height:1;transition:all .12s}
+.iconbtn:hover{border-color:#cfd6e0;background:#f9fafb;color:var(--ink)}
+.iconbtn[aria-pressed=true]{background:var(--accent-soft);border-color:#cfe6de;color:#12513f}
+
+/* ---------- shell ---------- */
+.shell{display:flex;height:calc(100dvh - 58px);min-height:0;align-items:stretch}
+aside{background:var(--panel);min-height:0;display:flex;flex-direction:column}
+.sidebar{width:var(--side-w);flex:0 0 auto;border-right:1px solid var(--line)}
+.inspector{width:var(--insp-w);flex:0 0 auto;border-left:1px solid var(--line)}
+.split{flex:0 0 6px;cursor:col-resize;position:relative;background:transparent;transition:background .12s}
+.split:hover,.split.dragging{background:linear-gradient(90deg,transparent,rgba(31,111,92,.16),transparent)}
+.split::after{content:"";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:2px;height:34px;
+  border-radius:2px;background:#e3e7ee}
+.split:hover::after{background:var(--accent-2)}
+.shell.side-off .sidebar,.shell.side-off #split-l{display:none}
+.shell.insp-off .inspector,.shell.insp-off #split-r{display:none}
+
+/* ---------- sidebar ---------- */
+.sec{padding:14px 14px 8px}
+.sec h2{margin:0 0 8px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);font-weight:650}
+.kb{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:10px;background:var(--accent-soft);
+  color:#12513f;font-weight:600;font-size:13px;border:1px solid #d6ece3}
+.kb .cnt{margin-left:auto;font-weight:500;color:#3f7a68;font-size:12px}
+.kb .ws{font-size:11px;color:#5c7d73;background:#fff;border-radius:5px;padding:1px 5px;font-weight:500}
+.kb .ico{width:20px;height:20px;border-radius:6px;background:#fff;display:grid;place-items:center;font-size:11px;color:#1f6f5c}
+.kbs{display:flex;flex-direction:column;gap:5px}
+.kb{cursor:pointer;text-align:left;border:1px solid transparent;font:inherit;width:100%}
+.kb:hover{border-color:#cfe3da}
+.kb.on{border-color:#8fc3b1;box-shadow:inset 0 0 0 1px #cbe4da}
+.kb:not(.on){background:#f7faf8}
+.kb:not(.on) .cnt{color:var(--ink-3)}
+.kb .who{margin-left:auto;font-size:11px;color:var(--ink-3)}
+.tools{display:flex;gap:6px;padding:0 14px 10px}
+.tools input{flex:1;min-width:0;border:1px solid var(--line);border-radius:9px;padding:7px 10px;font-size:13px;background:var(--panel-2);transition:all .12s}
+.tools input:focus{outline:none;border-color:#bcd9cf;background:#fff;box-shadow:0 0 0 3px rgba(31,111,92,.08)}
+.tools select{border:1px solid var(--line);border-radius:9px;background:var(--panel-2);font-size:12.5px;padding:6px 6px;color:var(--ink-2)}
+.docs{flex:1;min-height:0;overflow:auto;padding:2px 8px 10px}
+.doc{display:block;width:100%;text-align:left;border:0;background:transparent;padding:9px 11px;border-radius:9px;
+  border-left:2px solid transparent;transition:background .12s}
+.doc:hover{background:#f5f7fa}
+.doc[aria-current=true]{background:#eef3fb;border-left-color:#3b6fd4}
+.doc .t{font-size:13px;line-height:1.38;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink)}
+.doc .m{display:flex;align-items:center;gap:6px;margin-top:4px;color:var(--ink-3);font-size:11.5px}
+.badge{display:inline-flex;align-items:center;gap:4px;border-radius:999px;padding:1px 7px;font-size:11px;
+  border:1px solid var(--line);color:var(--ink-2);background:#fff}
+.badge.ok{background:#eaf7f1;border-color:#cfe9dd;color:#1c6b52}
+.badge.wait{background:var(--warn-soft);border-color:#f0e0bd;color:var(--warn)}
+.badge.arch{background:#f4f5f7;border-color:#e3e6ec;color:var(--ink-3)}
+.badge.int{background:var(--info-soft);border-color:#d9ddfb;color:#3b3f9e}
+.sidebar-foot{border-top:1px solid var(--line-2);padding:10px 14px;background:var(--panel)}
+.btn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:7px 13px;font-size:13px;color:var(--ink-2);transition:all .12s}
+.btn:hover{background:#f9fafb;border-color:#cfd6e0;color:var(--ink)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.primary:hover{background:#1a6051;border-color:#1a6051}
+.btn.wide{width:100%;display:flex;justify-content:center;gap:6px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn:disabled:hover{background:#fff;border-color:var(--line);color:var(--ink-2)}
+.btn.danger{color:var(--danger);border-color:#f0cfca}
+.btn.danger:hover{background:var(--danger-soft);border-color:#e2b3ac;color:var(--danger)}
+.btn.danger:disabled:hover{background:#fff}
+
+/* ---------- chat ---------- */
+.main{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;background:var(--bg)}
+.thread{flex:1 1 auto;min-height:0;overflow:auto;padding:24px 0 18px;scroll-behavior:smooth}
+.wrap{max-width:780px;margin:0 auto;padding:0 26px}
+.empty{max-width:660px;margin:5vh auto 0;padding:0 26px}
+.empty h1{font-size:23px;margin:0 0 8px;letter-spacing:-.015em}
+.empty p{margin:0 0 22px;color:var(--ink-2);font-size:13.5px;line-height:1.75}
+.chips{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.chip{text-align:left;border:1px solid var(--line);background:#fff;border-radius:12px;padding:12px 14px;
+  color:var(--ink-2);font-size:13px;line-height:1.5;box-shadow:0 1px 2px rgba(16,24,40,.03);transition:all .14s}
+.chip:hover{border-color:#bcd9cf;box-shadow:0 6px 18px rgba(31,111,92,.10);transform:translateY(-1px)}
+.chip b{display:block;color:var(--ink);font-weight:600;font-size:12.5px;margin-bottom:3px}
+.chip span{color:var(--ink-3);font-size:12px}
+.msg{max-width:780px;margin:0 auto 18px;padding:0 26px;display:flex;gap:11px}
+.msg .who{width:27px;height:27px;flex:none;border-radius:9px;display:grid;place-items:center;font-size:12px;
+  font-weight:700;color:#fff;background:#98a2b3;margin-top:3px}
+.msg.user .who{background:#334155}
+.msg.ai .who{background:linear-gradient(140deg,#1f6f5c,#2f9d80)}
+.bubble{min-width:0;flex:1}
+.msg.user .bubble .body{background:#eceff4;border-radius:12px 12px 12px 4px;padding:10px 14px;display:inline-block;max-width:100%}
+.body{white-space:pre-wrap;word-break:break-word}
+.answer{border:1px solid var(--line);background:#fff;border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow)}
+.answer .banner{display:flex;align-items:center;gap:8px;margin-bottom:9px;font-size:12.5px;color:var(--ink-3);flex-wrap:wrap}
+.tag{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:2px 9px;font-size:11.5px;
+  border:1px solid #cfe9dd;background:#eaf7f1;color:#1c6b52;font-weight:600}
+.tag.warn{border-color:#f0e0bd;background:var(--warn-soft);color:var(--warn)}
+.tag.info{border-color:#cfe0ff;background:var(--info-soft);color:var(--info)}
+.cites{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+.cite{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--panel-2);
+  border-radius:9px;padding:5px 9px;font-size:12.5px;color:var(--ink-2);max-width:100%;transition:all .12s}
+.cite:hover{border-color:#bcd9cf;background:#f2f8f6;color:var(--ink)}
+.cite .n{width:17px;height:17px;border-radius:5px;background:var(--accent-soft);color:#12513f;
+  display:grid;place-items:center;font-size:11px;font-weight:700}
+.cite .t{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:320px}
+.meta-line{margin-top:10px;color:var(--ink-3);font-size:11.5px;line-height:1.6}
+.meta-line button{border:0;background:none;color:var(--accent);padding:0;font-size:11.5px}
+.composer{flex:0 0 auto;border-top:1px solid var(--line);background:rgba(255,255,255,.96);
+  backdrop-filter:saturate(1.2) blur(6px);padding:12px 26px 16px;box-shadow:0 -6px 20px rgba(16,24,40,.04)}
+.composer .box{max-width:780px;margin:0 auto;border:1px solid var(--line);border-radius:14px;background:#fff;
+  padding:10px 11px 9px;box-shadow:0 2px 10px rgba(16,24,40,.05);transition:all .14s}
+.composer .box:focus-within{border-color:#b7d8cd;box-shadow:0 0 0 3px rgba(31,111,92,.09),0 4px 14px rgba(16,24,40,.06)}
+.composer textarea{width:100%;border:0;outline:0;resize:none;min-height:48px;max-height:200px;font-size:14px;line-height:1.6;background:transparent}
+.composer .row{display:flex;align-items:center;gap:8px;margin-top:6px;flex-wrap:wrap}
+.composer .hint{color:var(--ink-3);font-size:11.5px;flex:1 1 260px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.composer .send{margin-left:auto;background:var(--accent);color:#fff;border:0;border-radius:10px;padding:8px 18px;font-weight:600;
+  transition:all .12s;box-shadow:0 2px 8px rgba(31,111,92,.22)}
+.composer .send:hover{background:#1a6051}
+.composer .send[disabled]{opacity:.5;box-shadow:none}
+
+/* ---------- inspector ---------- */
+.tabs{display:flex;gap:2px;padding:0 12px;border-bottom:1px solid var(--line-2);flex:0 0 auto}
+.tab{border:0;background:none;padding:12px 11px;color:var(--ink-3);font-size:12.5px;border-bottom:2px solid transparent;transition:all .12s}
+.tab:hover{color:var(--ink-2)}
+.tab[aria-selected=true]{color:var(--ink);border-bottom-color:var(--accent);font-weight:600}
+.pane{padding:16px;overflow:auto;flex:1 1 auto;min-height:0}
+.pane h3{margin:0 0 4px;font-size:14.5px;line-height:1.4}
+.pane .sub{color:var(--ink-3);font-size:12px;margin-bottom:10px}
+.kv{display:grid;grid-template-columns:92px 1fr;gap:7px 10px;font-size:12.5px;margin:10px 0}
+.kv dt{color:var(--ink-3)}
+.kv dd{margin:0;word-break:break-word}
+.quote{border-left:2px solid #cfe9dd;background:#f8fbfa;padding:10px 12px;border-radius:0 9px 9px 0;
+  font-size:13px;white-space:pre-wrap;line-height:1.7}
+.actions{display:flex;gap:7px;margin-top:12px;flex-wrap:wrap}
+.field{margin:10px 0}
+.field label{display:block;font-size:12px;color:var(--ink-3);margin-bottom:4px}
+.field input,.field textarea,.field select{width:100%;border:1px solid var(--line);border-radius:9px;padding:8px 10px;font-size:13px;background:#fff}
+.field input:focus,.field textarea:focus,.field select:focus{outline:none;border-color:#bcd9cf;box-shadow:0 0 0 3px rgba(31,111,92,.08)}
+.empty-hint{color:var(--ink-3);font-size:12.5px;text-align:center;margin-top:44px;line-height:1.85}
+
+/* 正文预览：读者也要能看全文，否则「资料查看」只剩问答里的片段 */
+.src-h{display:flex;align-items:baseline;gap:8px;margin:14px 0 6px}
+.src-h h3{margin:0;font-size:12.5px}
+.src-h .n{color:var(--ink-3);font-size:11.5px;font-variant-numeric:tabular-nums}
+.src-h .btn{margin-left:auto;padding:2px 9px;font-size:11.5px}
+.src{white-space:pre-wrap;word-break:break-word;font-size:13px;line-height:1.78;background:#fff;
+  border:1px solid var(--line);border-radius:9px;padding:11px 13px;max-height:320px;overflow:auto}
+.docs-count{padding:2px 14px 5px;font-size:11.5px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+/* 目录：按分类标签筛（标签是演示层台账，见 scripts/console.py 的 TAG_RULES） */
+.tree{padding:2px 6px 2px;display:flex;flex-direction:column;gap:1px;max-height:186px;overflow:auto}
+.tree:empty{display:none}
+.tree .th{padding:6px 8px 2px;font-size:11px;color:var(--ink-3);letter-spacing:.04em}
+.tree button{display:flex;justify-content:space-between;gap:6px;background:none;border:0;padding:5px 8px;
+  border-radius:6px;font:inherit;font-size:12.5px;color:var(--ink-2);cursor:pointer;text-align:left}
+.tree button:hover{background:rgba(16,24,40,.045)}
+.tree button[aria-pressed=true]{background:var(--accent-soft);color:#12513f;font-weight:600}
+.tree .n{color:var(--ink-3);font-variant-numeric:tabular-nums;font-size:11px}
+/* 批量操作 */
+.bulk{display:flex;gap:6px;align-items:center;padding:0 8px 6px;font-size:12px;color:var(--ink-2);flex-wrap:wrap}
+.bulk .btn{padding:3px 8px;font-size:12px}
+.docrow{display:flex;align-items:center;gap:5px;padding-left:6px}
+.docrow .pick{width:13px;height:13px;accent-color:var(--accent);flex:0 0 auto;cursor:pointer}
+.docrow .doc{flex:1 1 auto;min-width:0}
+/* 版本 diff */
+.diff{max-height:min(60vh,520px);overflow:auto;border:1px solid var(--line);border-radius:10px;background:var(--panel-2);
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12.5px;line-height:1.6}
+.diff div{padding:1px 10px;white-space:pre-wrap;word-break:break-word}
+.diff .add{background:#e8f6ee;color:#14532d}
+.diff .del{background:#fdecea;color:#7f1d1d;text-decoration:line-through}
+.diff .same{color:var(--ink-2)}
+.diff .hunk{padding:4px 10px;color:var(--ink-3);background:#f2f4f7}
+
+/* 窄屏：三栏塌成一栏，侧栏/右栏变覆盖层（☰ / ▤ 或 Ctrl+B / Ctrl+J 拉出） */
+@media (max-width:900px){
+  body{overflow-x:hidden}
+  .appbar{gap:6px;padding:0 8px}
+  .appbar .crumb,.brand span:not(.mark),#live,.composer .hint{display:none}
+  .brand{font-size:14px}
+  #btn-account .an{max-width:96px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .iconbtn{width:32px;padding:0}
+  .sidebar{position:fixed;left:0;top:58px;bottom:0;z-index:40;width:84vw;max-width:330px;
+    background:#fbfcfc;box-shadow:12px 0 32px rgba(17,40,34,.16)}
+  .inspector{position:fixed;right:0;top:58px;bottom:0;z-index:40;width:90vw;max-width:400px;
+    background:#fbfcfc;box-shadow:-12px 0 32px rgba(17,40,34,.16)}
+  #split-l,#split-r{display:none}
+  .shell{max-width:100vw;overflow-x:hidden}
+  .empty{margin-top:3vh;padding:0 16px}
+  .empty h1{font-size:19px}
+  .empty p{font-size:13px}
+  .chips{grid-template-columns:1fr !important}
+  .thread{padding:16px 14px 12px}
+  .msg .body{max-width:100%}
+  .composer{padding:8px 10px 10px}
+  .composer .box{padding:8px 10px}
+  .pane{padding:12px}
+  /* 窄屏兜底：任何一处固有宽度都会把整页撑宽，这里统一收到 100vw 内 */
+  html,body{width:100%;max-width:100%}
+  .appbar{width:100%;overflow:hidden}
+  .appbar .grow{min-width:0}
+  .appbar .sel{min-width:0;flex:0 1 auto}
+  .iconbtn{flex:0 0 auto}
+  #btn-settings{display:none}
+  .main{flex:1 1 100%;width:100%;max-width:100vw;overflow:hidden}
+  .thread{width:100%;max-width:100vw;overflow-x:hidden}
+  .composer{width:100%;max-width:100vw}
+  .empty{max-width:100%;margin-left:0;margin-right:0;padding:0 16px}
+  .composer .box{width:100%;max-width:100%}
+  #question{width:100%;max-width:100%}
+}
+
+/* records */
+.rec{display:flex;flex-direction:column;gap:8px}
+.drop{border:1px dashed #c9d6d1;border-radius:10px;padding:10px;background:#fbfdfc}
+.drop.over{border-color:var(--accent);background:var(--accent-soft)}
+.drop input[type=file]{width:100%;font-size:12px;color:var(--ink-2)}
+.drop-hint{font-size:11.5px;color:var(--ink-3);margin-top:6px}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.check{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--ink-2);padding-top:7px}
+table.tbl{width:100%;border-collapse:collapse;font-size:11.5px;margin-top:10px}
+table.tbl th{text-align:left;color:var(--ink-3);font-weight:500;border-bottom:1px solid var(--line);padding:4px 6px}
+table.tbl td{padding:4px 6px;border-bottom:1px solid #f1f4f3;color:var(--ink-2);vertical-align:top}
+table.tbl td.num{font-variant-numeric:tabular-nums;text-align:right}
+.kpi3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0 4px}
+.kpi3 .k{border:1px solid var(--line);border-radius:9px;padding:8px 10px;background:#fff}
+.kpi3 .k b{display:block;font-size:18px;font-variant-numeric:tabular-nums}
+.kpi3 .k span{font-size:11px;color:var(--ink-3)}
+.rec-item{border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 11px;text-align:left;transition:all .12s}
+.rec-item:hover{border-color:#bcd9cf;background:#fafcfb}
+.rec-item .q{font-size:12.5px;color:var(--ink);line-height:1.45}
+.rec-item .m{display:flex;gap:7px;align-items:center;margin-top:5px;color:var(--ink-3);font-size:11px}
+.rec-item.static{cursor:default}
+.rec-item.static:hover{border-color:var(--line);background:#fff}
+
+/* ---------- assistant ---------- */
+.sugg{display:flex;flex-wrap:wrap;gap:6px;margin:11px 0 0}
+.sugg button{font:inherit;font-size:12px;padding:4px 10px;border:1px solid var(--line);
+  border-radius:999px;background:#fff;color:var(--ink-2);cursor:pointer;transition:all .12s}
+.sugg button:hover{border-color:var(--accent-2);color:var(--accent);background:var(--accent-soft)}
+.fb{display:flex;gap:8px;align-items:center;margin:11px 0 0;font-size:12px;color:var(--ink-3);flex-wrap:wrap}
+.fb button{font:inherit;font-size:12px;border:1px solid var(--line);background:#fff;
+  border-radius:8px;padding:3px 10px;cursor:pointer;color:var(--ink-2);transition:all .12s}
+.fb button:hover{border-color:#cfd6e0;color:var(--ink)}
+.fb button.on{border-color:var(--accent-2);color:var(--accent);background:var(--accent-soft)}
+.answer .body{white-space:pre-wrap}
+
+/* ---------- debug ---------- */
+.debug{border-top:1px solid var(--line);background:var(--panel-2);padding:10px 14px;max-height:42%;overflow:auto;flex:0 0 auto}
+.debug h4{margin:0 0 6px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
+.log{font-size:11.5px;color:var(--ink-2)}
+.log div{display:flex;gap:8px;padding:2px 0;border-bottom:1px dashed var(--line-2)}
+.log .s2{color:#1c6b52}.log .s4{color:var(--warn)}.log .s5{color:var(--danger)}
+pre{margin:6px 0 0;background:#0f172a;color:#dbe4f0;border-radius:9px;padding:10px;overflow:auto;font-size:11.5px}
+dialog{border:0;border-radius:14px;padding:0;box-shadow:0 24px 70px rgba(16,24,40,.28);max-width:580px;width:92vw}
+dialog::backdrop{background:rgba(15,23,42,.36)}
+.dlg-head{padding:15px 18px;border-bottom:1px solid var(--line);font-weight:650}
+.dlg-body{padding:15px 18px;max-height:60vh;overflow:auto}
+.dlg-foot{padding:13px 18px;border-top:1px solid var(--line);display:flex;gap:8px;justify-content:flex-end}
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:#111827;color:#fff;
+  border-radius:10px;padding:10px 16px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .18s;z-index:60}
+.toast.on{opacity:1}
+@media (max-width:1360px){ .composer .hint{display:none} .composer .row{gap:8px} }
+/* 公开演示：管理向的入口一律不出现 */
+body.is-public #tab-audit, body.is-public #tab-data,
+body.is-public #btn-new, body.is-public #btn-import,
+body.is-public #btn-debug, body.is-public #btn-account { display:none !important }
+.pub-badge{display:none;align-items:center;height:26px;padding:0 9px;border-radius:6px;
+  font-size:12px;color:#1f6f5c;background:#e9f4f0;border:1px solid #cfe6dd}
+body.is-public .pub-badge{display:inline-flex}
+.pub-who{display:inline-flex;align-items:center;height:32px;padding:0 10px;border-radius:8px;
+  font-size:12.5px;color:var(--ink-2);background:var(--panel);border:1px solid var(--line)}
+@media (max-width:1180px){ :root{--insp-w:330px} }
+@media (max-width:980px){ .shell.insp-off .inspector{display:none} .inspector{display:none} #split-r{display:none} }
+
+/* ---- 登录 ---- */
+.acct{display:inline-flex;align-items:center;gap:7px;height:32px;padding:0 10px 0 5px;border-radius:9px;
+  border:1px solid var(--line);background:var(--panel);cursor:pointer;font:inherit;font-size:12.5px;color:var(--ink-2)}
+.acct:hover{border-color:var(--accent);color:var(--ink)}
+.acct .av{width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;
+  display:inline-flex;align-items:center;justify-content:center;font-size:11.5px}
+.acct .ar{color:var(--ink-3);font-size:11.5px}
+.login-layer{position:fixed;inset:0;z-index:90;display:flex;align-items:center;justify-content:center;
+  background:rgba(15,32,28,.5)}
+.login-layer[hidden]{display:none}
+.login-card{width:384px;max-width:92vw;background:#fff;border-radius:16px;padding:26px 26px 20px;
+  box-shadow:0 24px 60px rgba(9,30,25,.28);display:flex;flex-direction:column;gap:12px}
+.lg-brand{display:flex;align-items:center;gap:9px;font-weight:700;font-size:17px;color:var(--ink)}
+.lg-brand .mark{width:26px;height:26px;border-radius:7px;background:var(--accent);color:#fff;
+  display:inline-flex;align-items:center;justify-content:center;font-size:14px}
+.lg-sub{margin:0;font-size:12.5px;line-height:1.7;color:var(--ink-3)}
+.lg-sub code{background:#f2f6f4;padding:1px 4px;border-radius:4px}
+.lg-f{display:flex;flex-direction:column;gap:5px;font-size:12.5px;color:var(--ink-2)}
+.lg-f select,.lg-f input{height:38px;border:1px solid var(--line);border-radius:9px;padding:0 11px;
+  font:inherit;font-size:13.5px;color:var(--ink);background:#fff}
+.lg-f select:focus,.lg-f input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(31,111,92,.12)}
+.lg-err{min-height:16px;font-size:12.5px;color:var(--danger)}
+.lg-go{height:40px;font-size:14px}
+.lg-dev{display:none;flex-wrap:wrap;gap:6px;padding-top:8px;border-top:1px dashed var(--line)}
+.lg-dev:not(:empty){display:flex}
+.lg-dev-t{width:100%;font-size:11.5px;color:var(--ink-3)}
+.lg-hint{margin:0;font-size:11.5px;color:var(--ink-3);line-height:1.6}
+.btn.sm{height:28px;padding:0 9px;font-size:12px}
+</style>
+</head>
+<body>
+<header class="appbar">
+  <div class="brand"><span class="mark">E</span>EKB<span style="font-weight:400;color:var(--ink-3);font-size:12.5px;margin-left:2px">企业知识库</span></div>
+  <div class="crumb">知识库<span>/</span><b id="crumb-ws">handbook</b></div>
+  <div class="grow"></div>
+  <div class="status"><span class="dot" id="live-dot"></span><span id="live">连接中…</span></div>
+  <button class="acct" id="btn-account" title="当前账号 · 点击切换账号或退出登录">
+    <span class="av" id="acct-av">?</span><span class="an" id="acct-name">未登录</span><span class="ar" id="acct-role"></span>
+  </button>
+  <button class="iconbtn" id="btn-side" title="展开 / 收起文档栏（Ctrl+B）" aria-pressed="true">☰</button>
+  <button class="iconbtn" id="btn-insp" title="展开 / 收起右侧栏（Ctrl+J）" aria-pressed="true">▤</button>
+  <button class="iconbtn" id="btn-settings" title="设置">⚙</button>
+</header>
+
+<div class="shell" id="shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="sec">
+      <h2>知识库</h2>
+      <div class="kbs" id="kb-list"></div>
+    </div>
+    <div class="tools">
+      <input id="doc-search" placeholder="搜索标题或 ID（如 #9）" autocomplete="off">
+      <select id="doc-filter" title="筛选">
+        <option value="ACTIVE">已索引</option>
+        <option value="ALL">全部</option>
+        <option value="DRAFT">待索引</option>
+        <option value="ARCHIVED">已归档</option>
+      </select>
+    </div>
+    <div class="tree" id="doc-tree"></div>
+    <div class="bulk" id="doc-bulk" hidden></div>
+    <div class="docs-count" id="docs-count"></div>
+    <div class="docs" id="docs"></div>
+    <div class="sidebar-foot">
+      <button class="btn primary wide" id="btn-new">＋ 新建文档</button>
+      <button class="btn wide" id="btn-import" style="margin-top:6px">⇪ 导入文件（PDF / Word / Excel / 图片）</button>
+    </div>
+  </aside>
+
+  <div class="split" id="split-l" title="拖动调整宽度 · 双击收起"></div>
+
+  <section class="main">
+    <div class="thread" id="thread">
+      <div class="empty" id="empty">
+        <h1 id="empty-title">问员工手册知识库</h1>
+        <p id="empty-desc">先判定意图再决定要不要检索：寒暄与追问不会浪费一次检索，制度问题才会走混合召回（BM25 + bge-m3 向量）、bge-reranker-v2-m3 重排、本地模型依据片段作答；查不到就直接说查不到，并记进待补资料清单。每句结论都带原文出处。</p>
+        <div class="chips" id="chips"></div>
+        <p id="kb-note" style="margin:18px 0 0;color:var(--ink-3);font-size:12px">—</p>
+      </div>
+    </div>
+    <div class="composer">
+      <div class="box">
+        <textarea id="question" rows="2" placeholder="例如：入职当天在哪里领取办公电脑？（Enter 发送，Shift+Enter 换行）"></textarea>
+        <div class="row">
+          <span class="hint" id="pipeline-hint">混合检索 + 重排 + 本地模型生成 · 每条结论可回溯原文</span>
+          <select id="mode" title="回答方式" style="width:auto;min-width:104px">
+            <option value="assistant">助手模式</option>
+            <option value="direct">直接检索</option>
+          </select>
+          <button class="btn" id="btn-new-session" title="开一段新会话">新会话</button>
+          <button class="send" id="btn-ask">发送</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="split" id="split-r" title="拖动调整宽度 · 双击收起"></div>
+
+  <aside class="inspector" id="inspector">
+    <div class="tabs">
+      <button class="tab" id="tab-cite" aria-selected="true">引用片段</button>
+      <button class="tab" id="tab-doc" aria-selected="false">文档详情</button>
+      <button class="tab" id="tab-log" aria-selected="false">问答记录</button>
+      <button class="tab" id="tab-audit" aria-selected="false">变更记录</button>
+      <button class="tab" id="tab-data" aria-selected="false">资料库</button>
+    </div>
+    <div class="pane" id="pane-cite"><div class="empty-hint">提问后，点答案下方的引用卡片<br>这里显示原文片段与出处</div></div>
+    <div class="pane hide" id="pane-doc"><div class="empty-hint">在左侧选择一篇文档<br>这里显示版本、可见范围与操作</div></div>
+    <div class="pane hide" id="pane-audit"><div class="empty-hint">文档的创建、改版、索引、下线、删除都记在这里<br>来自产品自己的 audit 表</div></div>
+    <div class="pane hide" id="pane-log"><div class="empty-hint">这段会话的提问与回答会依次记在这里<br>点一条可以回到它的引用依据</div></div>
+    <div class="pane hide" id="pane-data"><div class="empty-hint">这里放资料库的运维视角<br>导入台账、采集源、数据质量、导出</div></div>
+    <div class="debug hide" id="debug"></div>
+  </aside>
+</div>
+
+<dialog id="dlg-new">
+  <form method="dialog" id="new-form">
+    <div class="dlg-head">新建文档</div>
+    <div class="dlg-body">
+      <div class="field"><label>标题</label><input id="new-title" placeholder="例如：差旅报销补充说明"></div>
+      <div class="field"><label>正文（纯文本或 Markdown，入库后按段落切分）</label>
+        <textarea id="new-text" rows="8" placeholder="粘贴制度正文…"></textarea></div>
+      <div class="field"><label>可见范围</label>
+        <select id="new-audience"><option value="all">全员可见（all）</option><option value="internal">仅内部（internal）</option></select></div>
+      <p class="sub" style="color:var(--ink-3);font-size:12px;margin:0">创建后自动写入 v1 并建立索引；PDF/扫描件不在本版本范围内。</p>
+    </div>
+    <div class="dlg-foot">
+      <button class="btn" value="cancel" id="new-cancel">取消</button>
+      <button class="btn primary" value="ok" id="new-ok">创建并索引</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="dlg-edit">
+  <form method="dialog" id="edit-form">
+    <div class="dlg-head">编辑正文<span class="sub" id="edit-sub"></span></div>
+    <div class="dlg-body">
+      <div class="field"><label>正文（保存会生成新版本并重新索引，旧版本保留在版本表里）</label>
+        <textarea id="edit-text" rows="12" placeholder="加载原正文…"></textarea></div>
+      <p class="sub" style="color:var(--ink-3);font-size:12px;margin:0" id="edit-note">标题与可见范围不能在这里改：产品契约里标题创建后不可变，可见范围变更需要走归档后重建。</p>
+    </div>
+    <div class="dlg-foot">
+      <button class="btn" value="cancel" id="edit-cancel">取消</button>
+      <button class="btn primary" value="ok" id="edit-ok">保存为新版本</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="dlg-diff" style="max-width:min(980px,94vw)">
+  <form method="dialog" id="diff-form">
+    <div class="dlg-head">版本对比<span class="sub" id="diff-sub"></span></div>
+    <div class="dlg-body">
+      <div class="diff" id="diff-body"></div>
+      <p class="sub" style="color:var(--ink-3);font-size:12px;margin:8px 0 0">行级对比：绿色是新增行，红色是删除行。旧版本的正文一直留在版本表里，下线不会删它。</p>
+    </div>
+    <div class="dlg-foot">
+      <button class="btn" value="cancel" id="diff-close" style="margin-left:auto">关闭</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="dlg-del">
+  <form method="dialog" id="del-form">
+    <div class="dlg-head">彻底删除文档</div>
+    <div class="dlg-body">
+      <p class="sub" style="margin:0 0 10px;color:var(--ink-3);font-size:12px" id="del-warn"></p>
+      <div class="field"><label>输入文档标题确认（不可撤销）</label><input id="del-title" placeholder="完整标题"></div>
+      <p class="sub" style="color:var(--ink-3);font-size:12px;margin:0">删除会清掉该文档的全部版本、分块与向量，并在 audit 表留一条 purged 记录。只想下线就别删，用「下线」。</p>
+    </div>
+    <div class="dlg-foot">
+      <button class="btn" value="cancel" id="del-cancel">取消</button>
+      <button class="btn danger" value="ok" id="del-ok">确认删除</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="dlg-import">
+  <div class="dlg-head">导入文件<span class="sub" id="import-sub"></span></div>
+  <div class="dlg-body">
+    <div class="field">
+      <label>选择文件或压缩包（PDF / Word / Excel / CSV / 文本 / 图片 / .zip，可多选，单次 ≤ 300 个且 ≤ 120 MB）</label>
+      <div class="drop" id="drop">
+        <input type="file" id="import-files" multiple
+               accept=".pdf,.docx,.xlsx,.xlsm,.csv,.tsv,.txt,.md,.markdown,.png,.jpg,.jpeg,.webp,.bmp,.zip">
+        <div class="drop-hint">把文件或 .zip 拖到这里，或点上面的选择框</div>
+        <div class="drop-hint" style="margin-top:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <span>整目录导入：</span>
+          <button class="btn" id="btn-pick-dir" type="button" style="padding:2px 10px">选择文件夹</button>
+          <span class="sub" style="font-size:11.5px;color:var(--ink-3)">保留目录名，标题自动带「部门 · 文件名」</span>
+        </div>
+        <input type="file" id="import-dir" webkitdirectory directory multiple style="display:none">
+        <div class="drop-hint" id="import-limits" style="margin-top:8px;color:var(--ink-3)">上限：单次 300 个 / 单个 60 MB / 整批 120 MB。超出的不会静默丢掉，导入结果里会逐条列出哪几个没进来、为什么。</div>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>可见范围</label>
+        <select id="import-audience"><option value="all">全员可见（all）</option><option value="internal">仅内部（internal）</option></select></div>
+      <div class="field"><label>写入方式</label>
+        <label class="check"><input type="checkbox" id="import-dry"> 先只解析，不写库</label></div>
+    </div>
+    <p class="sub" style="color:var(--ink-3);font-size:12px;margin:0">
+      解析在控制台进程里做：PDF 取文本层（无文字层的扫描件走本地 OCR）、Word 保标题与表格、Excel 逐 sheet 摊平成「列名：值」。
+      图片（png / jpg / webp）先交给本地多模态模型 Qwen3.5-9B-VL 转写成 Markdown 再入库，截图和扫描页都适用。
+      正文清洗后按段落切块入库，原始文件按 sha256 存在运行目录里，重复导入同一份文件会被跳过。      压缩包（.zip）会被解包后逐个入库，隐藏文件与 __MACOSX 跳过；整目录导入时目录名会进标题前缀。
+    </p>
+    <div id="import-result"></div>
+  </div>
+  <div class="dlg-foot">
+    <button class="btn" id="import-cancel">关闭</button>
+    <button class="btn primary" id="import-ok">开始导入</button>
+  </div>
+</dialog>
+
+<div class="login-layer" id="login-layer" hidden>
+  <form class="login-card" id="login-form">
+    <div class="lg-brand"><span class="mark">E</span><span>EKB 企业知识库</span></div>
+    <p class="lg-sub">登录后才能提问、查看资料。四个演示账号共用一个演示口令（下面会直接写出来）。</p>
+    <label class="lg-f"><span>账号</span><select id="login-account"></select></label>
+    <label class="lg-f"><span>口令</span><input id="login-password" type="password" autocomplete="current-password" placeholder="请输入口令"></label>
+    <div class="lg-err" id="login-err"></div>
+    <button class="btn primary lg-go" id="login-go" type="submit">登录</button>
+    <div class="lg-dev" id="login-dev"></div>
+    <p class="lg-hint" id="login-hint"></p>
+    <button class="btn sm" id="login-logout" type="button" style="align-self:flex-start;display:none">退出登录</button>
+  </form>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+/* ============================================================
+   EKB 控制台前端：对话 + 文档 + 引用 + 调试（调试默认关闭）
+   ============================================================ */
+const S = {
+  identity: "reader", workspace: "handbook", docs: [], doc: null, meta: null, counts: {},
+  messages: [], debug: false, log: [], busy: false,
+  session: null, mode: "assistant", tab: "cite", public: false,
+  tagFilter: null, tagIndex: {}, selected: new Set()
+};
+const $ = (id) => document.getElementById(id);
+const esc = (v) => String(v == null ? "" : v).replace(/[&<>"']/g, (c) =>
+  ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+/* 对外演示：身份由服务端钉死，前端把一切「能改」的入口收掉，
+   免得访客点出一堆 403 还以为是坏的。 */
+function applyPublicMode() {
+  document.body.classList.add("is-public");
+  const sel = $("btn-account");
+  if (sel) {
+    sel.style.display = "none";
+    const tag = document.createElement("span");
+    tag.className = "pub-who";
+    tag.textContent = "访客 · 只读";
+    tag.title = (S.meta && S.meta.public_note) || "公开演示模式";
+    sel.parentNode.insertBefore(tag, sel.nextSibling);
+  }
+  const badge = document.createElement("span");
+  badge.className = "pub-badge";
+  badge.textContent = "公开演示 · 只读";
+  badge.title = "资料管理端点已关闭，提问按 IP 限流";
+  const appbar = document.querySelector(".appbar");
+  if (appbar) appbar.insertBefore(badge, appbar.children[1] || null);
+  const dbg = $("btn-debug");
+  if (dbg) dbg.remove();
+  document.title = "EKB 企业知识库 · 公开演示";
+}
+
+/* 权限：真实来自 /__meta 里每个身份的角色（editor 可写，reader 只读） */
+function me() {
+  const list = (S.meta && S.meta.identities) || [];
+  return list.find((x) => x.key === S.identity) || null;
+}
+function myWorkspaces() { const who = me(); return (who && who.workspaces) || {}; }
+function wsLabel(key) {
+  const list = (S.meta && S.meta.workspaces) || [];
+  const hit = list.find((w) => w.key === key);
+  return hit ? hit.label : key;
+}
+function wsKind(key) {
+  const list = (S.meta && S.meta.workspaces) || [];
+  const hit = list.find((w) => w.key === key);
+  return hit ? hit.kind : "org";
+}
+/* 权限按库判：同一个人在企业库可能只读，在自己的个人库可写 */
+function canWrite() {
+  if (S.public) return false;          // 公开演示是只读的，后端也拦着
+  return myWorkspaces()[S.workspace] === "editor";
+}
+function requireWrite() {
+  if (canWrite()) return true;
+  toast("当前身份在「" + wsLabel(S.workspace) + "」里只读：换到自己的资料库或切换身份再试");
+  return false;
+}
+
+/* ---------------- 知识库切换 ---------------- */
+function renderWorkspaces() {
+  const box = $("kb-list");
+  if (!box) return;
+  const mine = myWorkspaces();
+  const catalog = (S.meta && S.meta.workspaces) || [];
+  const available = catalog.filter((w) => mine[w.key]);
+  if (!available.length) {
+    box.innerHTML = '<div class="empty-hint">这个身份没有可访问的知识库</div>';
+    return;
+  }
+  if (!mine[S.workspace]) S.workspace = available[0].key;
+  box.innerHTML = available.map((w) =>
+    '<button class="kb' + (w.key === S.workspace ? " on" : "") + '" data-ws="' + esc(w.key) +
+    '" aria-current="' + (w.key === S.workspace) + '" title="' + esc(w.kind === "org" ? "企业知识库（全员）" : "个人知识库（仅本人可见）") + '">' +
+      '<span class="ico">' + (w.kind === "org" ? "▦" : "★") + "</span>" +
+      esc(w.label) +
+      (w.kind === "org" ? "" : '<span class="who">' +
+        esc(S.public ? "只读" : (mine[w.key] === "editor" ? "可写" : "只读")) + "</span>") +
+      '<span class="cnt" id="kb-count-' + esc(w.key) + '">' + (S.counts[w.key] == null ? "—" : S.counts[w.key] + " 篇") + "</span>" +
+    "</button>").join("");
+  Array.prototype.forEach.call(box.querySelectorAll(".kb"), (el) => {
+    el.onclick = () => switchWorkspace(el.dataset.ws);
+  });
+}
+
+function renderChips() {
+  const org = wsKind(S.workspace) === "org";
+  const box = $("chips");
+  if (org) {
+    const samples = S.public
+      ? SAMPLES.filter(([k]) => k.indexOf("staff") < 0)
+          .concat([["制度 · 采购比价", "采购一万元以上要几家比价？"]])
+      : SAMPLES;
+    box.innerHTML = samples.map(([k, q]) =>
+      '<button class="chip" data-q="' + esc(q) + '"><b>' + esc(k) + "</b>" + esc(q) + "</button>").join("");
+    Array.prototype.forEach.call(box.querySelectorAll(".chip"), (el) => {
+      el.onclick = () => ask(el.dataset.q);
+    });
+    return;
+  }
+  const docs = S.docs.filter((d) => (d.status || "DRAFT") === "ACTIVE").slice(0, 4);
+  if (!docs.length) {
+    box.innerHTML = '<div class="empty-hint">这个库里还没有资料，点左下角「新建文档」或「导入文件」加一份</div>';
+    return;
+  }
+  box.innerHTML = docs.map((d) =>
+    '<button class="chip" data-doc="' + d.id + '"><b>个人资料 · 打开</b>' + esc(d.title) + "</button>").join("");
+  Array.prototype.forEach.call(box.querySelectorAll(".chip"), (el) => {
+    el.onclick = () => openDoc(Number(el.dataset.doc));
+  });
+}
+
+function applyScopeUi() {
+  const org = wsKind(S.workspace) === "org";
+  $("crumb-ws").textContent = wsLabel(S.workspace);
+  $("empty-title").textContent = org ? "问员工手册知识库" : "问我自己的资料";
+  $("kb-note").textContent = org
+    ? "当前知识库共 " + (S.counts[S.workspace] || 0) + " 篇已索引文档，仅检索你有权查看的部分。"
+    : "个人知识库只有你自己能读写；企业库的资料不会出现在这里，反过来也一样。";
+  renderChips();
+}
+
+async function switchWorkspace(key) {
+  if (!key || key === S.workspace) return;
+  S.workspace = key;
+  S.doc = null;
+  S.selected.clear(); S.tagFilter = null;
+  $("pane-doc").innerHTML = '<div class="empty-hint">在左侧选择一篇文档<br>这里显示版本、可见范围与操作</div>';
+  $("pane-cite").innerHTML = '<div class="empty-hint">这里显示原文片段与出处</div>' +
+    '<div class="meta-line">提一个这个库里能回答的问题，点答案下方的引用卡片即可回溯原文。</div>';
+  renderWorkspaces();
+  syncWritable();
+  await loadDocs();
+  await loadTags();
+  applyScopeUi();
+}
+
+const IDENTITIES = [
+  ["editor", "editor · 可编辑"], ["reader", "reader · 只读"],
+  ["staff", "staff · 主管"], ["other-reader", "other-reader · 其他租户"]
+];
+const SAMPLES = [
+  ["常见问题 · 入职设备", "入职当天在哪里领取办公电脑？"],
+  ["口语提问 · 福利", "入职有什么福利"],
+  ["短句 · 年假", "年假有几天"],
+  ["差旅 · 住宿标准", "出差住宿每晚上限多少？"],
+  ["权限示例 · 切到 staff", "调薪窗口在几月？"]
+];
+const STATUS_TAG = {
+  answered: ["已找到依据", ""],
+  smalltalk: ["助手引导", "info"],
+  insufficient_knowledge: ["知识库中没有可支撑的内容", "warn"],
+  knowledge_unavailable: ["知识服务暂时不可用", "warn"],
+  no_permission: ["当前身份无权限", "warn"],
+  out_of_scope: ["超出知识库范围", "warn"]
+};
+
+function toast(text) {
+  const t = $("toast"); t.textContent = text; t.className = "toast on";
+  clearTimeout(toast._t); toast._t = setTimeout(() => { t.className = "toast"; }, 2200);
+}
+
+async function api(path, opt) {
+  opt = opt || {};
+  // 身份由会话 Cookie 决定，不再让浏览器自称是谁（PA-228）。
+  // 仍保留 opt.identity 这个调用形式：自检要验「换个身份就是 403」，
+  // 它就真的切一次会话、请求完再切回来——不是伪造一个头。
+  const anonymous = opt.identity === "anon";
+  if (!anonymous && opt.identity && opt.identity !== S.identity) {
+    const prev = S.identity;
+    if (!(await devLogin(opt.identity, { quiet: true }))) {
+      return { status: 0, data: null, ms: 0, error: new Error("dev switch unavailable") };
+    }
+    try {
+      return await api(path, Object.assign({}, opt, { identity: null }));
+    } finally {
+      await devLogin(prev, { quiet: true });
+    }
+  }
+  const t0 = performance.now();
+  let res, data = null, err = null;
+  try {
+    res = await fetch("/api" + path, {
+      method: opt.method || "GET",
+      headers: { "Content-Type": "application/json" },
+      credentials: anonymous ? "omit" : "same-origin",
+      body: opt.body === undefined ? undefined : JSON.stringify(opt.body)
+    });
+    const text = await res.text();
+    try { data = text ? JSON.parse(text) : null; } catch (e) { data = { raw: text }; }
+  } catch (e) {
+    err = e; res = { status: 0 };
+  }
+  const ms = Math.round(performance.now() - t0);
+  // quiet：调试面板自己的取数（运营面板）不再写进请求日志、也不再触发重绘——
+  // 否则 api -> renderDebug -> loadAssistOps -> api 会自激成请求风暴（面板永远停在「加载中…」）。
+  if (!opt.quiet) {
+    S.log.unshift({ t: new Date().toLocaleTimeString("zh-CN", { hour12: false }), m: opt.method || "GET",
+      p: path.length > 46 ? path.slice(0, 44) + "…" : path, who: S.identity,
+      s: res.status, ms: ms });
+    if (S.log.length > 40) S.log.pop();
+    renderDebug();
+  }
+  return { status: res.status, data: data, ms: ms, error: err };
+}
+
+/* ---------------- 文档列表 ---------------- */
+function statusBadge(doc) {
+  const st = doc.status || "DRAFT";
+  if (st === "ACTIVE") return '<span class="badge ok">已索引</span>';
+  if (st === "ARCHIVED") return '<span class="badge arch">已归档</span>';
+  if (st === "FAILED") return '<span class="badge wait">索引失败</span>';
+  return '<span class="badge wait">待索引</span>';
+}
+
+async function loadDocs() {
+  const key = S.workspace;
+  const r = await api("/documents?workspace=" + encodeURIComponent(key));
+  if (r.status === 403) {
+    $("docs").innerHTML = '<div class="empty-hint">当前身份没有这个工作区的权限<br>换一个身份再看</div>';
+    S.docs = []; S.counts[key] = null; renderWorkspaces(); return;
+  }
+  S.docs = (r.data && r.data.items) || [];
+  renderDocs();
+  loadTags();
+}
+
+/* ---------------- 分类树（按标签筛） ---------------- */
+async function loadTags() {
+  const r = await api("/__tags?workspace=" + encodeURIComponent(S.workspace), { quiet: true });
+  S.tagIndex = {};
+  if (r.status === 200 && r.data) {
+    (r.data.groups || []).forEach((g) => { S.tagIndex[g.tag] = g.ids || []; });
+  }
+  renderTree();
+}
+
+function renderTree() {
+  const box = $("doc-tree");
+  if (!box) return;
+  const tags = Object.keys(S.tagIndex);
+  if (!tags.length) { box.innerHTML = ""; return; }
+  box.innerHTML = '<div class="th">分类</div>' + tags.map((t) =>
+    '<button data-tag="' + esc(t) + '" aria-pressed="' + (S.tagFilter === t) + '">' +
+      "<span>" + esc(t) + '</span><span class="n">' + (S.tagIndex[t] || []).length + "</span></button>").join("");
+  Array.prototype.forEach.call(box.querySelectorAll("button"), (el) => {
+    el.onclick = () => {
+      S.tagFilter = (S.tagFilter === el.dataset.tag) ? null : el.dataset.tag;
+      renderTree(); renderDocs();
+    };
+  });
+}
+
+/* ---------------- 批量操作 ---------------- */
+function renderBulk() {
+  const box = $("doc-bulk");
+  if (!box) return;
+  const n = S.selected.size;
+  box.hidden = n === 0;
+  if (!n) { box.innerHTML = ""; return; }
+  box.innerHTML = "<span>已选 " + n + " 篇</span>" +
+    '<button class="btn" id="bulk-arch">批量下线</button>' +
+    '<button class="btn" id="bulk-exp">批量导出</button>' +
+    '<button class="btn" id="bulk-clear">清除</button>';
+  $("bulk-clear").onclick = () => { S.selected.clear(); renderDocs(); };
+  $("bulk-arch").onclick = () => batchArchive();
+  $("bulk-exp").onclick = () => {
+    const ids = Array.from(S.selected).join(",");
+    download("/__export?scope=docs&ids=" + ids + "&workspace=" + encodeURIComponent(S.workspace),
+      S.workspace + "-selected.zip");
+  };
+}
+
+async function batchArchive() {
+  if (!requireWrite()) return;
+  const ids = Array.from(S.selected);
+  if (!ids.length) return;
+  const r = await api("/__batch", { method: "POST", body: { workspace: S.workspace, action: "archive", ids: ids } });
+  if (r.status !== 200) { toast("批量下线失败：HTTP " + r.status + hint(r)); return; }
+  const d = r.data || {};
+  const ok = (d.archived || []).length, bad = (d.failed || []).length;
+  toast("已下线 " + ok + " 篇" + (bad ? "，失败 " + bad + " 篇" : ""));
+  S.selected.clear();
+  await loadDocs(); renderBulk();
+  if (S.doc) await openDoc(S.doc.id);
+}
+
+function renderDocs() {
+  const q = ($("doc-search").value || "").trim().toLowerCase();
+  const f = $("doc-filter").value;
+  const cjk = (t) => /[一-鿿]/.test(t || "");
+  const tagIds = S.tagFilter ? (S.tagIndex[S.tagFilter] || []) : null;
+  const rows = S.docs.filter((d) => {
+    if (f !== "ALL" && (d.status || "DRAFT") !== f) return false;
+    if (tagIds && tagIds.indexOf(Number(d.id)) < 0) return false;
+    if (!q) return true;
+    // 搜索同时认标题和 ID：查资料时常常只记得编号（#9 或 9）
+    const num = q.replace(/^#/, "");
+    return (d.title || "").toLowerCase().indexOf(q) >= 0 || String(d.id) === num;
+  }).sort((a, b) => (cjk(b.title) - cjk(a.title)) || String(a.title).localeCompare(String(b.title), "zh-Hans-CN"));
+  const dc = $("docs-count");
+  if (dc) dc.textContent = rows.length === S.docs.length
+    ? "共 " + S.docs.length + " 篇"
+    : "筛出 " + rows.length + " 篇 / 共 " + S.docs.length + " 篇";
+  const active = S.docs.filter((d) => (d.status || "") === "ACTIVE").length;
+  S.counts[S.workspace] = active;
+  const cnt = $("kb-count-" + S.workspace);
+  if (cnt) cnt.textContent = active + " 篇";
+  if ($("crumb-ws")) $("crumb-ws").textContent = wsLabel(S.workspace);
+  if (!rows.length) {
+    $("docs").innerHTML = '<div class="empty-hint">' + (q ? "没有匹配的文档" : "这个筛选下没有文档") + "</div>";
+    return;
+  }
+  $("docs").innerHTML = rows.map((d) =>
+    '<div class="docrow">' +
+      '<input type="checkbox" class="pick" data-id="' + d.id + '"' +
+        (S.selected.has(d.id) ? " checked" : "") + ' aria-label="选择 ' + esc(d.title) + '">' +
+      '<button class="doc" data-id="' + d.id + '" aria-current="' + (S.doc && S.doc.id === d.id) + '">' +
+        '<span class="t">' + esc(d.title) + "</span>" +
+        '<span class="m">' + statusBadge(d) +
+          '<span>v' + esc(d.latest_version) + "</span>" +
+          (d.audience === "internal" ? '<span class="badge int">internal</span>' : "") +
+        "</span></button>" +
+    "</div>").join("");
+  Array.prototype.forEach.call($("docs").querySelectorAll(".doc"), (el) => {
+    el.onclick = () => openDoc(Number(el.dataset.id));
+  });
+  Array.prototype.forEach.call($("docs").querySelectorAll(".pick"), (el) => {
+    el.onchange = () => {
+      const id = Number(el.dataset.id);
+      if (el.checked) S.selected.add(id); else S.selected.delete(id);
+      renderBulk();
+    };
+  });
+  renderBulk();
+}
+
+/* ---------------- 文档详情 ---------------- */
+function myAudiences() {
+  const me = ((S.meta && S.meta.identities) || []).filter((x) => x.key === S.identity)[0];
+  return (me && me.audiences) || ["all"];
+}
+function fallbackCopy(text, done) {
+  const ta = document.createElement("textarea");
+  ta.value = text; ta.style.position = "fixed"; ta.style.top = "-1000px";
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand("copy"); done(); } catch (e) { toast("复制失败，请手动选择正文"); }
+  ta.remove();
+}
+function copyText(text) {
+  const done = () => toast("正文已复制（" + text.length + " 字）");
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(done, () => fallbackCopy(text, done));
+  } else { fallbackCopy(text, done); }
+}
+async function openDoc(id) {
+  const r = await api("/documents/" + id);
+  if (r.status !== 200) { toast("打不开：HTTP " + r.status); return; }
+  S.doc = r.data;
+  renderDocs();
+  showTab("doc");
+  const d = r.data;
+  const versions = (d.versions || []).slice().reverse();
+  const writable = canWrite();
+  // 导出与读正文同一条判据：编辑者整库可读，其他人只能读 audience=all 或自己 audiences 内的
+  const readable = writable || d.audience === "all" || myAudiences().indexOf("internal") >= 0;
+  const ro = writable ? "" : (S.public
+    ? '<div class="meta-line">这是公开演示：只读，可以查看和提问，改资料请在本机运行。</div>'
+    : '<div class="meta-line">当前身份 ' + esc(S.identity) +
+      " 是只读：可以查看、提问，不能改资料。切换右上角身份为 editor。</div>");
+  $("pane-doc").innerHTML =
+    "<h3>" + esc(d.title) + "</h3>" +
+    '<div class="sub">' + esc(d.workspace) + " · " + esc(d.audience === "internal" ? "仅内部可见" : "全员可见") + "</div>" +
+    '<div class="kv"><dt>状态</dt><dd>' + statusBadge(d) + "</dd>" +
+      "<dt>当前版本</dt><dd>v" + esc(d.latest_version) + "</dd>" +
+      "<dt>文档 ID</dt><dd class='mono'>" + esc(d.id) + "</dd></div>" +
+    (d.status === "ARCHIVED"
+      ? '<div class="meta-line">已下线：不在检索范围内。要恢复，用「恢复」重写一版并重新索引（会生成 v' + (d.latest_version + 1) + "）。</div>"
+      : "") +
+    '<div class="src-h"><h3>正文</h3><span class="n" id="doc-chars"></span>' +
+      '<button class="btn" id="btn-copy">复制</button></div>' +
+    '<div class="src" id="doc-src"><span style="color:var(--ink-3)">读取正文…</span></div>' +
+    "<h3 style='font-size:12.5px;margin:14px 0 6px'>版本</h3>" +
+    '<div class="kv" style="grid-template-columns:1fr">' + versions.map((v) =>
+      "<div style='display:flex;gap:8px;align-items:center'>" +
+        '<span class="badge ' + (v.status === "ACTIVE" ? "ok" : v.status === "FAILED" ? "wait" : "") + '">v' +
+        esc(v.version) + " " + esc(v.status) + "</span>" +
+        (v.version === d.latest_version ? '<span class="badge">当前</span>' : "") +
+        '<span class="mono" style="color:var(--ink-3);overflow:hidden;text-overflow:ellipsis">' + esc((v.content_hash || "").slice(0, 16)) + "</span>" +
+        (Number(v.version) > 1
+          ? '<button class="btn" style="margin-left:auto;padding:2px 8px;font-size:11.5px" data-diff="' +
+            esc(v.version) + '">对比上一版</button>'
+          : "") +
+      "</div>").join("") + "</div>" +
+    '<div class="actions">' +
+      '<button class="btn" id="btn-edit"' + (writable ? "" : " disabled") + ">编辑正文</button>" +
+      '<button class="btn" id="btn-reingest"' + (writable ? "" : " disabled") + ">重新索引</button>" +
+      (d.status === "ARCHIVED"
+        ? '<button class="btn" id="btn-restore"' + (writable ? "" : " disabled") + ">恢复</button>"
+        : '<button class="btn" id="btn-archive"' + (writable ? "" : " disabled") + ">下线</button>") +
+      '<button class="btn danger" id="btn-purge"' + (writable ? "" : " disabled") + ">删除</button>" +
+    "</div>" +
+    '<div class="actions">' +
+      '<button class="btn" id="btn-exp-md"' + (readable ? "" : " disabled") + ' title="把当前版本正文导出成 Markdown">导出 Markdown</button>' +
+      '<button class="btn" id="btn-exp-docx"' + (readable ? "" : " disabled") + ' title="导出成 Word，保留标题层级">导出 Word</button>' +
+    "</div>" + ro;
+
+  $("btn-reingest").onclick = async () => {
+    if (!requireWrite()) return;
+    const res = await api("/documents/" + d.id + "/versions/" + d.latest_version + "/ingest", { method: "POST", body: {} });
+    toast(res.status === 200 ? "已重新索引 v" + d.latest_version : "索引失败：HTTP " + res.status + hint(res));
+    await loadDocs(); await openDoc(d.id);
+  };
+  Array.prototype.forEach.call($("pane-doc").querySelectorAll("[data-diff]"), (el) => {
+    el.onclick = () => openDiff(d, Number(el.dataset.diff));
+  });
+  $("btn-edit").onclick = () => openEdit(d);
+  $("btn-purge").onclick = () => openPurge(d);
+  $("btn-exp-md").onclick = () => download("/__export?scope=doc&format=md&document_id=" + d.id + "&workspace=" + encodeURIComponent(S.workspace),
+    d.title + ".md");
+  $("btn-exp-docx").onclick = () => download("/__export?scope=doc&format=docx&document_id=" + d.id + "&workspace=" + encodeURIComponent(S.workspace),
+    d.title + ".docx");
+  // 正文懒加载：产品 API 不返回 source，只能走代理的 /__source（服务端按 audience 判权）
+  const srcBox = $("doc-src");
+  api("/__source?document_id=" + d.id + "&workspace=" + encodeURIComponent(S.workspace), { quiet: true }).then((sr) => {
+    if (!srcBox || !document.body.contains(srcBox)) return;
+    if (sr.status === 200) {
+      const text = (sr.data && sr.data.text) || "";
+      srcBox.textContent = text || "（这一版没有正文）";
+      $("doc-chars").textContent = text.length + " 字";
+      $("btn-copy").onclick = () => copyText(text);
+    } else if (sr.status === 403) {
+      srcBox.innerHTML = '<span style="color:var(--ink-3)">这篇文档的可见范围不让当前身份看正文（' +
+        esc(d.audience === "internal" ? "仅内部可见" : d.audience) + "）</span>";
+      $("btn-copy").style.display = "none";
+    } else {
+      srcBox.innerHTML = '<span style="color:var(--ink-3)">正文读取失败：HTTP ' + sr.status + "</span>";
+      $("btn-copy").style.display = "none";
+    }
+  });
+  const arch = $("btn-archive");
+  if (arch) arch.onclick = async () => {
+    if (!requireWrite()) return;
+    const res = await api("/documents/" + d.id + "/archive", { method: "POST", body: { expected_version: d.latest_version } });
+    toast(res.status === 200 ? "已下线，之后的提问不再召回它" : "下线失败：HTTP " + res.status + hint(res));
+    await loadDocs(); await openDoc(d.id); if (S.tab === "audit") renderAudit();
+  };
+  const restore = $("btn-restore");
+  if (restore) restore.onclick = async () => {
+    if (!requireWrite()) return;
+    const src = await api("/__source?document_id=" + d.id + "&workspace=" + encodeURIComponent(S.workspace));
+    if (src.status !== 200) { toast("读不到原正文：HTTP " + src.status); return; }
+    const res = await api("/documents/" + d.id + "/versions", { method: "POST",
+      body: { text: src.data.text, expected_version: d.latest_version } });
+    if (res.status !== 200) { toast("恢复失败：HTTP " + res.status + hint(res)); return; }
+    const ing = await api("/documents/" + d.id + "/versions/" + (d.latest_version + 1) + "/ingest", { method: "POST", body: {} });
+    toast(ing.status === 200 ? "已恢复并索引为 v" + (d.latest_version + 1) : "已写入 v" + (d.latest_version + 1) + "，索引失败：HTTP " + ing.status);
+    await loadDocs(); await openDoc(d.id); if (S.tab === "audit") renderAudit();
+  };
+}
+
+function hint(r) {
+  const err = r && r.data && r.data.error;
+  if (!err) return "";
+  /* 上限类错误（413 请求过大、422 空包）后端带 detail 中文说明，优先显示它 */
+  const msg = err.detail || err.message || "";
+  return msg ? " " + msg : " " + (err.code || "");
+}
+
+/* 编辑正文：读原正文 → 写新版本 → 重新索引 */
+/* ---------------- 版本对比（行级 diff） ---------------- */
+function diffLines(oldText, newText) {
+  const a = String(oldText || "").split("\n");
+  const b = String(newText || "").split("\n");
+  const n1 = a.length, n2 = b.length;
+  // LCS 表：文档正文量级（几千行内）够用，且不引第三方库
+  const dp = [];
+  for (let i = 0; i <= n1; i++) dp.push(new Uint16Array(n2 + 1));
+  for (let i = n1 - 1; i >= 0; i--) {
+    for (let j = n2 - 1; j >= 0; j--) {
+      dp[i][j] = a[i] === b[j] ? dp[i + 1][j + 1] + 1 : Math.max(dp[i + 1][j], dp[i][j + 1]);
+    }
+  }
+  const out = [];
+  let i = 0, j = 0;
+  while (i < n1 && j < n2) {
+    if (a[i] === b[j]) { out.push(["same", b[j]]); i++; j++; }
+    else if (dp[i + 1][j] >= dp[i][j + 1]) { out.push(["del", a[i]]); i++; }
+    else { out.push(["add", b[j]]); j++; }
+  }
+  while (i < n1) { out.push(["del", a[i]]); i++; }
+  while (j < n2) { out.push(["add", b[j]]); j++; }
+  return out;
+}
+
+async function openDiff(d, version) {
+  const ws = encodeURIComponent(S.workspace);
+  const cur = await api("/__source?document_id=" + d.id + "&workspace=" + ws + "&version=" + version, { quiet: true });
+  const prev = await api("/__source?document_id=" + d.id + "&workspace=" + ws + "&version=" + (version - 1), { quiet: true });
+  if (cur.status !== 200 || prev.status !== 200) {
+    toast("取版本正文失败：HTTP " + cur.status + " / " + prev.status);
+    return;
+  }
+  const rows = diffLines(prev.data.text, cur.data.text);
+  const added = rows.filter((r) => r[0] === "add").length;
+  const removed = rows.filter((r) => r[0] === "del").length;
+  $("diff-sub").textContent = "v" + (version - 1) + " → v" + version +
+    " · 新增 " + added + " 行 / 删除 " + removed + " 行";
+  const html = ['<div class="hunk">' + esc(d.title) + " · 旧 v" + (version - 1) + " → 新 v" + version + "</div>"];
+  rows.forEach((r) => {
+    html.push('<div class="' + r[0] + '">' + (r[0] === "add" ? "+ " : r[0] === "del" ? "- " : "  ") + esc(r[1]) + "</div>");
+  });
+  $("diff-body").innerHTML = html.join("");
+  $("diff-close").onclick = () => $("dlg-diff").close();
+  $("dlg-diff").showModal();
+}
+
+async function openEdit(d) {
+  if (!requireWrite()) return;
+  const src = await api("/__source?document_id=" + d.id + "&workspace=" + encodeURIComponent(S.workspace));
+  if (src.status !== 200) { toast("读不到原正文：HTTP " + src.status); return; }
+  S.editTarget = d;
+  $("edit-sub").textContent = " · " + d.title + " · 当前 v" + src.data.version;
+  $("edit-text").value = src.data.text || "";
+  $("dlg-edit").showModal();
+  $("edit-text").focus();
+}
+
+/* 删除：必须手打标题确认，删完写 audit */
+function openPurge(d) {
+  if (!requireWrite()) return;
+  S.purgeTarget = d;
+  $("del-warn").textContent = "即将删除「" + d.title + "」（ID " + d.id + "）：全部版本、分块与向量都会被清掉。";
+  $("del-title").value = "";
+  $("dlg-del").showModal();
+  $("del-title").focus();
+}
+
+/* ---------------- 对话 ---------------- */
+function addMessage(msg) { S.messages.push(msg); renderThread(); }
+function renderThread() {
+  const empty = $("empty");
+  if (!S.messages.length) { empty.classList.remove("hide"); return; }
+  empty.classList.add("hide");
+  const thread = $("thread");
+  thread.innerHTML = '<div id="empty" class="empty hide"></div>' +
+    S.messages.map((m, i) => m.role === "user"
+      ? '<div class="msg user"><div class="who">你</div><div class="bubble"><div class="body">' + esc(m.text) + "</div></div></div>"
+      : aiMessage(m, i)).join("");
+  thread.scrollTop = thread.scrollHeight;
+  bindCite();
+  if (S.tab === "log") renderLog();
+}
+function routeText(d) {
+  if (d.route_source === "rule") return "规则命中，未调用路由模型";
+  if (d.route_source === "model") return "模型路由" + (d.confidence != null ? " · 置信 " + d.confidence : "");
+  if (d.route_source === "default") return "路由模型不可用，回退到直接检索";
+  return "";
+}
+function aiMessage(m, idx) {
+  const d = m.data || {}, trace = d.trace || {}, cits = d.citations || [];
+  const known = ["answered", "smalltalk", "insufficient_knowledge", "knowledge_unavailable", "no_permission", "out_of_scope"];
+  const rawStatus = d.answer_status || d.status || "insufficient_knowledge";
+  const status = known.indexOf(rawStatus) >= 0 ? rawStatus : "insufficient_knowledge";
+  const tag = STATUS_TAG[status] || ["已回复", "info"];
+  const body = esc(d.reply != null ? d.reply : (d.answer || ""));
+  const citeHtml = cits.length ? '<div class="cites">' + cits.map((c, i) =>
+      '<button class="cite" data-msg="' + idx + '" data-cite="' + i + '">' +
+        '<span class="n">' + (i + 1) + "</span>" +
+        '<span class="t">' + esc(c.title) + "</span>" +
+        '<span style="color:var(--ink-3)">v' + esc(c.version) + "</span></button>").join("") + "</div>" : "";
+  let where;
+  if (status === "answered") {
+    where = '<div class="meta-line">来源：' + esc(cits.map((c) => c.title).join("、") || "—") +
+      " · " + esc(chainText(trace)) + " · 已按你的可见范围过滤" + "</div>";
+  } else if (status === "smalltalk") {
+    where = '<div class="meta-line">不查文档，也不编制度用词 · ' + esc(routeText(d)) + "</div>";
+  } else if (status === "knowledge_unavailable") {
+    where = '<div class="meta-line">检索网关或本地模型没起来（embed / rerank / 生成 任一不可用），' +
+      "所以这次没有回答；重启演示栈后会恢复，不是知识库里没有这条制度</div>";
+  } else {
+    where = '<div class="meta-line">已检索 ' + esc(trace.eligible_chunks == null ? "—" : trace.eligible_chunks) +
+      " 个片段，" + esc(chainText(trace)) + " 之后仍无一条能支撑回答</div>";
+  }
+  const intent = d.intent ? '<span class="tag info">意图 ' + esc(d.intent) + "</span>" : "";
+  // 这一层没有真人坐席：助手不再承诺转接，也不生成没人接的工单号。
+  const suggList = d.suggestions || [];
+  const sugg = suggList.length
+    ? '<div class="sugg">' + suggList.map((s) =>
+        '<button data-sugg="' + esc(s) + '">' + esc(s) + "</button>").join("") + "</div>"
+    : "";
+  const ops = [];
+  if (d.message_id) {
+    ops.push('<button data-fb="up" data-mid="' + d.message_id + '">有用</button>');
+    ops.push('<button data-fb="down" data-mid="' + d.message_id + '">没答到</button>');
+  }
+  const fb = ops.length ? '<div class="fb"><span>这条回答：</span>' + ops.join("") + "</div>" : "";
+  const debug = S.debug
+    ? '<div class="meta-line">耗时 ' + esc(m.ms) + " ms · " + esc(routeText(d)) +
+      (d.standalone_question && d.standalone_question !== m.question
+        ? " · 改写为「" + esc(d.standalone_question) + "」" : "") + "</div>"
+    : "";
+  return '<div class="msg ai"><div class="who">E</div><div class="bubble"><div class="answer">' +
+    '<div class="banner"><span class="tag ' + tag[1] + '">' + esc(tag[0]) + "</span>" + intent + "</div>" +
+    '<div class="body">' + body + "</div>" + citeHtml + where + sugg + fb + debug + "</div></div></div>";
+}
+function chainText(trace) {
+  // 用真实 trace 说清这条回答走了哪条链路，而不是写死一句话。
+  const rag = (S.meta && S.meta.rag) || {};
+  const mode = trace.retrieval_mode || "bm25";
+  const parts = [];
+  if (mode === "hybrid") {
+    const lex = trace.lexical_candidates, dense = trace.dense_candidates;
+    parts.push("混合召回 BM25 " + (lex == null ? "—" : lex) + " + 向量 " + (dense == null ? "—" : dense));
+  } else if (mode === "dense") {
+    parts.push("向量召回（" + (rag.embedding_model || "bge-m3") + "）");
+  } else {
+    parts.push("词法召回（BM25）");
+  }
+  if (trace.rerank === "applied") parts.push((rag.rerank_model || "重排模型") + " 重排");
+  else if (trace.rerank === "unavailable_kept_original_order") parts.push("重排不可用，沿用召回顺序");
+  parts.push((rag.chat_model || "本地模型") + " 生成");
+  return parts.join(" · ");
+}
+function bindCite() {
+  Array.prototype.forEach.call(document.querySelectorAll(".cite"), (el) => {
+    el.onclick = () => {
+      const m = S.messages[Number(el.dataset.msg)];
+      const c = (m.data.citations || [])[Number(el.dataset.cite)];
+      showCite(c);
+    };
+  });
+  Array.prototype.forEach.call(document.querySelectorAll("[data-sugg]"), (el) => {
+    el.onclick = () => ask(el.dataset.sugg);
+  });
+  Array.prototype.forEach.call(document.querySelectorAll("[data-fb]"), (el) => {
+    el.onclick = async () => {
+      const r = await api("/assistant/feedback", {
+        method: "POST", body: { message_id: Number(el.dataset.mid), value: el.dataset.fb }
+      });
+      if (r.status === 201) {
+        el.classList.add("on");
+        toast(el.dataset.fb === "up" ? "已记为有用，谢谢" : "已记录没答到，会进待补资料清单");
+      } else {
+        toast("反馈没记上：HTTP " + r.status);
+      }
+    };
+  });
+}
+function showCite(c) {
+  if (!c) return;
+  showTab("cite");
+  $("pane-cite").innerHTML =
+    "<h3>" + esc(c.title) + "</h3>" +
+    '<div class="sub">第 ' + (c.chunk_id != null ? esc(c.chunk_id) : "—") + " 段 · 版本 v" + esc(c.version) + "</div>" +
+    '<div class="quote">' + esc(c.excerpt || "") + "</div>" +
+    '<div class="kv"><dt>文档</dt><dd>' + esc(c.document_id) + "</dd>" +
+      "<dt>字符偏移</dt><dd class='mono'>" + esc(c.start) + "–" + esc(c.end) + "</dd>" +
+      "<dt>可见范围复核</dt><dd>已通过</dd></div>" +
+    '<div class="meta-line">这段文字就是回答的依据；引用只保证出处，不保证推论正确。</div>';
+}
+
+async function ask(text) {
+  const question = (text != null ? text : $("question").value).trim();
+  if (!question || S.busy) return;
+  S.busy = true; $("btn-ask").disabled = true;
+  addMessage({ role: "user", text: question });
+  $("question").value = "";
+  let r, data;
+  if (S.mode === "assistant") {
+    r = await api("/assistant/chat", { method: "POST",
+      body: { text: question, session_id: S.session, workspace: S.workspace } });
+    data = r.data || {};
+    if (r.status === 200 && data.session_id) S.session = data.session_id;
+    if (r.status >= 400) {
+      data = { answer_status: "out_of_scope", reply: "助手服务暂时不可用（HTTP " + r.status + "）。可以切到「直接检索」继续查库。", suggestions: [] };
+    }
+  } else {
+    r = await api("/query", { method: "POST", body: { workspace: S.workspace, question: question, mode: "auto" } });
+    data = r.data || {};
+    if (r.status >= 400) {
+      toast("提问失败：HTTP " + r.status + (r.data && r.data.error ? " " + r.data.error.code : ""));
+    }
+  }
+  addMessage({ role: "assistant", data, ms: r.ms, question: question });
+  if ((data.citations || []).length) showCite(data.citations[0]);
+  else $("pane-cite").innerHTML = '<div class="empty-hint">这次没有可引用的片段<br>助手已说明原因，可换个更贴近制度用词的问法</div>';
+  S.busy = false; $("btn-ask").disabled = false;
+  $("question").focus();
+}
+
+/* ---------------- 设置面板 ---------------- */
+function toggleDebug(on) {
+  S.debug = on === undefined ? !S.debug : !!on;
+  $("debug").classList.toggle("hide", !S.debug);
+  renderDebug();
+  renderThread();
+}
+function renderDebug() {
+  if (!S.debug) return;
+  const box = $("debug");
+  const last = S.messages.filter((m) => m.role === "assistant").slice(-1)[0];
+  const trace = (last && last.data && last.data.trace) || null;
+  box.innerHTML =
+    '<h4>请求日志</h4><div class="log">' + (S.log.slice(0, 12).map((l) =>
+      "<div><span>" + esc(l.t) + "</span><span class='mono'>" + esc(l.m) + " " + esc(l.p) + "</span>" +
+      "<span class='mono'>" + esc(l.who) + "</span><span class='mono s" + String(l.s).charAt(0) + "'>" + esc(l.s) + "</span>" +
+      "<span class='mono'>" + esc(l.ms) + "ms</span></div>").join("") || "<div>暂无请求</div>") + "</div>" +
+    (trace ? '<h4 style="margin-top:10px">检索轨迹</h4><div class="log">' +
+      Object.keys(trace).filter((k) => k !== "ranked_chunk_ids").map((k) =>
+        "<div><span class='mono'>" + esc(k) + "</span><span class='mono'>" + esc(Array.isArray(trace[k]) ? JSON.stringify(trace[k]) : trace[k]) + "</span></div>").join("") +
+      "</div><pre>" + esc(JSON.stringify(last.data, null, 2)) + "</pre>" : "") +
+    '<h4 style="margin-top:10px">助手运营面板 <button class="btn" id="btn-ops" style="padding:1px 8px;font-size:11px">刷新</button></h4>' +
+    '<div class="log" id="assist-ops">' + (S.opsHtml || "加载中…") + '</div>' +
+    '<h4 style="margin-top:10px">生成模型档位</h4>' +
+    '<div class="log" id="model-box">' + modelBoxHtml() + '</div>' +
+    '<h4 style="margin-top:10px">兜底话术 <button class="btn" id="btn-rep-reset" style="padding:1px 8px;font-size:11px">恢复默认</button></h4>' +
+    '<div class="log" id="reply-box">' + replyBoxHtml() + '</div>' +
+    '<h4 style="margin-top:10px">接口契约自检</h4>' +
+    '<button class="btn" id="btn-checks">运行 54 项</button> <span class="mono" id="chk-out" style="color:var(--ink-3)">' + esc(S.checksOut || "") + '</span>';
+  const b = $("btn-checks");
+  if (b) b.onclick = runChecks;
+  const o = $("btn-ops");
+  if (o) o.onclick = () => { S.opsHtml = ""; loadAssistOps(); };
+  const mb = $("btn-model");
+  if (mb) mb.onclick = switchModel;
+  const rb = $("btn-replies");
+  if (rb) rb.onclick = saveReplies;
+  const rl = $("btn-rep-load");
+  if (rl) {
+    rl.onclick = loadReplies;
+    if (!S.repliesLoading) loadReplies();
+  }
+  const rr = $("btn-rep-reset");
+  if (rr) rr.onclick = () => saveReplies({ reset: true });
+  if (!S.opsHtml) loadAssistOps();
+}
+
+/* 生成模型档位：切换会真正重启检索网关 / 知识库 / 助手，不是只改个标签 */
+function myRole() {
+  const list = (S.meta && S.meta.identities) || [];
+  const me = list.filter((x) => x.key === S.identity)[0];
+  return (me && me.role) || "reader";
+}
+
+function modelBoxHtml() {
+  const m = (S.meta && S.meta.models) || null;
+  if (!m) return "<div><span>模型档位未知（服务未就绪）</span></div>";
+  const opts = (m.profiles || []).map((p) =>
+    "<option value=\"" + esc(p.key) + "\"" + (p.current ? " selected" : "") + (p.available ? "" : " disabled") + ">" +
+    esc(p.label) + (p.available ? "" : "（未安装）") + "</option>").join("");
+  const cur = (m.profiles || []).filter((p) => p.current)[0] || {};
+  const ed = myRole() === "editor" && !S.public;
+  const dis = ed ? "" : " disabled";
+  return "<div><span>当前</span><span class='mono'>" + esc(m.current) + "</span></div>" +
+    (cur.note ? "<div><span>规格</span><span class='mono'>" + esc(cur.note) + "</span></div>" : "") +
+    "<div style='display:flex;gap:6px;align-items:center;margin-top:6px'>" +
+    "<select id='model-sel' style='flex:1;padding:3px 6px;font-size:12px'" + dis + ">" + opts + "</select>" +
+    "<button class='btn' id='btn-model' style='padding:2px 10px;font-size:12px'" + dis +
+    (ed ? "" : " title='只有 editor 身份能切换生成模型（右上角切身份）'") + ">切换</button></div>" +
+    "<div class='mono' id='model-out' style='color:var(--ink-3);margin-top:4px'>" +
+    esc(S.modelOut || (ed ? "切换会重启网关、知识库与助手，约 10 秒" : "当前身份是 " + S.identity + "（只读）：切换需要 editor")) +
+    "</div>";
+}
+
+/* 兜底话术：四句都可以改成公司自己的口吻；保存会重启助手进程（约 2 秒），不用重启整个栈 */
+const REPLY_LABELS = { refusal: "查不到（拒答）", unavailable: "服务不可用", no_permission: "无权限", out_of_scope: "超出范围" };
+
+function replyBoxHtml() {
+  const ed = myRole() === "editor" && !S.public;
+  const dis = ed ? "" : " disabled";
+  const info = S.replies || null;
+  if (!info) {
+    return "<div><span>兜底话术未知</span><button class=\"btn\" id=\"btn-rep-load\" style=\"padding:1px 8px;font-size:11px\">读取</button></div>";
+  }
+  const keys = info.keys || Object.keys(REPLY_LABELS);
+  const rows = keys.map((k) =>
+    "<div style=\"margin-top:6px\"><span class=\"mono\" style=\"color:var(--ink-3)\">" + esc(REPLY_LABELS[k] || k) +
+    (info.overridden && info.overridden.indexOf(k) >= 0 ? " · 已覆盖" : " · 默认") + "</span>" +
+    "<textarea id=\"rep-" + esc(k) + "\" rows=\"2\" style=\"width:100%;font-size:12px;padding:4px 6px;margin-top:2px\"" + dis + ">" +
+    esc((info.replies || {})[k] || "") + "</textarea></div>").join("");
+  return rows +
+    "<div style=\"display:flex;gap:6px;align-items:center;margin-top:6px\">" +
+    "<button class=\"btn\" id=\"btn-replies\" style=\"padding:2px 10px;font-size:12px\"" + dis + ">保存并生效</button>" +
+    "<span class=\"mono\" id=\"rep-out\" style=\"color:var(--ink-3);font-size:11px\">" +
+    esc(S.repliesOut || (ed ? "保存后助手会重启，约 2 秒；清空某个输入框＝恢复那句的默认文案" : "当前身份是 " + S.identity + "（只读）：改话术需要 editor")) +
+    "</span></div>";
+}
+
+async function loadReplies() {
+  if (S.repliesLoading) return;
+  S.repliesLoading = true;
+  try {
+    const r = await api("/__replies", { quiet: true });
+    if (r.status === 200) { S.replies = r.data; S.repliesOut = ""; }
+    else S.repliesOut = "读取失败 HTTP " + r.status;
+  } finally {
+    S.repliesLoading = false;
+    renderDebug();
+  }
+}
+
+async function saveReplies(opt) {
+  opt = opt || {};
+  if (myRole() !== "editor" || S.public) { S.repliesOut = "只有 editor 身份可以改兜底话术"; renderDebug(); return; }
+  const body = {};
+  const keys = (S.replies && S.replies.keys) || Object.keys(REPLY_LABELS);
+  keys.forEach((k) => {
+    const el = $("rep-" + k);
+    body[k] = opt.reset ? "" : (el ? el.value : "");
+  });
+  S.repliesOut = opt.reset ? "恢复默认中…" : "保存中…（重启助手）";
+  renderDebug();
+  const r = await api("/__replies", { method: "POST", body: { replies: body } });
+  if (r.status === 200 && r.data) {
+    S.replies = r.data;
+    S.repliesOut = (opt.reset ? "已恢复默认" : "已生效") + "（" + (Math.round(r.data.ms / 100) / 10) + " s，覆盖 " + (r.data.overridden || []).length + " 条）";
+  } else {
+    const detail = (r.data && r.data.error && r.data.error.detail) || "";
+    S.repliesOut = "保存失败 HTTP " + r.status + " " + detail;
+  }
+  renderDebug();
+}
+async function switchModel() {
+  const sel = $("model-sel");
+  if (!sel) return;
+  if (myRole() !== "editor" || S.public) {
+    S.modelOut = "只有 editor 身份可以切换生成模型（右上角切换身份）";
+    renderDebug();
+    return;
+  }
+  const target = sel.value;
+  const current = ((S.meta && S.meta.models) || {}).current;
+  if (target === current) { S.modelOut = "已经是这个档位"; renderDebug(); return; }
+  S.modelOut = "切换中…（重启检索网关 / 知识库 / 助手）";
+  renderDebug();
+  const r = await api("/__models", { method: "POST", body: { model: target } });
+  if (r.status === 200 && r.data) {
+    S.modelOut = "已切到 " + r.data.model + "（" + (Math.round(r.data.ms / 100) / 10) + " s）";
+  } else {
+    const detail = (r.data && r.data.error && r.data.error.detail) || "";
+    S.modelOut = "切换失败 HTTP " + r.status + " " + detail;
+  }
+  const meta = await api("/__meta", { quiet: true });
+  if (meta.status === 200) S.meta = meta.data;
+  renderDebug();
+}
+
+/* 运营视角：会话量、反馈、未解决问题与工单——知识库缺什么，看这里补 */
+async function loadAssistOps() {
+  const box = $("assist-ops");
+  if (!box) return;
+  if (S.opsLoading) return;
+  S.opsLoading = true;
+  const s = await api("/assistant/stats", { quiet: true });
+  const u = await api("/assistant/unresolved?limit=6", { quiet: true });
+  S.opsLoading = false;
+  if (s.status !== 200 || !s.data) { S.opsHtml = "<div><span>助手服务不可用</span><span class='mono'>" + s.status + "</span></div>"; box.innerHTML = S.opsHtml; return; }
+  const d = s.data;
+  const rows = (u.data && u.data.items) || [];
+  box.innerHTML = S.opsHtml =
+    "<div><span>会话 / 消息</span><span class='mono'>" + d.sessions + " / " + d.messages + "</span></div>" +
+    "<div><span>反馈 有用 / 没答到</span><span class='mono'>" + d.feedback_positive + " / " + d.feedback_negative + "</span></div>" +
+    "<div><span>未解决问题</span><span class='mono'>" + d.unresolved_open + "</span></div>" +
+    "<div style='margin-top:6px;color:var(--ink-3)'>最近未解决（回流补语料的输入）</div>" +
+    (rows.length ? rows.map((r) =>
+      "<div><span>" + esc(r.question.slice(0, 40)) + "</span><span class='mono'>" + esc(r.reason) + "</span></div>").join("")
+      : "<div><span>暂无</span></div>");
+}
+
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+/* 等服务端重新接住连接：/__meta 的 api_health 由代理现探 /health */
+async function waitHealthy(tries = 50) {
+  for (let i = 0; i < tries; i++) {
+    const m = await api("/__meta", { identity: "anon" });
+    const h = m.data && m.data.api_health;
+    if (h && h.status === "ok") return true;
+    await sleep(100);
+  }
+  return false;
+}
+
+/* 自检：只走公开 HTTP 接口，跑完自动归档临时文档，不污染文档列表 */
+async function runChecks() {
+  const out = $("chk-out"); const res = [];
+  const bad = [];
+  // note 只在失败时显示，用来定位（HTTP 状态、返回摘要），不改变断言强度。
+  const ck = (name, ok, note) => {
+    res.push(ok);
+    if (!ok) bad.push(note ? name + "（" + note + "）" : name);
+    // 自检过程中每次请求都会重绘调试面板，chk-out 节点会被重建：
+    // 结果要同时存进 S.checksOut，重绘后还能看见，而不是只闪一下。
+    S.checksOut = res.filter(Boolean).length + "/" + res.length + " pass" +
+      (bad.length ? " · 未过：" + bad.join("、") : "");
+    const live = $("chk-out");
+    if (live) live.textContent = S.checksOut;
+    return ok;
+  };
+  let r = await api("/health"); ck("health", r.status === 200);
+  r = await api("/documents?workspace=handbook", { identity: "anon" }); ck("anon", r.status === 401);
+
+  /* ---- 账号登录（PA-228）：身份来自会话 Cookie，不再由请求头自称 ---- */
+  r = await api("/__source?document_id=1", { identity: "anon" });
+  ck("session required", r.status === 401, "HTTP " + r.status);
+  let lastLogin = null;
+  for (let t = 0; t < 6; t++) {
+    lastLogin = await fetch("/api/__login", { method: "POST",
+      headers: { "Content-Type": "application/json" }, credentials: "omit",
+      body: JSON.stringify({ account: "probe-nobody", password: "wrong-password" }) });
+  }
+  ck("login locked", lastLogin && lastLogin.status === 429, "HTTP " + (lastLogin || {}).status);
+  const badLogin = await fetch("/api/__login", { method: "POST",
+    headers: { "Content-Type": "application/json" }, credentials: "omit",
+    body: JSON.stringify({ account: "probe-nobody-2", password: "x" }) });
+  ck("login wrong", badLogin.status === 401, "HTTP " + badLogin.status);
+  const meOk = await api("/__me");
+  ck("session ttl", meOk.status === 200 && Number((meOk.data || {}).expires_at) * 1000 > Date.now(),
+    "expires_at=" + ((meOk.data || {}).expires_at || "-"));
+  const keep = S.identity;
+  let devOk = false;
+  try {
+    if (await devLogin("staff")) {
+      const who = await api("/__me", { quiet: true });
+      devOk = who.status === 200 && (who.data || {}).account === "staff";
+    }
+  } finally {
+    await devLogin(keep, { quiet: true });
+  }
+  ck("dev switch", devOk);
+  let logoutOk = false;
+  try {
+    if (await devLogin("reader")) {
+      await fetch("/api/__logout", { method: "POST" });
+      const after = await fetch("/api/__me", { credentials: "same-origin" });
+      logoutOk = after.status === 401;
+    }
+  } finally {
+    await devLogin(keep, { quiet: true });
+  }
+  ck("logout", logoutOk);
+  const rep = await api("/__replies", { quiet: true });
+  ck("replies read", rep.status === 200 && (((rep.data || {}).keys) || []).length === 4,
+    "keys=" + (((rep.data || {}).keys) || []).length);
+  const repDeny = await api("/__replies", { method: "POST", identity: "reader", body: { replies: { refusal: "不该生效" } } });
+  ck("replies forbidden", repDeny.status === 403, "HTTP " + repDeny.status);
+  // marker 用纯 ASCII 随机串：中文「校验临时文档」这类通用词会和库里别的文档撞词，
+  // 归档后仍可能被别的片段召回，把归档排除断言弄成假失败。
+  const marker = "verify" + Math.random().toString(16).slice(2, 8);
+  let created = await api("/documents", { method: "POST", identity: "editor",
+    body: { workspace: "handbook", title: "临时条目 " + marker, text: marker + " 接口自检用，跑完自动归档。", audience: "all" } });
+  const id = created.data && created.data.id;
+  const ing = await api("/documents/" + id + "/versions/1/ingest", { method: "POST", identity: "editor", body: {} });
+  ck("create+ingest", created.status === 201 && ing.status === 200);
+  /* 问句要带上下文：裸 marker 是硬造词，rerank 分低于 0.12 门槛会（正确地）拒答（PA-225） */
+  const ans = await api("/query", { method: "POST", identity: "reader", body: { workspace: "handbook", question: marker + " 接口自检", mode: "auto" } });
+  const ansCites = ((ans.data && ans.data.citations) || []).map((c) => c.document_id);
+  ck("citation", Boolean(ans.data) && ans.data.status === "answered" && ansCites.indexOf(id) >= 0,
+    "status=" + ((ans.data && ans.data.status) || "-") + " doc=" + id + " cited=" + ansCites.join(","));
+  r = await api("/documents/" + id, { identity: "other-reader" }); ck("cross-tenant", r.status === 404);
+  r = await api("/documents", { method: "POST", identity: "reader", body: { workspace: "handbook", title: "x", text: "y", audience: "all" } }); ck("reader write", r.status === 403);
+  // 助手层：寒暄不检索也不拒答；追问要先改写成可独立检索的问题；无关问题必须拒答。
+  const hi = await api("/assistant/chat", { method: "POST", identity: "reader", body: { text: "你好" } });
+  ck("assistant hello", hi.status === 200 && hi.data && hi.data.answer_status === "smalltalk"
+    && hi.data.intent === "greeting" && (hi.data.reply || "").length > 10);
+  const sid = hi.data && hi.data.session_id;
+  const q1 = await api("/assistant/chat", { method: "POST", identity: "reader",
+    body: { text: "入职当天在哪里领取办公电脑", session_id: sid } });
+  const q2 = await api("/assistant/chat", { method: "POST", identity: "reader",
+    body: { text: "要带什么", session_id: (q1.data && q1.data.session_id) || sid } });
+  ck("assistant followup", q2.status === 200 && q2.data && q2.data.intent === "followup"
+    && (q2.data.standalone_question || "").length > 0 && (q2.data.citations || []).length > 0);
+  const star = await api("/assistant/chat", { method: "POST", identity: "reader",
+    body: { text: "员工购房无息贷款怎么申请" } });
+  ck("assistant refusal", star.status === 200 && star.data
+    && star.data.answer_status === "insufficient_knowledge" && (star.data.citations || []).length === 0);
+  // 同一句同义改写：纯 BM25 版本这里必然拒答（召回不到），接上向量召回后应当答得出。
+  // 断言的是契约而不是某个分支：答了必须带引用，不答必须不带引用（fail-closed）。
+  r = await api("/query", { method: "POST", identity: "reader", body: { workspace: "handbook", question: "I forgot my login secret; where can I regain access?", mode: "auto" } });
+  const para = r.data || {}, paraCites = para.citations || [];
+  ck("paraphrase", (para.status === "answered") === (paraCites.length > 0));
+  r = await api("/query", { method: "POST", identity: "reader", body: { workspace: "handbook", question: "员工购房无息贷款怎么申请", mode: "auto" } });
+  ck("refusal", r.data && r.data.status === "insufficient_knowledge" && (r.data.citations || []).length === 0);
+  r = await api("/documents", { method: "POST", identity: "editor", body: { workspace: "handbook", title: "bad", text: "z", audience: "all", filename: "x.pdf" } }); ck("format guard", r.status === 422);
+  r = await api("/__restart", { method: "POST", identity: "editor", body: {} });
+  // 重启后新进程要几百毫秒才接住连接：先等健康，再带重试取文档（不把启动抖动算成数据丢失）
+  await waitHealthy();
+  let back = await api("/documents/" + id, { identity: "editor" });
+  for (let i = 0; i < 4 && back.status !== 200; i++) { await sleep(200); back = await api("/documents/" + id, { identity: "editor" }); }
+  ck("restart persistence", r.status === 200 && back.status === 200 && back.data.latest_version === 1);
+  const arch = await api("/documents/" + id + "/archive", { method: "POST", identity: "editor", body: { expected_version: 1 } });
+  const archDoc = await api("/documents/" + id, { identity: "editor" });
+  r = await api("/query", { method: "POST", identity: "reader", body: { workspace: "handbook", question: marker + " 接口自检", mode: "auto" } });
+  // 归档的硬契约是「这篇不再被召回」，不是「模型必须拒答」：换到量化档后，对库里没有的随机 marker
+  // 偶尔会答一句并引用别的文档（24 次里出现 1 次），那是生成侧行为，由 refusal 那项单独把关。（PA-222）
+  const archCites = (r.data && r.data.citations) || [];
+  ck("archive exclusion", arch.status === 200 && archDoc.data && archDoc.data.status === "ARCHIVED"
+    && !archCites.some((c) => c.document_id === id));
+  // 资料管理三件：改版（写新版本 + 重新索引，归档态会被这次写版本带回草稿再激活）、
+  // 权限（reader 碰管理端点即 403）、硬删除（清版本/分块/向量，audit 留 purged）。
+  const ed = await api("/documents/" + id + "/versions", { method: "POST", identity: "editor",
+    body: { text: marker + " 第二版：改版自检。", expected_version: 1 } });
+  const edIng = await api("/documents/" + id + "/versions/2/ingest", { method: "POST", identity: "editor", body: {} });
+  const edDoc = await api("/documents/" + id, { identity: "editor" });
+  const edSrc = await api("/__source?document_id=" + id + "&workspace=handbook", { identity: "editor" });
+  const edV2 = ((edDoc.data && edDoc.data.versions) || []).some((v) => v.version === 2 && v.status === "ACTIVE");
+  ck("edit version", ed.status === 200 && edDoc.data && edDoc.data.latest_version === 2
+    && edDoc.data.current_version === 2 && edDoc.data.status === "ACTIVE" && edIng.status === 200
+    && edV2 && (edSrc.data && (edSrc.data.text || "").indexOf("第二版") >= 0));
+  // 读正文按 audience 判：读者能读 all 的正文（产品没有读正文接口，正文只能走 /__source），
+  // internal 才是越权。旧断言把「读者一律 403」当权限，等于把产品缺口包装成权限边界（PA-221）。
+  const srcR = await api("/__source?document_id=" + id + "&workspace=handbook", { identity: "reader" });
+  ck("source read", srcR.status === 200 && !!srcR.data && (srcR.data.text || "").indexOf("第二版") >= 0);
+  const allDocs = await api("/documents?workspace=handbook", { identity: "editor" });
+  const intDoc = ((allDocs.data && allDocs.data.items) || []).filter((x) => x.audience === "internal")[0];
+  const intSrc = intDoc
+    ? await api("/__source?document_id=" + intDoc.id + "&workspace=handbook", { identity: "reader" })
+    : { status: 0 };
+  ck("source internal 403", !!intDoc && intSrc.status === 403);
+  const purR = await api("/__purge", { method: "POST", identity: "reader", body: { document_id: id, confirm_title: "x" } });
+  ck("reader cannot write", purR.status === 403);
+  const pur = await api("/__purge", { method: "POST", identity: "editor",
+    body: { document_id: id, confirm_title: "临时条目 " + marker } });
+  const gone = await api("/documents/" + id, { identity: "editor" });
+  const aud = await api("/__audit?limit=20", { identity: "editor" });
+  const acts = ((aud.data && aud.data.items) || []).map((x) => x.action);
+  ck("purge", pur.status === 200 && pur.data && pur.data.deleted && pur.data.deleted.chunks > 0
+    && gone.status === 404 && acts.indexOf("purged") >= 0);
+  /* 入库流水线：导入文件 → 去重 → 只读拦截 → 可检索；导出（md/docx/整库 zip/审计 csv）；
+     采集源 dry run；数据质量看板。脚本版 scripts/verify_checks.py 跑同一组断言。 */
+  const b64 = (str) => { const bytes = new TextEncoder().encode(str); let s = ""; for (const b of bytes) s += String.fromCharCode(b); return btoa(s); };
+  const impText = marker + " 导入自检：一线城市住宿上限每晚 600 元，仅用于自检。";
+  const impBody = { files: [{ filename: "selfcheck.txt", data: b64(impText) }] };
+  const imp = await api("/__import", { method: "POST", identity: "editor", body: impBody });
+  const impSum = (imp.data && imp.data.summary) || {};
+  const impItem = ((imp.data && imp.data.items) || [])[0] || {};
+  const impId = impItem.document_id;
+  ck("import file", imp.status === 200 && impSum.imported === 1 && impItem.indexed === true);
+  const imp2 = await api("/__import", { method: "POST", identity: "editor", body: impBody });
+  ck("import dedupe", imp2.status === 200 && imp2.data && imp2.data.summary && imp2.data.summary.skipped === 1);
+  const impDeny = await api("/__import", { method: "POST", identity: "reader",
+    body: { files: [{ filename: "x.txt", data: b64("plain") }] } });
+  ck("import forbidden", impDeny.status === 403);
+  /* 这一条测的是「刚导入的内容能被检索到」。问句必须带上下文：裸 marker 是硬造词，
+     bge-reranker 对它的相关性打分低于 0.12 门槛，拒答是产品的正确行为（PA-225）。
+     同一个问题再问一次，两次里有任意一次 answered 且引到这篇就算过（生成侧抖动）。 */
+  let impCited = [];
+  let impStatus = "";
+  for (let att = 0; att < 2; att++) {
+    r = await api("/query", { method: "POST", identity: "reader", body: { workspace: "handbook", question: marker + " 一线城市住宿上限", mode: "auto" } });
+    impCited = ((r.data && r.data.citations) || []).map((c) => c.document_id);
+    impStatus = String((r.data && r.data.status) || "");
+    if (impStatus === "answered" && impCited.indexOf(impId) >= 0) break;
+  }
+  ck("import searchable", impStatus === "answered" && impCited.indexOf(impId) >= 0,
+    "status=" + (impStatus || "-") + " doc=" + impId + " cited=" + impCited.join(","));
+  /* 压缩包批量导入：前端手写 store 模式 zip（无压缩、带 CRC32），后端解包后目录名进标题 */
+  const crcT = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1); t[n] = c >>> 0; } return t; })();
+  const crcOf = (u8) => { let c = 0xFFFFFFFF; for (let i = 0; i < u8.length; i++) c = crcT[(c ^ u8[i]) & 0xFF] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; };
+  const zipMake = (entries) => {
+    const enc = new TextEncoder(); const parts = []; const cen = []; let off = 0;
+    for (const e of entries) {
+      const nb = enc.encode(e.name); const db = enc.encode(e.text); const crc = crcOf(db);
+      const lh = new Uint8Array(30 + nb.length); const lv = new DataView(lh.buffer);
+      lv.setUint32(0, 0x04034b50, true); lv.setUint16(4, 20, true); lv.setUint16(6, 0x0800, true);
+      lv.setUint16(8, 0, true); lv.setUint16(10, 0, true); lv.setUint16(12, 0x21, true);
+      lv.setUint32(14, crc, true); lv.setUint32(18, db.length, true); lv.setUint32(22, db.length, true);
+      lv.setUint16(26, nb.length, true); lv.setUint16(28, 0, true); lh.set(nb, 30);
+      parts.push(lh, db);
+      const ch = new Uint8Array(46 + nb.length); const cv = new DataView(ch.buffer);
+      cv.setUint32(0, 0x02014b50, true); cv.setUint16(4, 20, true); cv.setUint16(6, 20, true);
+      cv.setUint16(8, 0x0800, true); cv.setUint16(10, 0, true); cv.setUint16(12, 0, true); cv.setUint16(14, 0x21, true);
+      cv.setUint32(16, crc, true); cv.setUint32(20, db.length, true); cv.setUint32(24, db.length, true);
+      cv.setUint16(28, nb.length, true); cv.setUint32(42, off, true); ch.set(nb, 46);
+      cen.push(ch); off += lh.length + db.length;
+    }
+    const cdSize = cen.reduce((a, b) => a + b.length, 0);
+    const eocd = new Uint8Array(22); const ev = new DataView(eocd.buffer);
+    ev.setUint32(0, 0x06054b50, true); ev.setUint16(8, entries.length, true);
+    ev.setUint16(10, entries.length, true); ev.setUint32(12, cdSize, true); ev.setUint32(16, off, true);
+    const all = parts.concat(cen, [eocd]);
+    let total = 0; for (const p of all) total += p.length;
+    const out = new Uint8Array(total); let q = 0;
+    for (const p of all) { out.set(p, q); q += p.length; }
+    return out;
+  };
+  const u8b64 = (u8) => { let s = ""; for (const b of u8) s += String.fromCharCode(b); return btoa(s); };
+  const zipMark = marker + "zip";
+  const zipB64 = u8b64(zipMake([
+    { name: "综合部/" + zipMark + "-a.md", text: "# 综合部制度\n\n" + zipMark + " 综合部办公用品按月申领。" },
+    { name: "技术部/" + zipMark + "-b.md", text: "# 技术部制度\n\n" + zipMark + " 技术部值班按周轮换。" },
+    { name: "综合部/.DS_Store", text: "junk" },
+  ]));
+  const zipImp = await api("/__import", { method: "POST", identity: "editor", body: {
+    workspace: "handbook", audience: "all", files: [{ filename: zipMark + ".zip", data: zipB64 }] } });
+  const zSum = (zipImp.data && zipImp.data.summary) || {};
+  const zipItems = (zipImp.data && zipImp.data.items) || [];
+  const zipTitles = zipItems.map((it) => String(it.title || ""));
+  ck("zip import", zipImp.status === 200 && zSum.imported === 2 && zSum.archives === 1
+    && zipTitles.length === 2 && zipTitles.every((t) => t.indexOf("综合部") === 0 || t.indexOf("技术部") === 0),
+    "HTTP " + zipImp.status + " sum=" + JSON.stringify(zSum) + " titles=" + zipTitles.join("|"));
+  const zipDeny = await api("/__import", { method: "POST", identity: "reader",
+    body: { workspace: "handbook", files: [{ filename: "x.zip", data: zipB64 }] } });
+  ck("zip forbidden", zipDeny.status === 403);
+  /* 上限提醒：一次提交 301 个文件，后端必须留下「还有 1 个没进来」的记录，而不是静默丢掉 */
+  const manyFiles = [];
+  for (let mi = 0; mi < 301; mi++) {
+    manyFiles.push({ filename: zipMark + "-many-" + mi + ".md", data: btoa("# " + zipMark + " " + mi + "\n\nbody placeholder.") });
+  }
+  const many = await api("/__import", { method: "POST", identity: "editor", body: {
+    workspace: "handbook", dry_run: true, files: manyFiles } });
+  const mSum = (many.data && many.data.summary) || {};
+  const mFail = ((many.data && many.data.items) || []).filter((it) => it.status === "failed");
+  ck("import limit", many.status === 200 && mSum.parsed === 300 && mFail.length === 1
+    && String(mFail[0].error || "").indexOf("300") >= 0,
+    "HTTP " + many.status + " sum=" + JSON.stringify(mSum));
+  // 二进制下载（导出件）。身份同样由会话决定：要换身份就真的切一次会话，下载完切回。
+  const bl = async (p, identity) => {
+    if (identity && identity !== S.identity) {
+      const prev = S.identity;
+      if (!(await devLogin(identity))) return new Response(null, { status: 0 });
+      try { return await fetch("/api" + p); }
+      finally { await devLogin(prev); }
+    }
+    return fetch("/api" + p);
+  };
+  const mdRes = await bl("/__export?scope=doc&document_id=" + impId + "&format=md");
+  const docxRes = await bl("/__export?scope=doc&document_id=" + impId + "&format=docx");
+  const mdText = mdRes.ok ? await mdRes.text() : "";
+  const docxBuf = docxRes.ok ? new Uint8Array(await docxRes.arrayBuffer()) : new Uint8Array();
+  ck("export doc", mdRes.ok && docxRes.ok && mdText.indexOf(marker) >= 0
+    && docxBuf[0] === 0x50 && docxBuf[1] === 0x4b);
+  const zipRes = await bl("/__export?scope=all&format=zip");
+  const zipBuf = zipRes.ok ? new Uint8Array(await zipRes.arrayBuffer()) : new Uint8Array();
+  ck("export zip", zipRes.ok && zipBuf[0] === 0x50 && zipBuf.length > 10000);
+  const csvRes = await bl("/__export?scope=audit&format=csv");
+  const csvText = csvRes.ok ? await csvRes.text() : "";
+  ck("export audit", csvRes.ok && csvText.indexOf("actor") >= 0 && csvText.indexOf("action") >= 0);
+  /* 多模态读图：本地 Qwen3.5-9B-VL 把图片转写成 Markdown（扫描件/截图入库的前置步骤）。 */
+  const cv = document.createElement("canvas");
+  cv.width = 720; cv.height = 200;
+  const cx = cv.getContext("2d");
+  cx.fillStyle = "#ffffff"; cx.fillRect(0, 0, 720, 200);
+  cx.fillStyle = "#111111"; cx.font = "bold 46px monospace";
+  cx.fillText("OCR CHECK " + marker.toUpperCase(), 28, 112);
+  const pngData = cv.toDataURL("image/png").split(",")[1] || "";
+  const ocr = await api("/__ocr", { method: "POST", identity: "editor",
+    body: { filename: "selfcheck.png", data: pngData, workspace: "handbook" } });
+  const ocrText = String((ocr.data && ocr.data.text) || "").toUpperCase();
+  ck("ocr read", ocr.status === 200 && ocrText.indexOf(marker.toUpperCase()) >= 0);
+  const ocrDeny = await api("/__ocr", { method: "POST", identity: "reader",
+    body: { filename: "x.png", data: pngData } });
+  ck("ocr forbidden", ocrDeny.status === 403);
+  // 自检导入件不入库：导出检查跑完按标题确认硬删。
+  const impDet = await api("/documents/" + impId, { identity: "editor" });
+  const impTitle = impDet.data && impDet.data.title;
+  if (impTitle) await api("/__purge", { method: "POST", identity: "editor",
+    body: { document_id: impId, confirm_title: impTitle } });
+  for (const it of zipItems) {
+    if (it.document_id && it.title) {
+      await api("/__purge", { method: "POST", identity: "editor",
+        body: { document_id: it.document_id, confirm_title: it.title } });
+    }
+  }
+  const col = await api("/__collect", { method: "POST", identity: "editor", body: { source: "all", dry_run: true } });
+  ck("collect dry run", col.status === 200 && col.data && col.data.summary
+    && col.data.summary.fetched >= 1 && col.data.summary.created === 0);
+  const qa = await api("/__quality", { identity: "editor" });
+  const qaDeny = await api("/__quality", { identity: "reader" });
+  ck("quality board", qa.status === 200 && qaDeny.status === 403 && qa.data && qa.data.documents
+    && qa.data.documents.total > 0);
+
+  /* ---- 分类标签 / 版本对比 / 批量操作（演示层台账，产品 schema 不动） ---- */
+  const bulkIds = [];
+  for (const suffix of ["a", "b"]) {
+    const made2 = await api("/documents", { method: "POST", identity: "editor",
+      body: { workspace: "handbook", title: "临时条目 " + marker + " bulk-" + suffix,
+              text: marker + " 批量自检 " + suffix + " 用，跑完即下线。", audience: "all" } });
+    const bid = made2.data && made2.data.id;
+    if (bid) {
+      bulkIds.push(bid);
+      await api("/documents/" + bid + "/versions/1/ingest", { method: "POST", identity: "editor", body: {} });
+    }
+  }
+  const diffDoc = bulkIds[0];
+  if (diffDoc) {
+    await api("/documents/" + diffDoc + "/versions", { method: "POST", identity: "editor",
+      body: { text: marker + " 批量自检 a 第二版：加了住宿上限说明。", expected_version: 1 } });
+    await api("/documents/" + diffDoc + "/versions/2/ingest", { method: "POST", identity: "editor", body: {} });
+  }
+  const v1s = diffDoc ? await api("/__source?document_id=" + diffDoc + "&workspace=handbook&version=1", { identity: "editor" }) : { status: 0, data: {} };
+  const v2s = diffDoc ? await api("/__source?document_id=" + diffDoc + "&workspace=handbook&version=2", { identity: "editor" }) : { status: 0, data: {} };
+  const t1 = (v1s.data && v1s.data.text) || "";
+  const t2 = (v2s.data && v2s.data.text) || "";
+  ck("version diff", !!diffDoc && v1s.status === 200 && v2s.status === 200
+    && v1s.data.version === 1 && v2s.data.version === 2
+    && t1 !== t2 && t2.indexOf("第二版") >= 0 && t1.indexOf("第二版") < 0);
+  const tg = await api("/__tags?workspace=handbook", { identity: "editor" });
+  const tgGroups = (tg.data && tg.data.groups) || [];
+  const tgDeny = await api("/__tags", { method: "POST", identity: "reader",
+    body: { workspace: "handbook", document_id: diffDoc, tags: ["越权标签"] } });
+  await api("/__tags", { method: "POST", identity: "editor",
+    body: { workspace: "handbook", document_id: diffDoc, tags: ["自检分类"] } });
+  const tg2 = await api("/__tags?workspace=handbook", { identity: "editor" });
+  const mineTag = ((tg2.data && tg2.data.groups) || []).filter((g) => g.tag === "自检分类")[0];
+  ck("tag tree", tg.status === 200 && tgGroups.length >= 3 && ((tg.data && tg.data.total) || 0) >= 3);
+  ck("tag write", !!mineTag && (mineTag.ids || []).indexOf(diffDoc) >= 0);
+  ck("tag forbidden", tgDeny.status === 403);
+  if (bulkIds.length) {
+    const bz = await bl("/__export?scope=docs&ids=" + bulkIds.join(","));
+    const bzBuf = bz.ok ? new Uint8Array(await bz.arrayBuffer()) : new Uint8Array();
+    ck("bulk export", bz.ok && bzBuf[0] === 0x50 && bzBuf.length > 500);
+    const ba = await api("/__batch", { method: "POST", identity: "editor",
+      body: { workspace: "handbook", action: "archive", ids: bulkIds } });
+    const states = [];
+    for (const bid of bulkIds) {
+      const st = await api("/documents/" + bid, { identity: "editor" });
+      states.push(st.data && st.data.status);
+    }
+    ck("bulk archive", ba.status === 200 && ((ba.data && ba.data.archived) || []).length === bulkIds.length
+      && states.every((x) => x === "ARCHIVED"));
+    const bd = await api("/__batch", { method: "POST", identity: "reader",
+      body: { workspace: "handbook", action: "archive", ids: bulkIds } });
+    ck("bulk forbidden", bd.status === 403);
+    // 临时文档不入库：下线后按标题确认硬删，避免每跑一次自检就往侧栏留两篇。
+    for (const bid of bulkIds) {
+      const det = await api("/documents/" + bid, { identity: "editor" });
+      const title = det.data && det.data.title;
+      if (title) await api("/__purge", { method: "POST", identity: "editor",
+        body: { document_id: bid, confirm_title: title } });
+    }
+  } else {
+    ck("bulk export", false); ck("bulk archive", false); ck("bulk forbidden", false);
+  }
+
+  /* ---- 双层：个人库隔离（同一身份在企业库只读、在自己的库可写）---- */
+  const mine = Object.keys(myWorkspaces() || {});
+  const personal = mine.filter((k) => wsKind(k) === "personal");
+  const otherPersonal = ((S.meta.workspaces || []).filter((w) => w.kind === "personal")
+    .map((w) => w.key).filter((k) => personal.indexOf(k) < 0))[0];
+  const pms = personal[0];
+  if (pms) {
+    const marker = "pnote" + Math.random().toString(16).slice(2, 8);
+    const made = await api("/documents", { method: "POST",
+      body: { workspace: pms, title: "个人条目 " + marker,
+              text: marker + " 个人库隔离自检用，跑完即删。", audience: "all" } });
+    ck("personal write", made.status === 201);
+    if (made.status === 201) {
+      const pid = made.data.id;
+      await api("/documents/" + pid + "/versions/1/ingest", { method: "POST", body: {} });
+      const seen = await api("/documents?workspace=" + encodeURIComponent(pms));
+      ck("personal list", seen.status === 200
+        && (seen.data.items || []).some((d) => d.id === pid));
+      // 个人库按本人身份导出：企业库 editor 在别人的个人库里没有权限（按库判权）
+      const pz = await bl("/__export?scope=all&format=zip&workspace=" + encodeURIComponent(pms), S.identity);
+      const pzBuf = pz.ok ? new Uint8Array(await pz.arrayBuffer()) : new Uint8Array();
+      ck("personal export", pz.ok && pzBuf[0] === 0x50);
+      // 产品没有 DELETE，硬删走代理层；当前库的编辑者就能删自己的条目
+      const purged = await api("/__purge", { method: "POST",
+        body: { document_id: pid, confirm_title: "个人条目 " + marker, workspace: pms } });
+      ck("personal purge", purged.status === 200);
+    } else {
+      ck("personal list", false);
+      ck("personal export", false);
+      ck("personal purge", false);
+    }
+  } else {
+    ck("personal write", false);
+    ck("personal list", false);
+    ck("personal export", false);
+    ck("personal purge", false);
+  }
+  if (otherPersonal) {
+    const deny = await api("/documents?workspace=" + encodeURIComponent(otherPersonal));
+    const denyQ = await api("/query", { method: "POST",
+      body: { workspace: otherPersonal, question: "入职有什么福利", mode: "auto" } });
+    ck("personal isolate", deny.status === 403 && denyQ.status === 403);
+  } else {
+    ck("personal isolate", false);
+  }
+
+  await loadDocs();
+  toast("自检完成：" + res.filter(Boolean).length + "/" + res.length + " 通过");
+}
+
+/* ---------------- 启动 ---------------- */
+function showTab(which) {
+  S.tab = which;
+  $("tab-cite").setAttribute("aria-selected", which === "cite");
+  $("tab-doc").setAttribute("aria-selected", which === "doc");
+  $("tab-log").setAttribute("aria-selected", which === "log");
+  $("tab-audit").setAttribute("aria-selected", which === "audit");
+  $("tab-data").setAttribute("aria-selected", which === "data");
+  $("pane-cite").classList.toggle("hide", which !== "cite");
+  $("pane-doc").classList.toggle("hide", which !== "doc");
+  $("pane-log").classList.toggle("hide", which !== "log");
+  $("pane-audit").classList.toggle("hide", which !== "audit");
+  $("pane-data").classList.toggle("hide", which !== "data");
+  if (which === "log") renderLog();
+  if (which === "audit") renderAudit();
+  if (which === "data") renderData();
+}
+
+/* 这段会话的问答记录：用户看到的「资料」在左，「记录」在右 */
+function renderLog() {
+  const box = $("pane-log");
+  if (!box) return;
+  const rows = [];
+  S.messages.forEach((m, i) => {
+    if (m.role !== "assistant") return;
+    const prev = S.messages[i - 1];
+    const q = (prev && prev.role === "user" ? prev.text : m.question) || "";
+    const d = m.data || {};
+    const st = d.answer_status || d.status || "";
+    const tag = STATUS_TAG[st] || ["已回复", "info"];
+    const cits = (d.citations || []).length;
+    rows.push('<button class="rec-item" data-rec="' + i + '">' +
+      '<div class="q">' + esc(q.slice(0, 120)) + "</div>" +
+      '<div class="m"><span class="tag ' + tag[1] + '">' + esc(tag[0]) + "</span>" +
+      "<span>" + cits + " 条引用</span>" + (m.ms ? "<span>" + esc(m.ms) + " ms</span>" : "") + "</div></button>");
+  });
+  box.innerHTML = rows.length
+    ? '<div class="rec">' + rows.reverse().join("") + "</div>"
+    : '<div class="empty-hint">这段会话的提问与回答会依次记在这里<br>点一条可以回到它的引用依据</div>';
+  Array.prototype.forEach.call(box.querySelectorAll("[data-rec]"), (el) => {
+    el.onclick = () => {
+      const m = S.messages[Number(el.dataset.rec)] || {};
+      const c = (m.data && m.data.citations || [])[0];
+      if (c) showCite(c); else showTab("log");
+    };
+  });
+}
+
+/* 变更记录：产品 audit 表的真实流水（谁在什么时候对哪篇文档做了什么） */
+const ACTION_TEXT = {
+  created: ["新建", "ok"], version_created: ["新版本", "info"], published: ["发布索引", "ok"],
+  archived: ["下线", "wait"], ingest_failed: ["索引失败", "wait"], purged: ["删除", "wait"]
+};
+async function renderAudit() {
+  const box = $("pane-audit");
+  if (!box) return;
+  const r = await api("/__audit?limit=40");
+  if (r.status !== 200) {
+    box.innerHTML = '<div class="empty-hint">变更记录只有 editor 身份能看<br>（含 internal 文档标题，不对 reader 暴露）</div>';
+    return;
+  }
+  const rows = (r.data && r.data.items) || [];
+  box.innerHTML = rows.length ? '<div class="rec">' + rows.map((a) => {
+    const t = ACTION_TEXT[a.action] || [a.action, "info"];
+    return '<div class="rec-item static"><div class="q">' + esc(a.title || ("文档 " + a.document_id)) + "</div>" +
+      '<div class="m"><span class="tag ' + t[1] + '">' + esc(t[0]) + "</span>" +
+      "<span>" + esc(a.actor) + "</span><span>" + esc(String(a.created_at || "").replace("T", " ").slice(5, 19)) + "</span></div></div>";
+  }).join("") + "</div>"
+    : '<div class="empty-hint">还没有操作记录<br>新建、改版、下线、删除都会自动记一条</div>';
+}
+
+/* ---------------- 资料库：导入台账 / 采集源 / 数据质量 / 导出 ---------------- */
+
+/* 二进制下载走 fetch 再存 blob：这样既能带上会话 Cookie，也能读回 Content-Disposition 里的中文文件名 */
+async function download(path, fallback) {
+  const res = await fetch("/api" + path);
+  if (!res.ok) { toast("导出失败：HTTP " + res.status); return; }
+  const blob = await res.blob();
+  let name = fallback;
+  const cd = res.headers.get("Content-Disposition") || "";
+  const m = /filename\*=UTF-8''([^;]+)/i.exec(cd);
+  if (m) { try { name = decodeURIComponent(m[1]); } catch (e) { /* 用回退名 */ } }
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 5000);
+  toast("已导出 " + name + "（" + Math.round(blob.size / 1024) + " KB）");
+}
+
+/* 采集：按 demo/sources.json 的来源逐个抓；指纹没变就跳过，变了才升版本 */
+async function collect(dry) {
+  if (!requireWrite()) return;
+  toast(dry ? "正在按来源抓取（只解析，不写库）…" : "正在按来源抓取并入库…");
+  const r = await api("/__collect", { method: "POST", body: { source: "all", dry_run: dry, workspace: S.workspace } });
+  if (r.status !== 200) { toast("采集失败：HTTP " + r.status + hint(r)); return; }
+  S.lastCollect = r.data;
+  const s = (r.data && r.data.summary) || {};
+  toast("采集完成：新建 " + (s.created || 0) + " · 更新 " + (s.updated || 0) +
+        " · 跳过 " + (s.skipped || 0) + " · 失败 " + (s.failed || 0));
+  await renderData();
+  if (!dry) await loadDocs();
+}
+
+async function renderData() {
+  const box = $("pane-data");
+  if (!box) return;
+  const q = await api("/__quality?workspace=" + encodeURIComponent(S.workspace));
+  if (q.status !== 200) {
+    box.innerHTML = '<div class="empty-hint">资料库运维视图只对 editor 开放<br>切换右上角身份为 editor</div>';
+    return;
+  }
+  const d = q.data || {};
+  const docs = d.documents || {}, issues = d.issues || {}, f = d.files || {};
+  const sources = d.sources || [], runs = d.runs || [];
+  const kpi = (n, label) => '<div class="k"><b>' + esc(n) + "</b><span>" + esc(label) + "</span></div>";
+
+  let html = '<div class="kpi3">' + kpi(docs.total || 0, "文档总数") +
+    kpi(docs.active || 0, "已索引 ACTIVE") + kpi(docs.archived || 0, "已归档") + "</div>" +
+    '<div class="kv" style="grid-template-columns:auto 1fr">' +
+      "<dt>空正文</dt><dd>" + (issues.empty_text || 0) + "</dd>" +
+      "<dt>重复正文</dt><dd>" + (issues.duplicate_hash || 0) + "</dd>" +
+      "<dt>ACTIVE 无分块</dt><dd>" + (issues.active_without_chunks || 0) + "</dd>" +
+      "<dt>导入原件</dt><dd>" + (f.files || 0) + " 份 · " + Math.round((f.bytes || 0) / 1024) + " KB</dd>" +
+      "<dt>审计事件</dt><dd>" + (d.audit_events || 0) + "</dd>" +
+    "</div>";
+
+  html += "<h3 style='font-size:12.5px;margin:16px 0 4px'>采集源（自采集 / 自更新）</h3>" +
+    '<div class="meta-line">一个来源只对应一篇文档：内容指纹没变就跳过，变了才在同一篇上写新版本。</div>' +
+    '<div class="actions"><button class="btn primary" id="btn-collect">立即采集</button>' +
+    '<button class="btn" id="btn-collect-dry">只看不写</button></div>';
+  html += sources.length
+    ? '<table class="tbl"><thead><tr><th>来源</th><th>状态</th><th>文档</th><th>上次</th></tr></thead><tbody>' +
+      sources.map((s) => "<tr><td>" + esc(s.name) +
+        (s.category ? '<div class="sub" style="font-size:10.5px;color:var(--ink-3)">' + esc(s.category) + "</div>" : "") + "</td>" +
+        "<td>" + esc(s.last_status || "—") + "</td>" +
+        '<td class="num">' + (s.document_id ? "#" + esc(s.document_id) : "—") + "</td>" +
+        '<td class="num">' + esc(String(s.last_run || "").replace("T", " ").slice(5, 16)) + "</td></tr>").join("") +
+      "</tbody></table>"
+    : '<div class="empty-hint">还没有采集记录<br>点「立即采集」会读 demo/sources.json 里的来源</div>';
+
+  if (S.lastCollect) {
+    const items = S.lastCollect.items || [];
+    const s = S.lastCollect.summary || {};
+    html += "<h3 style='font-size:12.5px;margin:16px 0 4px'>本次采集明细</h3>" +
+      '<div class="meta-line">' + (S.lastCollect.dry_run ? "只解析，未写库" : "已写库") +
+      " · " + esc(S.lastCollect.elapsed_ms) + " ms · 新建 " + (s.created || 0) + " / 更新 " +
+      (s.updated || 0) + " / 跳过 " + (s.skipped || 0) + " / 失败 " + (s.failed || 0) + "</div>" +
+      '<table class="tbl"><thead><tr><th>来源</th><th>结果</th><th>说明</th></tr></thead><tbody>' +
+      items.map((it) => "<tr><td>" + esc(it.source) + "</td><td>" + esc(it.status) +
+        (it.version ? " v" + esc(it.version) : "") + "</td><td>" + esc(it.detail || it.reason || "") + "</td></tr>").join("") +
+      "</tbody></table>";
+  }
+
+  if (runs.length) {
+    html += "<h3 style='font-size:12.5px;margin:16px 0 4px'>采集历史</h3>" +
+      '<table class="tbl"><thead><tr><th>#</th><th>范围</th><th>抓</th><th>新</th><th>更</th><th>跳</th><th>错</th></tr></thead><tbody>' +
+      runs.map((r) => "<tr><td>" + esc(r.id) + "</td><td>" + esc(r.source) + "</td>" +
+        '<td class="num">' + esc(r.fetched) + '</td><td class="num">' + esc(r.created) +
+        '</td><td class="num">' + esc(r.updated) + '</td><td class="num">' + esc(r.skipped) +
+        '</td><td class="num">' + esc(r.failed) + "</td></tr>").join("") + "</tbody></table>";
+  }
+
+  const fr = await api("/__files?limit=8&workspace=" + encodeURIComponent(S.workspace));
+  const items = (fr.status === 200 && fr.data.items) || [];
+  html += "<h3 style='font-size:12.5px;margin:16px 0 4px'>最近导入的原件</h3>";
+  html += items.length
+    ? '<table class="tbl"><thead><tr><th>文件</th><th>类型</th><th>字</th><th>页/表</th><th>状态</th></tr></thead><tbody>' +
+      items.map((it) => "<tr><td>" + esc(it.filename) + "</td><td>" + esc(it.kind) + "</td>" +
+        '<td class="num">' + esc(it.chars) + "</td>" +
+        '<td class="num">' + esc(it.pages) + "/" + esc(it.tables) + "</td><td>" + esc(it.status) + "</td></tr>").join("") +
+      "</tbody></table>"
+    : '<div class="empty-hint">还没有导入过文件<br>左侧「导入文件」支持 PDF / Word / Excel / CSV</div>';
+
+  html += "<h3 style='font-size:12.5px;margin:16px 0 4px'>导出</h3>" +
+    '<div class="actions">' +
+      '<button class="btn" id="btn-exp-zip">整库 zip（Markdown + manifest）</button>' +
+      '<button class="btn" id="btn-exp-audit">审计流水 CSV</button>' +
+    "</div>" +
+    '<div class="meta-line">当前库：' + esc(wsLabel(S.workspace)) +
+    "。整库导出含 internal 文档，只有这个库的编辑者能导；单篇导出在「文档详情」页的按钮上。</div>";
+
+  box.innerHTML = html;
+  $("btn-collect").onclick = () => collect(false);
+  $("btn-collect-dry").onclick = () => collect(true);
+  $("btn-exp-zip").onclick = () => download("/__export?scope=all&format=zip&workspace=" +
+    encodeURIComponent(S.workspace), S.workspace + "-export.zip");
+  $("btn-exp-audit").onclick = () => download("/__export?scope=audit&format=csv&workspace=" +
+    encodeURIComponent(S.workspace), "audit.csv");
+}
+
+/* 导入：图片先让本地多模态模型转写成 Markdown，再和文档一起走 /__import */
+const IMAGE_RE = /\.(png|jpe?g|webp|bmp)$/i;
+
+function readFileB64(file) {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result || "").split(",")[1] || "");
+    reader.onerror = () => resolve("");
+    reader.readAsDataURL(file);
+  });
+}
+
+function textB64(text) {
+  return readFileB64(new Blob([text], { type: "text/markdown" }));
+}
+
+const IMPORT_MAX_FILES = 300;
+const IMPORT_MAX_ONE = 60 * 1024 * 1024;
+const IMPORT_MAX_BATCH = 85 * 1024 * 1024;
+const mbText = (n) => (n / (1024 * 1024)).toFixed(1) + " MB";
+
+/* 选中后先按上限筛一遍：超出的不当场丢掉，全部列出来并写明原因，让人知道哪几个没进来。 */
+function splitByLimits(fileList) {
+  const relOf = (f) => String((f && (f.webkitRelativePath || f.name)) || "");
+  const all = Array.prototype.slice.call(fileList || []);
+  const picked = [];
+  const over = [];
+  let batch = 0;
+  for (const f of all) {
+    const name = relOf(f);
+    if (picked.length >= IMPORT_MAX_FILES) {
+      over.push({ filename: name, error: "单次最多 " + IMPORT_MAX_FILES + " 个文件，这一批超出的未提交" });
+      continue;
+    }
+    if (f.size > IMPORT_MAX_ONE) {
+      over.push({ filename: name, error: "单文件超过 60 MB（实际 " + mbText(f.size) + "），未提交" });
+      continue;
+    }
+    if (batch + f.size > IMPORT_MAX_BATCH) {
+      over.push({ filename: name, error: "本批已达到 120 MB 请求上限，未提交；请分成几批" });
+      continue;
+    }
+    batch += f.size;
+    picked.push(f);
+  }
+  return { picked: picked, over: over, all: all.length };
+}
+
+function overHintHtml(rows) {
+  if (!rows || !rows.length) return "";
+  return '<div class="empty-hint" style="text-align:left;color:var(--danger)">未提交 ' + rows.length + " 个：" +
+    rows.map((r) => "<div>· " + esc(r.filename) + " — " + esc(r.error) + "</div>").join("") + "</div>";
+}
+
+async function importFiles(fileList) {
+  if (!requireWrite()) return;
+  const split = splitByLimits(fileList);
+  const picked = split.picked;
+  const overRows = split.over;
+  const relName = (f) => String((f && (f.webkitRelativePath || f.name)) || "");
+  if (!picked.length) {
+    $("import-result").innerHTML = '<div class="empty-hint">没有可提交的文件</div>' + overHintHtml(overRows);
+    toast(overRows.length ? "全部超出导入上限，一个都没提交" : "没有选中文件");
+    return;
+  }
+  if (overRows.length) {
+    toast("共 " + split.all + " 个，只提交 " + picked.length + " 个；其余 " + overRows.length + " 个超出上限，原因写在结果里");
+  }
+  const images = picked.filter((f) => IMAGE_RE.test(relName(f)));
+  const docs = picked.filter((f) => !IMAGE_RE.test(relName(f)));
+  const payload = [];
+  const imageRows = [];
+
+  for (let ii = 0; ii < images.length; ii++) {
+    const file = images[ii];
+    const rel = relName(file);
+    const relDir = rel.indexOf("/") >= 0 ? rel.slice(0, rel.lastIndexOf("/")) : "";
+    $("import-result").innerHTML = '<div class="empty-hint">读图转写中：' + esc(file.name) +
+      "（本地 Qwen3.5-9B-VL，第 " + (ii + 1) + "/" + images.length + " 张）</div>";
+    const b64 = await readFileB64(file);
+    const out = await api("/__ocr", { method: "POST", body: {
+      filename: rel, data: b64, workspace: S.workspace, keep: ii < images.length - 1 } });
+    const text = String((out.data && out.data.text) || "").trim();
+    if (out.status !== 200 || !text) {
+      imageRows.push({ filename: rel, kind: "image", chars: 0, status: "failed",
+        error: "读图失败：HTTP " + out.status + hint(out) });
+      continue;
+    }
+    const stem = rel.replace(/^.*\//, "").replace(/\.[^.]+$/, "") || "image";
+    const md = "# " + stem + "\n\n" + text + "\n";
+    payload.push({ filename: (relDir ? relDir + "/" : "") + stem + ".md", data: await textB64(md) });
+    imageRows.push({ filename: rel, kind: "image → Markdown", chars: text.length,
+      ms: (out.data && out.data.ms) || 0, status: "parsed", note: (out.data && out.data.model) || "" });
+  }
+
+  for (const file of docs) {
+    payload.push({ filename: relName(file), data: await readFileB64(file) });
+  }
+
+  const dry = $("import-dry").checked;
+  const cells = (it) => {
+    const st = it.status === "imported" ? (it.indexed ? "已入库并索引" : "已入库未索引")
+      : it.status === "skipped" ? "跳过（重复文件）"
+      : it.status === "parsed" ? (it.kind && it.kind.indexOf("image") === 0 ? "已读图，随批入库" : "已解析（未写库）")
+      : "失败";
+    const warn = (it.warnings || []).length ? '<div class="sub" style="font-size:10.5px;color:var(--warn)">' +
+      esc(it.warnings.join("；")) + "</div>" : "";
+    const note = it.ms ? '<div class="sub" style="font-size:10.5px;color:var(--ink-3)">' + esc(it.ms) + " ms" +
+      (it.note ? " · " + esc(it.note) : "") + "</div>" : "";
+    return "<tr><td>" + esc(it.filename) + "</td><td>" + esc(it.kind || "") + warn + note + "</td>" +
+      '<td class="num">' + esc(it.chars || 0) + "</td>" +
+      '<td class="num">' + esc(it.pages || 0) + "/" + esc(it.tables || 0) + "</td>" +
+      "<td>" + esc(st) + (it.error ? '<div class="sub" style="font-size:10.5px;color:var(--danger)">' + esc(it.error) + "</div>" : "") +
+      "</td></tr>";
+  };
+
+  if (!payload.length) {
+    $("import-result").innerHTML = '<table class="tbl"><thead><tr><th>文件</th><th>类型</th><th>字</th><th>页/表</th><th>结果</th></tr></thead><tbody>' +
+      imageRows.map(cells).join("") + "</tbody></table>";
+    $("import-result").innerHTML += overHintHtml(overRows);
+    toast("没有可入库的内容：读图全部失败");
+    return;
+  }
+
+  $("import-result").innerHTML = '<div class="empty-hint">解析中…（图片已转写，文档按类型解析）</div>';
+  const r = await api("/__import", { method: "POST", body: {
+    files: payload, audience: $("import-audience").value, dry_run: dry,
+    workspace: S.workspace } });
+  if (r.status !== 200) {
+    $("import-result").innerHTML = '<div class="empty-hint">导入失败：HTTP ' + r.status + "</div>";
+    toast("导入失败：HTTP " + r.status + hint(r));
+    return;
+  }
+  const s = r.data.summary || {};
+  const rows = imageRows.map(cells).join("") + (r.data.items || []).map(cells).join("");
+  $("import-result").innerHTML =
+    '<div class="meta-line">共 ' + (s.total || 0) + " 个 · 入库 " + (s.imported || 0) + " · 跳过 " +
+    (s.skipped || 0) + " · 解析 " + (s.parsed || 0) + " · 失败 " + (s.failed || 0) + "</div>" +
+    (rows ? '<table class="tbl"><thead><tr><th>文件</th><th>类型</th><th>字</th><th>页/表</th><th>结果</th></tr></thead><tbody>' +
+      rows + "</tbody></table>" : "") + overHintHtml(overRows);
+  toast("导入完成：入库 " + (s.imported || 0) + " · 跳过 " + (s.skipped || 0) + " · 失败 " + (s.failed || 0));
+  if (!dry && (s.imported || 0) > 0) await loadDocs();
+}
+
+/* ---------------- 布局：宽度可拖拽、两栏可收起 ---------------- */
+const LS = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : v; } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* 隐私模式下忽略 */ } }
+};
+function setWidth(which, px) {
+  const root = document.documentElement;
+  if (which === "side") {
+    const w = Math.max(220, Math.min(460, Math.round(px)));
+    root.style.setProperty("--side-w", w + "px"); LS.set("ekb.side", String(w));
+  } else {
+    const w = Math.max(300, Math.min(620, Math.round(px)));
+    root.style.setProperty("--insp-w", w + "px"); LS.set("ekb.insp", String(w));
+  }
+}
+function toggleSide(show) {
+  const shell = $("shell");
+  const off = show === undefined ? !shell.classList.contains("side-off") : !show;
+  shell.classList.toggle("side-off", off);
+  $("btn-side").setAttribute("aria-pressed", String(!off));
+  LS.set("ekb.sideOff", off ? "1" : "0");
+}
+function toggleInsp(show) {
+  const shell = $("shell");
+  const off = show === undefined ? !shell.classList.contains("insp-off") : !show;
+  shell.classList.toggle("insp-off", off);
+  $("btn-insp").setAttribute("aria-pressed", String(!off));
+  LS.set("ekb.inspOff", off ? "1" : "0");
+}
+function initSplitters() {
+  [["split-l", "side"], ["split-r", "insp"]].forEach(([id, which]) => {
+    const el = $(id);
+    if (!el) return;
+    el.addEventListener("pointerdown", (e) => {
+      e.preventDefault();
+      el.classList.add("dragging");
+      try { el.setPointerCapture(e.pointerId); } catch (err) { /* 老浏览器忽略 */ }
+      document.body.style.cursor = "col-resize";
+      const rect = $("shell").getBoundingClientRect();
+      const move = (ev) => setWidth(which, which === "side" ? ev.clientX - rect.left : rect.right - ev.clientX);
+      const up = () => {
+        el.classList.remove("dragging");
+        document.body.style.cursor = "";
+        el.removeEventListener("pointermove", move);
+        el.removeEventListener("pointerup", up);
+        el.removeEventListener("pointercancel", up);
+      };
+      el.addEventListener("pointermove", move);
+      el.addEventListener("pointerup", up);
+      el.addEventListener("pointercancel", up);
+    });
+    el.addEventListener("dblclick", () => { if (which === "side") toggleSide(false); else toggleInsp(false); });
+  });
+}
+
+/* ---------------- 账号登录（会话 Cookie） ---------------- */
+function applyMe(data) {
+  S.identity = data.account;
+  S.me = data;
+  const av = $("acct-av"), nm = $("acct-name"), rl = $("acct-role");
+  if (av) av.textContent = String(data.name || data.account).slice(0, 1);
+  if (nm) nm.textContent = data.name || data.account;
+  if (rl) rl.textContent = data.role === "editor" ? "可编辑" : "只读";
+  const b = $("btn-account");
+  if (b) b.onclick = () => showLogin();
+}
+
+async function showLogin(message) {
+  const layer = $("login-layer");
+  if (!layer) return;
+  layer.hidden = false;
+  $("login-err").textContent = message || "";
+  let data = { accounts: [] };
+  try {
+    const r = await fetch("/api/__accounts");
+    if (r.ok) data = await r.json();
+  } catch (e) { /* 网关异常时留空列表，错误行下面会说明 */ }
+  S.loginAccounts = data.accounts || [];
+  $("login-account").innerHTML = S.loginAccounts.map((a) =>
+    '<option value="' + esc(a.account) + '">' + esc(a.name || a.account) +
+    "（" + esc(a.role === "editor" ? "可编辑" : "只读") + "）</option>").join("");
+  $("login-hint").textContent = data.password_hint || "";
+  const dev = $("login-dev");
+  dev.innerHTML = data.dev_switch
+    ? '<div class="lg-dev-t">演示快捷入口（每次都会写一条 dev_login 审计）</div>' +
+      S.loginAccounts.map((a) =>
+        '<button class="btn sm" type="button" data-as="' + esc(a.account) + '">' +
+        esc(a.name || a.account) + "</button>").join("")
+    : "";
+  Array.prototype.forEach.call(dev.querySelectorAll("[data-as]"), (btn) => {
+    btn.onclick = async () => {
+      if (await devLogin(btn.dataset.as)) location.reload();
+      else $("login-err").textContent = "这个实例关掉了一键切换（--strict-auth）";
+    };
+  });
+  const out = $("login-logout");
+  if (out) { out.style.display = S.me ? "inline-flex" : "none"; out.onclick = doLogout; }
+  // 未登录时 boot 会提前 return，尾部那段 onsubmit 绑不上；这里补一次（幂等），
+  // 否则登录卡上的「登录」按钮点了没反应（只能走演示快捷入口）。
+  const lf0 = $("login-form");
+  if (lf0 && lf0.dataset.bound !== "1") {
+    lf0.onsubmit = (e) => { e.preventDefault(); doLogin(); };
+    lf0.dataset.bound = "1";
+  }
+  const pw = $("login-password");
+  if (pw) { pw.value = ""; setTimeout(() => { try { pw.focus(); } catch (e) {} }, 30); }
+}
+
+async function devLogin(account) {
+  try {
+    const r = await fetch("/api/__dev-login", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ account: account })
+    });
+    return r.ok;
+  } catch (e) { return false; }
+}
+
+async function doLogin() {
+  const account = $("login-account").value;
+  const password = $("login-password").value;
+  if (!account) { $("login-err").textContent = "先选一个账号"; return; }
+  if (!password) { $("login-err").textContent = "口令不能为空"; return; }
+  $("login-go").disabled = true;
+  try {
+    const r = await fetch("/api/__login", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ account: account, password: password })
+    });
+    if (r.ok) { location.reload(); return; }
+    let data = {};
+    try { data = await r.json(); } catch (e) {}
+    $("login-err").textContent = (data.error && data.error.detail) || ("登录失败（HTTP " + r.status + "）");
+  } catch (e) {
+    $("login-err").textContent = "网络异常：" + e.message;
+  } finally {
+    $("login-go").disabled = false;
+  }
+}
+
+async function doLogout() {
+  try { await fetch("/api/__logout", { method: "POST" }); } catch (e) {}
+  location.reload();
+}
+
+async function boot() {
+  const meta = await api("/__meta", { quiet: true });
+  S.meta = meta.data || {};
+  S.public = !!S.meta.public;
+  S.auth = S.meta.auth || { required: false };
+  if (S.public) applyPublicMode();
+  if (!S.public && S.auth.required) {
+    let mine = await api("/__me", { quiet: true });
+    const wantId = new URLSearchParams(location.search).get("identity");
+    if (mine.status !== 200 && wantId && S.auth.dev_switch) {
+      await devLogin(wantId, { quiet: true });
+      mine = await api("/__me", { quiet: true });
+    }
+    if (mine.status !== 200) { await showLogin(); return; }
+    applyMe(mine.data);
+    // 未登录那次只能拿到 _guest_meta()（够渲染登录层）：登录后必须再取一次完整 meta，
+    // 否则 workspaces / models / rag 都是空的，侧栏知识库与计数会全空。
+    const full = await api("/__meta", { quiet: true });
+    if (full.status === 200) S.meta = full.data;
+  } else if (S.public) {
+    const first = (S.meta.identities || [])[0];
+    if (first) S.identity = first.key;
+  }
+  const rag = S.meta.rag || {};
+  if (rag.enabled) {
+    $("pipeline-hint").textContent = "混合检索（BM25 + " + (rag.embedding_model || "bge-m3") +
+      " 向量）· " + (rag.rerank_model || "重排") + " 重排 · " + (rag.chat_model || "本地模型") + " 生成";
+    $("empty-desc").textContent = "回答只来自这个知识库里已入库且你有权查看的文档。检索走混合召回（BM25 + " +
+      (rag.embedding_model || "bge-m3") + " 向量），再用 " + (rag.rerank_model || "重排模型") +
+      " 重排，最后由 " + (rag.chat_model || "本地模型") + " 依据选中的片段作答，每句结论都带原文出处。";
+  } else {
+    $("pipeline-hint").textContent = "词法检索（BM25）· 抽取式回答 · 未接模型网关（--no-rag）";
+    $("empty-desc").textContent = "回答只来自这个知识库里已入库且你有权查看的文档；每条结论都带原文出处。";
+  }
+  const wantWs = new URLSearchParams(location.search).get("ws");
+  if (wantWs) S.workspace = wantWs;
+  if (!myWorkspaces()[S.workspace]) {
+    const list = Object.keys(myWorkspaces());
+    if (list.length) S.workspace = list[0];
+  }
+  renderWorkspaces();
+  $("live").textContent = "服务正常";
+  $("live-dot").className = "dot";
+  if (meta.status !== 200) { $("live").textContent = "服务不可用"; $("live-dot").className = "dot off"; }
+
+  // 各库计数：侧栏要能一眼看到每个库有多少篇
+  await Promise.all(Object.keys(myWorkspaces()).map(async (key) => {
+    const r = await api("/documents?workspace=" + encodeURIComponent(key), { quiet: true });
+    if (r.status !== 200) return;
+    const items = (r.data && r.data.items) || [];
+    S.counts[key] = items.filter((d) => (d.status || "") === "ACTIVE").length;
+  }));
+  renderWorkspaces();
+
+  $("mode").value = S.mode;
+  $("mode").onchange = () => {
+    S.mode = $("mode").value;
+    toast(S.mode === "assistant" ? "助手模式：先判意图再检索，支持追问改写" : "直接检索：跳过意图路由，只返回带引用的答案");
+  };
+  $("btn-new-session").onclick = () => {
+    S.session = null;
+    S.messages = [];
+    renderThread();
+    toast("已开新会话；上一段记录仍保存在助手库里，可凭会话号回看");
+  };
+  const lf = $("login-form");
+  if (lf) lf.onsubmit = (e) => { e.preventDefault(); doLogin(); };
+  $("btn-ask").onclick = () => ask();
+  $("question").onkeydown = (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); ask(); } };
+  $("btn-refresh") && ($("btn-refresh").onclick = loadDocs);
+  $("doc-search").oninput = renderDocs;
+  $("doc-filter").onchange = renderDocs;
+  $("tab-cite").onclick = () => showTab("cite");
+  $("tab-doc").onclick = () => showTab("doc");
+  $("btn-settings").onclick = () => { toggleDebug(); toast(S.debug ? "调试面板已展开" : "调试面板已收起"); };
+  $("tab-log").onclick = () => showTab("log");
+  $("tab-audit").onclick = () => showTab("audit");
+  $("tab-data").onclick = () => showTab("data");
+  $("btn-side").onclick = () => toggleSide();
+  $("btn-insp").onclick = () => toggleInsp();
+  initSplitters();
+  const sw = parseInt(LS.get("ekb.side", "0"), 10);
+  const iw = parseInt(LS.get("ekb.insp", "0"), 10);
+  if (sw) setWidth("side", sw);
+  if (iw) setWidth("insp", iw);
+  if (LS.get("ekb.sideOff", "0") === "1") toggleSide(false);
+  if (LS.get("ekb.inspOff", "0") === "1") toggleInsp(false);
+  // 窄屏默认单栏：直接改类，不写 localStorage，免得下次在桌面端打开也跟着收起
+  if (window.matchMedia("(max-width:900px)").matches) {
+    $("shell").classList.add("side-off", "insp-off");
+    $("btn-side").setAttribute("aria-pressed", "false");
+    $("btn-insp").setAttribute("aria-pressed", "false");
+  }
+  document.addEventListener("keydown", (e) => {
+    if (!e.ctrlKey || e.altKey || e.metaKey) return;
+    const k = e.key.toLowerCase();
+    if (k === "b") { e.preventDefault(); toggleSide(); }
+    if (k === "j") { e.preventDefault(); toggleInsp(); }
+  });
+  const ta = $("question");
+  const grow = () => {
+    ta.style.height = "auto";
+    ta.style.height = Math.min(200, Math.max(48, ta.scrollHeight)) + "px";
+  };
+  ta.addEventListener("input", grow);
+  grow();
+  const syncWritable = () => {
+    const w = canWrite();
+    $("btn-new").disabled = !w;
+    $("btn-new").title = w ? "新建文档（editor）" : "只读身份：切换为 editor 才能新建";
+    $("btn-new").textContent = w ? "＋ 新建文档" : "＋ 新建文档（只读）";
+    $("btn-import").disabled = !w;
+    $("btn-import").title = w ? "导入 PDF / Word / Excel / CSV / 图片（editor）" : "只读身份：切换为 editor 才能导入";
+  };
+  syncWritable();
+  $("btn-new").title = "新建到「" + wsLabel(S.workspace) + "」";
+  $("btn-new").onclick = () => { if (!requireWrite()) return; $("dlg-new").showModal(); };
+  $("btn-import").onclick = () => {
+    if (!requireWrite()) return;
+    $("import-result").innerHTML = "";
+    $("import-sub").textContent = "";
+    $("dlg-import").showModal();
+  };
+  $("import-cancel").onclick = () => $("dlg-import").close();
+  $("import-ok").onclick = () => importFiles($("import-files").files);
+  const dirBtn = $("btn-pick-dir");
+  if (dirBtn) dirBtn.onclick = () => $("import-dir").click();
+  const dirInput = $("import-dir");
+  if (dirInput) dirInput.onchange = (ev) => { if (ev.target.files && ev.target.files.length) importFiles(ev.target.files); };
+  const drop = $("drop");
+  ["dragenter", "dragover"].forEach((ev) => drop.addEventListener(ev, (e) => {
+    e.preventDefault(); drop.classList.add("over");
+  }));
+  ["dragleave", "drop"].forEach((ev) => drop.addEventListener(ev, (e) => {
+    e.preventDefault(); drop.classList.remove("over");
+  }));
+  drop.addEventListener("drop", (e) => {
+    const files = e.dataTransfer && e.dataTransfer.files;
+    if (files && files.length) importFiles(files);
+  });
+  $("new-ok").onclick = async (e) => {
+    e.preventDefault();
+    const title = $("new-title").value.trim(), text = $("new-text").value;
+    if (!title || !text.trim()) { toast("标题和正文都要填"); return; }
+    const r = await api("/documents", { method: "POST", identity: "editor",
+      body: { workspace: S.workspace, title: title, text: text, audience: $("new-audience").value } });
+    if (r.status !== 201) { toast("创建失败：HTTP " + r.status + (r.data && r.data.error ? " " + r.data.error.code : "")); return; }
+    const id = r.data.id;
+    const ing = await api("/documents/" + id + "/versions/1/ingest", { method: "POST", identity: "editor", body: {} });
+    toast(ing.status === 200 ? "已创建并索引" : "已创建，索引失败：HTTP " + ing.status);
+    $("dlg-new").close(); $("new-title").value = ""; $("new-text").value = "";
+    await loadDocs(); await openDoc(id);
+  };
+  $("new-cancel").onclick = (e) => { e.preventDefault(); $("dlg-new").close(); };
+
+  /* 编辑正文：写新版本 → 重新索引 */
+  $("edit-ok").onclick = async (e) => {
+    e.preventDefault();
+    const d = S.editTarget;
+    const text = $("edit-text").value;
+    if (!d) return;
+    if (!text.trim()) { toast("正文不能为空"); return; }
+    const r = await api("/documents/" + d.id + "/versions", { method: "POST",
+      body: { text: text, expected_version: d.latest_version } });
+    if (r.status !== 200) {
+      toast(r.status === 409 ? "这篇文档已被改过（版本冲突），刷新后再改" : "保存失败：HTTP " + r.status + hint(r));
+      return;
+    }
+    const nv = d.latest_version + 1;
+    const ing = await api("/documents/" + d.id + "/versions/" + nv + "/ingest", { method: "POST", body: {} });
+    $("dlg-edit").close();
+    toast(ing.status === 200 ? "已保存为 v" + nv + " 并重新索引" : "已写入 v" + nv + "，索引失败：HTTP " + ing.status);
+    await loadDocs(); await openDoc(d.id); if (S.tab === "audit") renderAudit();
+  };
+  $("edit-cancel").onclick = (e) => { e.preventDefault(); $("dlg-edit").close(); };
+
+  /* 删除：标题确认 + 代理层硬删 + audit */
+  $("del-ok").onclick = async (e) => {
+    e.preventDefault();
+    const d = S.purgeTarget;
+    if (!d) return;
+    const r = await api("/__purge", { method: "POST",
+      body: { document_id: d.id, confirm_title: $("del-title").value, workspace: S.workspace } });
+    if (r.status !== 200) {
+      toast(r.status === 409 ? "标题不一致，没有删除" : "删除失败：HTTP " + r.status + hint(r));
+      return;
+    }
+    $("dlg-del").close();
+    S.doc = null;
+    $("pane-doc").innerHTML = '<div class="empty-hint">文档已删除<br>左栏列表已刷新</div>';
+    toast("已删除「" + d.title + "」，audit 里记了一条 purged");
+    await loadDocs(); if (S.tab === "audit") renderAudit();
+  };
+  $("del-cancel").onclick = (e) => { e.preventDefault(); $("dlg-del").close(); };
+
+  await loadDocs();
+
+  const pre = new URLSearchParams(location.search).get("ask");
+  const dbg = new URLSearchParams(location.search).get("debug");
+  if (dbg) toggleDebug(true);
+  if (new URLSearchParams(location.search).get("checks")) await runChecks();
+  applyScopeUi();
+  const openId = new URLSearchParams(location.search).get("doc");
+  const wantNew = new URLSearchParams(location.search).get("new");
+  if (wantNew) $("dlg-new").showModal();
+  if (new URLSearchParams(location.search).get("import")) $("dlg-import").showModal();
+  if (openId) await openDoc(Number(openId));
+  const editId = new URLSearchParams(location.search).get("edit");
+  if (editId) { S.doc = S.doc || {}; await openEdit({ id: Number(editId), title: (S.doc && S.doc.title) || ("文档 " + editId),
+    latest_version: (S.doc && S.doc.latest_version) || 1 }); }
+  const purgeId = new URLSearchParams(location.search).get("purge");
+  if (purgeId) { S.doc = S.doc || {}; openPurge({ id: Number(purgeId), title: (S.doc && S.doc.title) || ("文档 " + purgeId) }); }
+  if (pre) await ask(pre);
+  const qs = new URLSearchParams(location.search);
+  if (qs.get("tab")) showTab(qs.get("tab"));
+  // 演示 / 截图入口：?pick=9,17 预选文档（批量条直接出来）、?diff=9@2 直接开版本对比弹窗。
+  const pickIds = (qs.get("pick") || "").split(",").map((x) => Number(x.trim())).filter((x) => x > 0);
+  if (pickIds.length) { pickIds.forEach((x) => S.selected.add(x)); renderDocs(); }
+  const diffSpec = (qs.get("diff") || "").split("@");
+  if (diffSpec[0]) {
+    const dId = Number(diffSpec[0]);
+    await openDoc(dId);
+    if (diffSpec[1]) await openDiff({ id: dId, title: (S.doc && S.doc.title) || ("文档 " + dId) }, Number(diffSpec[1]));
+  }
+  if (qs.get("side") === "off") toggleSide(false);
+  if (qs.get("insp") === "off") toggleInsp(false);
+  // 自动化入口：?switch=<model> 走页面同一条切换路径（等价于点“切换”按钮）。
+  const swModel = qs.get("switch");
+  if (swModel) {
+    const sel = $("model-sel");
+    if (sel) sel.value = swModel;
+    await switchModel();
+  }
+  $("question").focus();
+}
+boot();
+</script>
+
+</body>
+</html>

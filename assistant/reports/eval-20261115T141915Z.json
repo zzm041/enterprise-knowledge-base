@@ -1,0 +1,913 @@
+{
+  "run_id": "assistant-20261115T141915Z",
+  "generated_at": "2026-11-15T14:20:22+00:00",
+  "stack": {
+    "kb": "http://127.0.0.1:61716",
+    "llm": {
+      "base_url": "http://127.0.0.1:64199/v1",
+      "model": "qwen2.5-14b-uncensored"
+    },
+    "workspace": "handbook",
+    "identities": [
+      "editor",
+      "other-reader",
+      "reader",
+      "staff"
+    ]
+  },
+  "summary": {
+    "cases": 23,
+    "passed": 23,
+    "failed": 0,
+    "pass_rate": 1.0,
+    "checks": {
+      "status": {
+        "passed": 23,
+        "total": 23
+      },
+      "intent": {
+        "passed": 23,
+        "total": 23
+      },
+      "citation": {
+        "passed": 23,
+        "total": 23
+      },
+      "rewrite": {
+        "passed": 23,
+        "total": 23
+      }
+    },
+    "latency_ms": {
+      "median": 3299.4,
+      "p95": 4030.1,
+      "max": 6131.6,
+      "samples": 26
+    },
+    "store": {
+      "sessions": 23,
+      "messages": 52,
+      "feedback_positive": 0,
+      "feedback_negative": 0,
+      "handoffs_open": 1,
+      "unresolved_open": 3
+    }
+  },
+  "results": [
+    {
+      "id": "greet-zh",
+      "name": "中文寒暄",
+      "identity": "reader",
+      "turns": [
+        {
+          "text": "你好",
+          "intent": "greeting",
+          "status": "smalltalk",
+          "standalone_question": "你好",
+          "citations": [],
+          "latency_ms": 7.5,
+          "reply": "你好，我是这个知识库的助手。制度、流程、时限、权限这类问题我都能查，回答会带上原文出处，看不准时我会直接说不确定，不编。\n常被问到的是：入职当天在哪里领取办公电脑？；出差住宿每晚上限多少？；采购一万元以上要几家比价？。你想先看哪一条？"
+        }
+      ],
+      "expect": {
+        "status": [
+          "smalltalk"
+        ],
+        "intents": [
+          "greeting"
+        ],
+        "cite": false
+      },
+      "checks": {
+        "status": true,
+        "intent": true,
+        "citation": true,
+        "rewrite": true
+      },
+      "passed": true,
+      "session_id": "edb4aa36a52f",
+      "total_ms": 12.7
+    },
+    {
+      "id": "greet-en",
+      "name": "英文寒暄",
+      "identity": "reader",
+      "turns": [
+        {
+          "text": "hello",
+          "intent": "greeting",
+          "status": "smalltalk",
+          "standalone_question": "hello",
+          "citations": [],
+          "latency_ms": 7.0,
+          "reply": "你好，我是这个知识库的助手。制度、流程、时限、权限这类问题我都能查，回答会带上原文出处，看不准时我会直接说不确定，不编。\n常被问到的是：入职当天在哪里领取办公电脑？；出差住宿每晚上限多少？；采购一万元以上要几家比价？。你想先看哪一条？"
+        }
+      ],
+      "expect": {
+        "status": [
+          "smalltalk"
+        ],
+        "intents": [
+          "greeting"
+        ],
+        "cite": false
+      },
+      "checks": {
+        "status": true,
+        "intent": true,
+        "citation": true,
+        "rewrite": true
+      },
+      "passed": true,
+      "session_id": "6f02d6f6759d",
+      "total_ms": 12.1
+    },
+    {
+      "id": "thanks",
+      "name": "致谢",
+      "identity": "reader",
+      "turns": [
+        {
+          "text": "谢谢！",
+          "intent": "thanks",
+          "status": "smalltalk",
+          "standalone_question": "谢谢！",
+          "citations": [],
+          "latency_ms": 7.0,
+          "reply": "不客气。还要查别的制度，直接说关键词就行。"
+        }
+      ],
+      "expect": {
+        "status": [
+          "smalltalk"
+        ],
+        "intents": [
+          "thanks"
+        ],
+        "cite": false
+      },
+      "checks": {
+        "status": true,
+        "intent": true,
+        "citation": true,
+        "rewrite": true
+      },
+      "passed": true,
+      "session_id": "2ed4cb058605",
+      "total_ms": 12.1
+    },
+    {
+      "id": "bye",
+      "name": "告别",
+      "identity": "reader",
+      "turns": [
+        {
+          "text": "没事了，再见",
+          "intent": "goodbye",
+          "status": "smalltalk",
+          "standalone_question": "没事了，再见",
+          "citations": [],
+          "latency_ms": 817.8,
+          "reply": "好，需要的时候再叫我。"
+        }
+      ],
+      "expect": {
+        "status": [
+          "smalltalk"
+        ],
+        "intents": [
+          "goodbye",
+          "thanks"
+        ],
+        "cite": false
+      },
+      "checks": {
+        "status": true,
+        "intent": true,
+        "citation": true,
+        "rewrite": true
+      },
+      "passed": true,
+      "session_id": "6ca57032fd20",
+      "total_ms": 824.3
+    },
+    {
+      "id": "capability",
+      "name": "能力询问",
+      "identity": "reader",
+      "turns": [
+        {
+          "text": "你能做什么？",
+          "intent": "capability",
+          "status": "smalltalk",
+          "standalone_question": "你能做什么？",
+          "citations": [],
+          "latency_ms": 6.0,
+          "reply": "我能做四件事：\n1) 按你的权限范围查制度文档，回答带出处（文档、版本、字符偏移）；\n2) 接住追问，比如“那要几天”“这个谁审批”，会先补全指代再检索；\n3) 查不到时明确说查不到，并记进未解决问题清单；\n4) 需要真人处理时转人工，生成工单号。\n我不会做的是：编制度、跨权限看文档、替你走审批。"
+        }
+      ],
+      "expect": {
+        "status": [
+          "smalltalk"
+        ],
+        "intents": [
+          "capability"
+        ],
+        "cite": false
+      },
+      "checks": {
+        "status": true,
+        "intent": true,
+        "citation": true,
+        "rewrite": true
+      },
+      "passed": true,
+      "session_id": "b5d66021513a",
+      "total_ms": 10.4
+    },
+    {
+      "id": "chitchat",
+      "name": "自我介绍闲聊",
+      "identity": "reader",
+      "turns": [
+        {
+          "text": "你是谁呀",
+          "intent": "chitchat",
+          "status": "smalltalk",
+          "standalone_question": "你是谁呀",
+          "citations": [],
+          "latency_ms": 588.5,
+          "reply": "我是来帮助大家解答关于公司问题的助手哦。有什么想知道的，直接问吧。"
+        }
+      ],
+      "expect": {
+        "status": [
+          "smalltalk"
+        ],
+        "intents": [
+          "chitchat"
+        ],
+        "cite": false
+      },
+      "checks": {
+        "status": true,
+        "intent": true,
+        "citation": true,
+        "rewrite": true
+      },
+      "passed": true,
+      "session_id": "a38ddc0b23c6",
+      "total_ms": 593.2
+    },
+    {
+      "id": "kb-benefit",
+      "name": "口语提问·反问语义",
+      "identity": "reader",
+      "turns": [
+        {
+          "text": "入职有什么福利",
+          "intent": "knowledge",
+          "status": "answered",
+          "standalone_question": "入职有什么福利",
+          "citations": [
+            "IT账号与权限管理",
+            "补充商业保险与年度体检",
+            "入职设备领取"
+          ],
+          "latency_ms": 4030.1,
+          "reply": "入职当天，新员工可以享受到信息技术部开通的域账号、邮箱、办公系统和门禁权限，并且可以领取办公电脑。公司还会为员工投保补充商业保险，包含门急诊与住院医疗、意外伤害和重大疾病责任。"
+        }
+      ],
+      "expect": {
+        "status": [
+          "answered"
+        ],
+        "intents": [
+          "knowledge"
+        ],
+        "cite": true
+      },
+      "checks": {
+        "status": true,
+        "intent": true,
+        "citation": true,
+        "rewrite": true
+      },
+      "passed": true,
+      "session_id": "99e0b8743bae",
+      "total_ms": 4035.6
+    },
+    {
+      "id": "kb-leave",
+      "name": "口语短句·年假",
+      "identity": "reader",
+      "turns": [
+        {
+          "text": "年假有几天",
+          "intent": "knowledge",
+          "status": "answered",
+          "standalone_question": "年假有几天",
+          "citations": [
+            "请假类型与审批权限",
+            "年休假与未休折算"
+          ],
+          "latency_ms": 3692.5,
+          "reply": "年假天数按累计工龄计算：满一年不满十年为五天，满十年不满二十年为十天，满二十年为十五天。"
+        }
+      ],
+      "expect": {
+        "status": [
+          "answered"
+        ],
+        "intents": [
+          "knowledge"
+        ],
+        "cite": true
+      },
+      "checks": {
+        "status": true,
+        "intent": true,
+        "citation": true,
+        "rewrite": true
+      },
+      "passed": true,
+      "session_id": "f534cde30ab9",
+      "total_ms": 3697.5
+    },
+    {
+      "id": "kb-travel",
+      "name": "差旅住宿上限",
+      "identity": "reader",
+      "turns": [
+        {
+          "text": "出差住宿每晚上限多少？",
+          "intent": "knowledge",
+          "status": "answered",
+          "standalone_question": "出差住宿每晚上限多少？",
+          "citations": [
+            "差旅标准与预订流程"
+          ],
+          "latency_ms": 3428.8,
+          "reply": "一线城市每晚上限六百元，二线城市四百五十元，其他城市三百五十元。"
+        }
+      ],
+      "expect": {
+        "status": [
+          "answered"
+        ],
+        "intents": [
+          "knowledge"
+        ],
+        "cite": true
+      },
+      "checks": {
+        "status": true,
+        "intent": true,
+        "citation": true,
+        "rewrite": true
+      },
+      "passed": true,
+      "session_id": "185ee8f77ea7",
+      "total_ms": 3434.9
+    },
+    {
+      "id": "kb-purchase",
+      "name": "采购比价门槛",
+      "identity": "reader",
+      "turns": [
+        {
+          "text": "采购一万元以上要几家比价？",
+          "intent": "knowledge",
+          "status": "answered",
+          "standalone_question": "采购一万元以上要几家比价？",
+          "citations": [
+            "采购比价与供应商准入"
+          ],
+          "latency_ms": 3354.8,
+          "reply": "一万元以上的采购需三家比价。"
+        }
+      ],
+      "expect": {
+        "status": [
+          "answered"
+        ],
+        "intents": [
+          "knowledge"
+        ],
+        "cite": true
+      },
+      "checks": {
+        "status": true,
+        "intent": true,
+        "citation": true,
+        "rewrite": true
+      },
+      "passed": true,
+      "session_id": "daa740491d82",
+      "total_ms": 3359.8
+    },
+    {
+      "id": "kb-paraphrase",
+      "name": "同义改写·找回密码",
+      "identity": "reader",
+      "turns": [
+        {
+          "text": "我忘了登录密码，在哪儿能重置",
+          "intent": "knowledge",
+          "status": "answered",
+          "standalone_question": "在哪里可以重置登录密码",
+          "citations": [
+            "Account recovery"
+          ],
+          "latency_ms": 3334.6,
+          "reply": "可以使用身份门户并完成多因素验证来重置账户密码。"
+        }
+      ],
+      "expect": {
+        "status": [
+          "answered"
+        ],
+        "intents": [
+          "knowledge"
+        ],
+        "cite": true
+      },
+      "checks": {
+        "status": true,
+        "intent": true,
+        "citation": true,
+        "rewrite": true
+      },
+      "passed": true,
+      "session_id": "815d5dcb92dc",
+      "total_ms": 3339.8
+    },
+    {
+      "id": "followup-travel",
+      "name": "多轮追问·差旅报销标准",
+      "identity": "reader",
+      "turns": [
+        {
+          "text": "出差住宿怎么订酒店",
+          "intent": "knowledge",
+          "status": "answered",
+          "standalone_question": "出差住宿怎么订酒店",
+          "citations": [
+            "出差住宿政策"
+          ],
+          "latency_ms": 3242.5,
+          "reply": "出差住宿应通过企业差旅平台预订。"
+        },
+        {
+          "text": "那报销标准呢",
+          "intent": "followup",
+          "status": "answered",
+          "standalone_question": "出差住宿的报销标准呢",
+          "citations": [
+            "差旅标准与预订流程"
+          ],
+          "latency_ms": 3595.6,
+          "reply": "住宿标准按城市分档：一线城市每晚上限六百元，二线城市四百五十元，其他城市三百五十元。"
+        }
+      ],
+      "expect": {
+        "status": [
+          "answered"
+        ],
+        "intents": [
+          "followup",
+          "knowledge"
+        ],
+        "cite": true,
+        "rewrite": true
+      },
+      "checks": {
+        "status": true,
+        "intent": true,
+        "citation": true,
+        "rewrite": true
+      },
+      "passed": true,
+      "session_id": "ccb44186525a",
+      "total_ms": 6850.5
+    },
+    {
+      "id": "followup-device",
+      "name": "多轮追问·领电脑要带什么",
+      "identity": "reader",
+      "turns": [
+        {
+          "text": "入职当天在哪里领取办公电脑",
+          "intent": "knowledge",
+          "status": "answered",
+          "standalone_question": "入职当天在哪里领取办公电脑",
+          "citations": [
+            "入职设备领取"
+          ],
+          "latency_ms": 3368.1,
+          "reply": "新员工在入职当天到信息服务台领取办公电脑。"
+        },
+        {
+          "text": "要带什么",
+          "intent": "followup",
+          "status": "answered",
+          "standalone_question": "入职当天到信息服务台领取办公电脑要带什么",
+          "citations": [
+            "入职设备领取"
+          ],
+          "latency_ms": 3635.4,
+          "reply": "入职当天到信息服务台领取办公电脑需要出示员工编号，并签署设备领用记录。"
+        }
+      ],
+      "expect": {
+        "status": [
+          "answered"
+        ],
+        "intents": [
+          "followup",
+          "knowledge"
+        ],
+        "cite": true,
+        "rewrite": true
+      },
+      "checks": {
+        "status": true,
+        "intent": true,
+        "citation": true,
+        "rewrite": true
+      },
+      "passed": true,
+      "session_id": "f0b84fa7d87c",
+      "total_ms": 7014.2
+    },
+    {
+      "id": "followup-anaphora",
+      "name": "多轮追问·指代",
+      "identity": "reader",
+      "turns": [
+        {
+          "text": "入职设备在哪里领",
+          "intent": "knowledge",
+          "status": "answered",
+          "standalone_question": "入职设备在哪里领",
+          "citations": [
+            "入职设备领取"
+          ],
+          "latency_ms": 3299.4,
+          "reply": "新员工在入职当天到信息服务台领取办公电脑。"
+        },
+        {
+          "text": "那培训呢",
+          "intent": "followup",
+          "status": "answered",
+          "standalone_question": "培训在哪里进行",
+          "citations": [
+            "培训体系与导师制",
+            "培训学时与外部培训"
+          ],
+          "latency_ms": 6131.6,
+          "reply": "培训分为入职培训、岗位技能、通用能力与管理培训四类。新员工入职一个月内完成入职培训，内容包括制度、安全、保密与业务概览，考核合格方可转正。全体员工每年应完成不少于二十四学时的培训，其中合规与信息安全课程不少于四学时。"
+        }
+      ],
+      "expect": {
+        "status": [
+          "answered",
+          "insufficient_knowledge"
+        ],
+        "intents": [
+          "followup",
+          "knowledge"
+        ],
+        "cite": null,
+        "rewrite": true
+      },
+      "checks": {
+        "status": true,
+        "intent": true,
+        "citation": true,
+        "rewrite": true
+      },
+      "passed": true,
+      "session_id": "1cc9514b54b8",
+      "total_ms": 9442.5
+    },
+    {
+      "id": "kb-leave-cashout",
+      "name": "扩语料后能答·年假未休折算",
+      "identity": "reader",
+      "turns": [
+        {
+          "text": "年假没休完可以折现吗",
+          "intent": "knowledge",
+          "status": "answered",
+          "standalone_question": "年假没休完可以折现吗",
+          "citations": [
+            "年休假与未休折算"
+          ],
+          "latency_ms": 3688.7,
+          "reply": "未休完的年假可以按日工资收入的300%支付，其中包含正常工作期间已支付的工资，实际额外支付200%。"
+        }
+      ],
+      "expect": {
+        "status": [
+          "answered"
+        ],
+        "intents": [
+          "knowledge"
+        ],
+        "cite": true
+      },
+      "checks": {
+        "status": true,
+        "intent": true,
+        "citation": true,
+        "rewrite": true
+      },
+      "passed": true,
+      "session_id": "5fd90a458a46",
+      "total_ms": 3695.0
+    },
+    {
+      "id": "refuse-policy",
+      "name": "库外制度·员工宿舍",
+      "identity": "reader",
+      "turns": [
+        {
+          "text": "公司是否提供员工宿舍",
+          "intent": "knowledge",
+          "status": "insufficient_knowledge",
+          "standalone_question": "公司是否提供员工宿舍",
+          "citations": [],
+          "latency_ms": 2950.0,
+          "reply": "这个问题在现有文档里找不到能支撑回答的原文，所以我先不给结论。\n可以换一个更贴近制度用词的说法，或者点右侧“转人工”，我把它记进未解决问题清单，由制度负责人补文档。"
+        }
+      ],
+      "expect": {
+        "status": [
+          "insufficient_knowledge"
+        ],
+        "intents": [
+          "knowledge"
+        ],
+        "cite": false
+      },
+      "checks": {
+        "status": true,
+        "intent": true,
+        "citation": true,
+        "rewrite": true
+      },
+      "passed": true,
+      "session_id": "1186d291ed9a",
+      "total_ms": 2955.6
+    },
+    {
+      "id": "refuse-not-in-corpus",
+      "name": "库里没有的真实问题·异地社保转移",
+      "identity": "reader",
+      "turns": [
+        {
+          "text": "异地社保怎么转移",
+          "intent": "knowledge",
+          "status": "insufficient_knowledge",
+          "standalone_question": "异地社保怎么转移",
+          "citations": [],
+          "latency_ms": 3250.1,
+          "reply": "这个问题在现有文档里找不到能支撑回答的原文，所以我先不给结论。\n可以换一个更贴近制度用词的说法，或者点右侧“转人工”，我把它记进未解决问题清单，由制度负责人补文档。"
+        }
+      ],
+      "expect": {
+        "status": [
+          "insufficient_knowledge"
+        ],
+        "intents": [
+          "knowledge"
+        ],
+        "cite": false
+      },
+      "checks": {
+        "status": true,
+        "intent": true,
+        "citation": true,
+        "rewrite": true
+      },
+      "passed": true,
+      "session_id": "44674ea805fb",
+      "total_ms": 3256.8
+    },
+    {
+      "id": "oos-code",
+      "name": "越界请求·写排序",
+      "identity": "reader",
+      "turns": [
+        {
+          "text": "帮我写一段快速排序",
+          "intent": "out_of_scope",
+          "status": "out_of_scope",
+          "standalone_question": "帮我写一段快速排序",
+          "citations": [],
+          "latency_ms": 915.4,
+          "reply": "这个不在我负责的范围内——我只管公司制度、流程、权限这类问题。如果是业务系统报错或外部问题，可以转人工找对应同事。"
+        }
+      ],
+      "expect": {
+        "status": [
+          "out_of_scope",
+          "insufficient_knowledge"
+        ],
+        "intents": [
+          "out_of_scope",
+          "knowledge"
+        ],
+        "cite": false
+      },
+      "checks": {
+        "status": true,
+        "intent": true,
+        "citation": true,
+        "rewrite": true
+      },
+      "passed": true,
+      "session_id": "fb4ca2259140",
+      "total_ms": 925.3
+    },
+    {
+      "id": "handoff",
+      "name": "投诉转人工",
+      "identity": "reader",
+      "turns": [
+        {
+          "text": "我要投诉，转人工",
+          "intent": "handoff",
+          "status": "handoff",
+          "standalone_question": "我要投诉，转人工",
+          "citations": [],
+          "latency_ms": 14.9,
+          "reply": "已转人工，工单号 HD-6B9FAABC。\n为了少来回一轮，建议你一并说明：所在部门、涉及的单据或系统、期望的时限。同事接手前，我这边也可以继续帮你查制度原文。"
+        }
+      ],
+      "expect": {
+        "status": [
+          "handoff"
+        ],
+        "intents": [
+          "handoff"
+        ],
+        "cite": false
+      },
+      "checks": {
+        "status": true,
+        "intent": true,
+        "citation": true,
+        "rewrite": true
+      },
+      "passed": true,
+      "session_id": "59c74871bc66",
+      "total_ms": 23.9
+    },
+    {
+      "id": "acl-reader",
+      "name": "权限内拒答·数据出境(reader)",
+      "identity": "reader",
+      "turns": [
+        {
+          "text": "数据出境安全评估，多少人的个人信息需要申报",
+          "intent": "knowledge",
+          "status": "insufficient_knowledge",
+          "standalone_question": "数据出境安全评估，多少人的个人信息需要申报",
+          "citations": [],
+          "latency_ms": 3407.7,
+          "reply": "这个问题在现有文档里找不到能支撑回答的原文，所以我先不给结论。\n可以换一个更贴近制度用词的说法，或者点右侧“转人工”，我把它记进未解决问题清单，由制度负责人补文档。"
+        }
+      ],
+      "expect": {
+        "status": [
+          "insufficient_knowledge",
+          "no_permission"
+        ],
+        "intents": [
+          "knowledge"
+        ],
+        "cite": false
+      },
+      "checks": {
+        "status": true,
+        "intent": true,
+        "citation": true,
+        "rewrite": true
+      },
+      "passed": true,
+      "session_id": "06842c9a4e87",
+      "total_ms": 3413.7
+    },
+    {
+      "id": "acl-staff",
+      "name": "权限内回答·数据出境(staff)",
+      "identity": "staff",
+      "turns": [
+        {
+          "text": "数据出境安全评估，多少人的个人信息需要申报",
+          "intent": "knowledge",
+          "status": "answered",
+          "standalone_question": "数据出境安全评估，多少人的个人信息需要申报",
+          "citations": [
+            "数据出境与安全评估"
+          ],
+          "latency_ms": 3983.5,
+          "reply": "处理一百万人以上个人信息者提供个人信息时，需要申报数据出境安全评估。"
+        }
+      ],
+      "expect": {
+        "status": [
+          "answered"
+        ],
+        "intents": [
+          "knowledge"
+        ],
+        "cite": true
+      },
+      "checks": {
+        "status": true,
+        "intent": true,
+        "citation": true,
+        "rewrite": true
+      },
+      "passed": true,
+      "session_id": "29042c0b39a7",
+      "total_ms": 3989.8
+    },
+    {
+      "id": "kb-salary-window",
+      "name": "内部文档·调薪窗口(editor)",
+      "identity": "editor",
+      "turns": [
+        {
+          "text": "调薪窗口在几月",
+          "intent": "knowledge",
+          "status": "answered",
+          "standalone_question": "调薪窗口在几月",
+          "citations": [
+            "薪酬结构与调薪"
+          ],
+          "latency_ms": 3200.3,
+          "reply": "调薪窗口为每年四月"
+        }
+      ],
+      "expect": {
+        "status": [
+          "answered"
+        ],
+        "intents": [
+          "knowledge"
+        ],
+        "cite": true
+      },
+      "checks": {
+        "status": true,
+        "intent": true,
+        "citation": true,
+        "rewrite": true
+      },
+      "passed": true,
+      "session_id": "aadf6f6b5612",
+      "total_ms": 3207.2
+    },
+    {
+      "id": "kb-security",
+      "name": "信息安全事件上报时限",
+      "identity": "reader",
+      "turns": [
+        {
+          "text": "发现信息安全事件多久内要上报",
+          "intent": "knowledge",
+          "status": "answered",
+          "standalone_question": "发现信息安全事件多久内要上报",
+          "citations": [
+            "信息安全事件上报"
+          ],
+          "latency_ms": 3313.7,
+          "reply": "发现信息安全事件应在一小时内上报。"
+        }
+      ],
+      "expect": {
+        "status": [
+          "answered",
+          "insufficient_knowledge"
+        ],
+        "intents": [
+          "knowledge"
+        ],
+        "cite": null
+      },
+      "checks": {
+        "status": true,
+        "intent": true,
+        "citation": true,
+        "rewrite": true
+      },
+      "passed": true,
+      "session_id": "a96be740c1fa",
+      "total_ms": 3320.8
+    }
+  ]
+}

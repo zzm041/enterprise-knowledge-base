@@ -1,0 +1,26 @@
+{
+  "database": "evals-rag\\eval-20261115T152756Z-ad18b1\\eval.db",
+  "credentials": [
+    {
+      "token_sha256": "0412bdfc84c3d41448b27446c89adc27c70dc134551a8fcab4a843e2f1ddddff",
+      "tenant": "acme",
+      "subject": "synthetic-reader",
+      "workspaces": {
+        "handbook": "reader"
+      },
+      "audiences": [
+        "all",
+        "internal"
+      ]
+    }
+  ],
+  "embedding": {
+    "base_url": "http://127.0.0.1:50305/v1",
+    "model": "bge-m3",
+    "dimensions": 1024,
+    "revision": "bge-m3",
+    "timeout": 120.0
+  },
+  "generation": {},
+  "reranking": {}
+}

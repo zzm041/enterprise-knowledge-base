@@ -1,0 +1,412 @@
+{
+  "version": 1,
+  "note": "Scripted dialogues for the assistant layer. Expectations are contracts (status/intent/citation), not exact wording. Refusal cases must ask something the corpus genuinely lacks - recheck them whenever the corpus grows.",
+  "cases": [
+    {
+      "id": "greet-zh",
+      "name": "中文寒暄",
+      "identity": "reader",
+      "turns": [
+        "你好"
+      ],
+      "expect": {
+        "status": [
+          "smalltalk"
+        ],
+        "intents": [
+          "greeting"
+        ],
+        "cite": false
+      }
+    },
+    {
+      "id": "greet-en",
+      "name": "英文寒暄",
+      "identity": "reader",
+      "turns": [
+        "hello"
+      ],
+      "expect": {
+        "status": [
+          "smalltalk"
+        ],
+        "intents": [
+          "greeting"
+        ],
+        "cite": false
+      }
+    },
+    {
+      "id": "thanks",
+      "name": "致谢",
+      "identity": "reader",
+      "turns": [
+        "谢谢！"
+      ],
+      "expect": {
+        "status": [
+          "smalltalk"
+        ],
+        "intents": [
+          "thanks"
+        ],
+        "cite": false
+      }
+    },
+    {
+      "id": "bye",
+      "name": "告别",
+      "identity": "reader",
+      "turns": [
+        "没事了，再见"
+      ],
+      "expect": {
+        "status": [
+          "smalltalk"
+        ],
+        "intents": [
+          "goodbye",
+          "thanks"
+        ],
+        "cite": false
+      }
+    },
+    {
+      "id": "capability",
+      "name": "能力询问",
+      "identity": "reader",
+      "turns": [
+        "你能做什么？"
+      ],
+      "expect": {
+        "status": [
+          "smalltalk"
+        ],
+        "intents": [
+          "capability"
+        ],
+        "cite": false
+      }
+    },
+    {
+      "id": "chitchat",
+      "name": "自我介绍闲聊",
+      "identity": "reader",
+      "turns": [
+        "你是谁呀"
+      ],
+      "expect": {
+        "status": [
+          "smalltalk"
+        ],
+        "intents": [
+          "chitchat"
+        ],
+        "cite": false
+      }
+    },
+    {
+      "id": "kb-benefit",
+      "name": "口语提问·反问语义",
+      "identity": "reader",
+      "turns": [
+        "入职有什么福利"
+      ],
+      "expect": {
+        "status": [
+          "answered"
+        ],
+        "intents": [
+          "knowledge"
+        ],
+        "cite": true
+      }
+    },
+    {
+      "id": "kb-leave",
+      "name": "口语短句·年假",
+      "identity": "reader",
+      "turns": [
+        "年假有几天"
+      ],
+      "expect": {
+        "status": [
+          "answered"
+        ],
+        "intents": [
+          "knowledge"
+        ],
+        "cite": true
+      }
+    },
+    {
+      "id": "kb-travel",
+      "name": "差旅住宿上限",
+      "identity": "reader",
+      "turns": [
+        "出差住宿每晚上限多少？"
+      ],
+      "expect": {
+        "status": [
+          "answered"
+        ],
+        "intents": [
+          "knowledge"
+        ],
+        "cite": true
+      }
+    },
+    {
+      "id": "kb-purchase",
+      "name": "采购比价门槛",
+      "identity": "reader",
+      "turns": [
+        "采购一万元以上要几家比价？"
+      ],
+      "expect": {
+        "status": [
+          "answered"
+        ],
+        "intents": [
+          "knowledge"
+        ],
+        "cite": true
+      }
+    },
+    {
+      "id": "kb-paraphrase",
+      "name": "同义改写·找回密码",
+      "identity": "reader",
+      "turns": [
+        "我忘了登录密码，在哪儿能重置"
+      ],
+      "expect": {
+        "status": [
+          "answered"
+        ],
+        "intents": [
+          "knowledge"
+        ],
+        "cite": true
+      }
+    },
+    {
+      "id": "followup-travel",
+      "name": "多轮追问·差旅报销标准",
+      "identity": "reader",
+      "turns": [
+        "出差住宿怎么订酒店",
+        "那报销标准呢"
+      ],
+      "expect": {
+        "status": [
+          "answered"
+        ],
+        "intents": [
+          "followup",
+          "knowledge"
+        ],
+        "cite": true,
+        "rewrite": true
+      }
+    },
+    {
+      "id": "followup-device",
+      "name": "多轮追问·领电脑要带什么",
+      "identity": "reader",
+      "turns": [
+        "入职当天在哪里领取办公电脑",
+        "要带什么"
+      ],
+      "expect": {
+        "status": [
+          "answered"
+        ],
+        "intents": [
+          "followup",
+          "knowledge"
+        ],
+        "cite": true,
+        "rewrite": true
+      }
+    },
+    {
+      "id": "followup-anaphora",
+      "name": "多轮追问·指代",
+      "identity": "reader",
+      "turns": [
+        "入职设备在哪里领",
+        "那培训呢"
+      ],
+      "expect": {
+        "status": [
+          "answered",
+          "insufficient_knowledge"
+        ],
+        "intents": [
+          "followup",
+          "knowledge"
+        ],
+        "cite": null,
+        "rewrite": true
+      }
+    },
+    {
+      "id": "kb-leave-cashout",
+      "name": "扩语料后能答·年假未休折算",
+      "identity": "reader",
+      "turns": [
+        "年假没休完可以折现吗"
+      ],
+      "expect": {
+        "status": [
+          "answered"
+        ],
+        "intents": [
+          "knowledge"
+        ],
+        "cite": true
+      }
+    },
+    {
+      "id": "refuse-policy",
+      "name": "库外制度·员工宿舍",
+      "identity": "reader",
+      "turns": [
+        "公司是否提供员工宿舍"
+      ],
+      "expect": {
+        "status": [
+          "insufficient_knowledge"
+        ],
+        "intents": [
+          "knowledge"
+        ],
+        "cite": false
+      }
+    },
+    {
+      "id": "refuse-not-in-corpus",
+      "name": "库里没有的真实问题·购房无息贷款",
+      "identity": "reader",
+      "turns": [
+        "员工购房无息贷款怎么申请"
+      ],
+      "expect": {
+        "status": [
+          "insufficient_knowledge"
+        ],
+        "intents": [
+          "knowledge"
+        ],
+        "cite": false
+      }
+    },
+    {
+      "id": "oos-code",
+      "name": "越界请求·写排序",
+      "identity": "reader",
+      "turns": [
+        "帮我写一段快速排序"
+      ],
+      "expect": {
+        "status": [
+          "out_of_scope",
+          "insufficient_knowledge"
+        ],
+        "intents": [
+          "out_of_scope",
+          "knowledge"
+        ],
+        "cite": false
+      }
+    },
+    {
+      "id": "complaint-out-of-scope",
+      "name": "投诉落到能力边界",
+      "identity": "reader",
+      "turns": [
+        "我要投诉，转人工"
+      ],
+      "expect": {
+        "status": [
+          "out_of_scope"
+        ],
+        "intents": [
+          "out_of_scope"
+        ],
+        "cite": false
+      }
+    },
+    {
+      "id": "acl-reader",
+      "name": "权限内拒答·数据出境(reader)",
+      "identity": "reader",
+      "turns": [
+        "数据出境安全评估，多少人的个人信息需要申报"
+      ],
+      "expect": {
+        "status": [
+          "insufficient_knowledge",
+          "no_permission"
+        ],
+        "intents": [
+          "knowledge"
+        ],
+        "cite": false
+      }
+    },
+    {
+      "id": "acl-staff",
+      "name": "权限内回答·数据出境(staff)",
+      "identity": "staff",
+      "turns": [
+        "数据出境安全评估，多少人的个人信息需要申报"
+      ],
+      "expect": {
+        "status": [
+          "answered"
+        ],
+        "intents": [
+          "knowledge"
+        ],
+        "cite": true
+      }
+    },
+    {
+      "id": "kb-salary-window",
+      "name": "内部文档·调薪窗口(editor)",
+      "identity": "editor",
+      "turns": [
+        "调薪窗口在几月"
+      ],
+      "expect": {
+        "status": [
+          "answered"
+        ],
+        "intents": [
+          "knowledge"
+        ],
+        "cite": true
+      }
+    },
+    {
+      "id": "kb-security",
+      "name": "信息安全事件上报时限",
+      "identity": "reader",
+      "turns": [
+        "发现信息安全事件多久内要上报"
+      ],
+      "expect": {
+        "status": [
+          "answered",
+          "insufficient_knowledge"
+        ],
+        "intents": [
+          "knowledge"
+        ],
+        "cite": null
+      }
+    }
+  ]
+}

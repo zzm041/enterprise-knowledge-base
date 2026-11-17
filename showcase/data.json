@@ -1,0 +1,416 @@
+{
+  "meta": {
+    "chips": [
+      {
+        "text": "本地单机 · FastAPI + SQLite",
+        "tone": "ok"
+      },
+      {
+        "text": "合成数据 · 无云调用 · 无付费 API",
+        "tone": ""
+      },
+      {
+        "text": "抽取式回答（非 LLM 生成）",
+        "tone": ""
+      },
+      {
+        "text": "离线页面 · 零外部依赖",
+        "tone": ""
+      },
+      {
+        "text": "所有数字可回溯到仓库文件",
+        "tone": "ok"
+      }
+    ],
+    "line": "基线提交 b2d99f18f946（2026-11-11 16:03）· 分支 codex/ekb-handoff-20261110 · 证据 run 20261028T184235Z-6e6351 · 页面数字与 data.json 同源、可复算"
+  },
+  "demo": {
+    "status": "PASS",
+    "request": {
+      "method": "POST",
+      "path": "/query",
+      "body": {
+        "workspace": "handbook",
+        "question": "restoration checksum review"
+      }
+    },
+    "checks": [
+      "startup",
+      "anonymous denial",
+      "create/ingest",
+      "citation",
+      "cross-tenant read denial",
+      "reader write denial",
+      "known lexical paraphrase bad case",
+      "unsupported format",
+      "process restart persistence",
+      "archive exclusion"
+    ],
+    "answer": {
+      "status": "answered",
+      "answer": "Demo restoration checks require a checksum review.",
+      "answer_mode": "extractive",
+      "citations": [
+        {
+          "chunk_id": 18,
+          "document_id": 17,
+          "title": "Demo restoration",
+          "version": 1,
+          "start": 0,
+          "end": 50,
+          "excerpt": "Demo restoration checks require a checksum review."
+        }
+      ],
+      "trace": {
+        "retrieval_mode": "bm25",
+        "rerank": "disabled",
+        "eligible_chunks": 14,
+        "ranked_chunk_ids": [
+          18
+        ],
+        "min_lexical_coverage": 0.45,
+        "max_lexical_coverage": 1.0,
+        "ranked_document_ids": [
+          17
+        ],
+        "permission_recheck": "passed",
+        "total_ms": 2.07
+      },
+      "request_id": "c108a858d10c48a9978f88519d904a66"
+    },
+    "bad_case": {
+      "dataset_id": "paraphrase-hard",
+      "question": "I forgot my login secret; where can I regain access?",
+      "expected_source": "Account recovery",
+      "actual_status": "insufficient_knowledge",
+      "limitation": "lexical retrieval misses a supported paraphrase"
+    },
+    "after_archive": {
+      "status": "insufficient_knowledge",
+      "citations": []
+    },
+    "cross_tenant_read_status": 404,
+    "server_stopped": true,
+    "elapsed_seconds": 1.438
+  },
+  "pipeline": [
+    {
+      "title": "入库与版本",
+      "detail": "文本 / Markdown 提交；不可变 revision、归档、显式可重试入索引",
+      "optional": false
+    },
+    {
+      "title": "切块",
+      "detail": "按段落边界切分，保留字符偏移，供引用回指原文",
+      "optional": false
+    },
+    {
+      "title": "租户 / 工作区 / 可见范围过滤",
+      "detail": "授权在打分之前生效：不属于当前主体的片段根本进不了候选",
+      "optional": false
+    },
+    {
+      "title": "BM25 + 覆盖门槛",
+      "detail": "词法打分；候选词法覆盖率 < 0.45 直接不入选，宁缺毋滥",
+      "optional": false
+    },
+    {
+      "title": "dense / hybrid / rerank",
+      "detail": "可选适配器：向量余弦、RRF 融合、索引重排；默认不加载模型",
+      "optional": true
+    },
+    {
+      "title": "抽取式回答",
+      "detail": "从命中片段直接摘录，不做自由生成，不允许编造句子",
+      "optional": false
+    },
+    {
+      "title": "生成后复核 + 引用",
+      "detail": "回答前后各复核一次可见性；引用带 document_id / version / 字符偏移",
+      "optional": false
+    }
+  ],
+  "permissions": [
+    {
+      "action": "匿名列文档",
+      "actor": "无 Authorization",
+      "result": "401",
+      "tone": "ok",
+      "meaning": "默认拒绝，没有匿名读通道"
+    },
+    {
+      "action": "跨租户直读文档",
+      "actor": "租户 A 令牌读租户 B 文档",
+      "result": "404",
+      "tone": "ok",
+      "meaning": "不泄漏资源是否存在（不是 403）"
+    },
+    {
+      "action": "reader 归档文档",
+      "actor": "只读角色写操作",
+      "result": "403",
+      "tone": "ok",
+      "meaning": "读写角色分离，写路径独立校验"
+    },
+    {
+      "action": "错工作区检索",
+      "actor": "令牌无该 workspace 授权",
+      "result": "403",
+      "tone": "ok",
+      "meaning": "工作区边界在检索前生效"
+    },
+    {
+      "action": "归档后再次检索",
+      "actor": "同一 reader 令牌",
+      "result": "insufficient_knowledge",
+      "tone": "warn",
+      "meaning": "归档即退出召回，返回空引用而不是旧答案"
+    }
+  ],
+  "perm_note": "四条越权路径在同一次 HTTP 运行里被断言：匿名 401、跨租户 404、只读角色写 403、归档后检索退回 insufficient_knowledge。检索之前先鉴权，是架构选择而不是事后过滤。",
+  "eval": {
+    "run_id": "20261028T184235Z-6e6351",
+    "retrieval_mode": "bm25",
+    "answer_mode": "extractive",
+    "metrics": {
+      "k": 4,
+      "answerable_count": 20,
+      "negative_count": 8,
+      "recall_at_k": 0.9,
+      "mrr_at_k": 0.9,
+      "ndcg_at_k": 0.9,
+      "negative_refusal_rate": 1.0
+    },
+    "latency_ms": {
+      "median": 1.1535,
+      "max": 3.316
+    },
+    "candidate_k": 12,
+    "top_k": 4,
+    "cases_total": 28,
+    "corpus_docs": 16,
+    "corpus_sha256": "fc346fcda08a85275836823f8e52a5dcbf58d8ae29314ab4727841e465fb5bde",
+    "cases_sha256": "f8389b7047e0c2c03ff3f4c92f65de8617b8ed93343713242990606c0dd59fb9",
+    "dataset_kind": "hand-authored synthetic validation, not independent blind benchmark",
+    "bad_cases": [
+      {
+        "id": "multi",
+        "reason": "多意图：一句话里同时要求两件事，抽取式回答只覆盖其一"
+      },
+      {
+        "id": "paraphrase-hard",
+        "reason": "口语改写过深：词法覆盖低于 0.45 门槛，召回为空，漏答"
+      }
+    ],
+    "sample_cases": [
+      {
+        "id": "leave-direct",
+        "status": "answered",
+        "ranked": [
+          "leave"
+        ],
+        "total_ms": 3.316
+      },
+      {
+        "id": "leave-carry",
+        "status": "answered",
+        "ranked": [
+          "leave"
+        ],
+        "total_ms": 1.421
+      },
+      {
+        "id": "expenses",
+        "status": "answered",
+        "ranked": [
+          "expenses"
+        ],
+        "total_ms": 1.471
+      },
+      {
+        "id": "expenses-deadline",
+        "status": "answered",
+        "ranked": [
+          "expenses"
+        ],
+        "total_ms": 1.362
+      },
+      {
+        "id": "multi",
+        "status": "insufficient_knowledge",
+        "ranked": [],
+        "total_ms": 0.492
+      },
+      {
+        "id": "paraphrase-hard",
+        "status": "insufficient_knowledge",
+        "ranked": [],
+        "total_ms": 0.453
+      },
+      {
+        "id": "negative-unknown-policy",
+        "status": "insufficient_knowledge",
+        "ranked": [],
+        "total_ms": 0.441
+      },
+      {
+        "id": "negative-tenant",
+        "status": "insufficient_knowledge",
+        "ranked": [],
+        "total_ms": 0.493
+      }
+    ],
+    "repeat_runs": [
+      {
+        "run_id": "20261006T052813Z-f8a060",
+        "recall": 0.9,
+        "mrr": 0.9,
+        "ndcg": 0.9,
+        "refusal": 1.0
+      },
+      {
+        "run_id": "20261028T184235Z-6e6351",
+        "recall": 0.9,
+        "mrr": 0.9,
+        "ndcg": 0.9,
+        "refusal": 1.0
+      }
+    ],
+    "ablation": {
+      "rows": [
+        {
+          "label": "覆盖门槛关闭（无门槛基线）",
+          "run_id": "20261005T132700Z-fa0a73",
+          "recall": 0.95,
+          "mrr": 0.95,
+          "ndcg": 0.95,
+          "refusal": 0.125
+        },
+        {
+          "label": "覆盖门槛 0.45（当前默认）",
+          "run_id": "20261005T132810Z-ea6738",
+          "recall": 0.9,
+          "mrr": 0.9,
+          "ndcg": 0.9,
+          "refusal": 1.0
+        }
+      ],
+      "note": "同一份 28 题：关掉覆盖门槛时召回更高、但 8 道负例几乎全答；打开 0.45 门槛后召回略降、负例 8/8 拒答。这是可解释的取舍，不能读成“准确率提升”。"
+    }
+  },
+  "test_suite": {
+    "passed": 74
+  },
+  "limits": [
+    "词法检索不等于语义 embedding 质量",
+    "引用存在不等于事实蕴含正确",
+    "单进程小合成语料，不作并发性能结论",
+    "题目与语料由同一人同时编写，不声称无偏泛化"
+  ],
+  "bounds": [
+    "只接收文本 / Markdown；PDF、扫描件与 OCR 属于未实现的 Future Work",
+    "单机 SQLite，小规模语料；没有并发、QPS 或容量结论",
+    "静态本地凭证；无 SSO、无 TLS 周界、无限流、无多副本高可用",
+    "抽取式回答在多意图与深度改写处会漏答（见第 04 节坏例）",
+    "引用保证出处形式（文档 / 版本 / 字符偏移），不保证自然语言推理正确",
+    "未做真实 reranker / embedding 质量消融，也没有独立盲测集"
+  ],
+  "commands": {
+    "l1": "cd E:\\enterprise-knowledge-base\n# 只要 PowerShell / 文本编辑器，不装任何依赖\nGet-Content reports\\http-demo.json -Raw | ConvertFrom-Json |\n  Select-Object status, cross_tenant_read_status, server_stopped\nGet-Content reports\\eval-20261028T184235Z-6e6351\\results.json -Raw |\n  ConvertFrom-Json | Select-Object -ExpandProperty metrics\nGet-FileHash evaluation\\corpus.json -Algorithm SHA256   # 应等于报告里的 corpus_sha256",
+    "l2": "cd E:\\enterprise-knowledge-base\n$env:TEMP=\"$PWD\\.cache\\temp\"; $env:TMP=$env:TEMP\n$env:UV_CACHE_DIR=\"$PWD\\.cache\\uv\"; $env:UV_PYTHON_DOWNLOADS=\"never\"\nuv sync --frozen\n.\\\\.venv\\\\Scripts\\\\python.exe -m pytest                        # 74 项全部通过\n.\\\\.venv\\\\Scripts\\\\python.exe -m ekb.evaluate              # 打印 metrics 与坏例\n.\\\\.venv\\\\Scripts\\\\python.exe scripts\\\\demo.py             # 10 checks, status PASS\n.\\\\.venv\\\\Scripts\\\\python.exe scripts\\\\build_showcase.py --check   # 页面对不上就非零退出"
+  },
+  "provenance": [
+    {
+      "claim": "10 项 HTTP 检查通过",
+      "value": "PASS · 10 checks",
+      "source": "reports/http-demo.json",
+      "field": "status, checks[]"
+    },
+    {
+      "claim": "引用精确到字符偏移",
+      "value": "0–50 · v1",
+      "source": "reports/http-demo.json",
+      "field": "answer.citations[0].start/end/version"
+    },
+    {
+      "claim": "生成后权限复核",
+      "value": "passed",
+      "source": "reports/http-demo.json",
+      "field": "answer.trace.permission_recheck"
+    },
+    {
+      "claim": "跨租户读取",
+      "value": "404",
+      "source": "reports/http-demo.json",
+      "field": "cross_tenant_read_status"
+    },
+    {
+      "claim": "归档后不再召回",
+      "value": "insufficient_knowledge · citations=0",
+      "source": "reports/http-demo.json",
+      "field": "after_archive.status/citations"
+    },
+    {
+      "claim": "rerank 只改顺序不改权限",
+      "value": "[1, 2] → [2, 1]",
+      "source": "reports/rerank-query-chain.json",
+      "field": "baseline_document_order, reranked_document_order, forbidden_workspace_status"
+    },
+    {
+      "claim": "Recall@4",
+      "value": "0.90",
+      "source": "reports/eval-20261028T184235Z-6e6351/results.json",
+      "field": "metrics.recall_at_k"
+    },
+    {
+      "claim": "MRR@4 / nDCG@4",
+      "value": "0.90 / 0.90",
+      "source": "reports/eval-20261028T184235Z-6e6351/results.json",
+      "field": "metrics.mrr_at_k, metrics.ndcg_at_k"
+    },
+    {
+      "claim": "负向拒答",
+      "value": "1.00（8 题）",
+      "source": "reports/eval-20261028T184235Z-6e6351/results.json",
+      "field": "metrics.negative_refusal_rate"
+    },
+    {
+      "claim": "题量与可答/负例拆分",
+      "value": "28 / 20 / 8",
+      "source": "evaluation/cases.json",
+      "field": "len(cases), cases[].relevant 非空计数"
+    },
+    {
+      "claim": "语料文档数",
+      "value": "16",
+      "source": "evaluation/corpus.json",
+      "field": "len(corpus)"
+    },
+    {
+      "claim": "语料指纹",
+      "value": "fc346fcda08a8527…",
+      "source": "evaluation/corpus.json",
+      "field": "sha256（与报告 corpus_sha256 比对）"
+    },
+    {
+      "claim": "门槛开/关消融",
+      "value": "0.95·拒 0.125 → 0.90·拒 1.00",
+      "source": "reports/eval-20261005T132700Z-fa0a73/results.json",
+      "field": "metrics（对照组）"
+    },
+    {
+      "claim": "测试与静态检查",
+      "value": "74 项通过 · ruff check/format 通过",
+      "source": "reports/takeover-verification-20261029-01/summary.json",
+      "field": "pytest.tests, ruff_check, ruff_format"
+    }
+  ],
+  "footer": {
+    "lines": [
+      "本页由 scripts/build_showcase.py 生成：只读 reports/ 与 evaluation/，不修改任何冻结文件，不联网。",
+      "基线分支 codex/ekb-handoff-20261110 · HEAD b2d99f18f9464e5caf26c27cc3f4ba6759598ba9 · 冻结提交 9f3993b8b038（Portfolio Freeze）",
+      "复算入口：showcase/README.md · 一键核验：scripts/verify_showcase.py"
+    ],
+    "sha": "证据指纹 corpus fc346fcda08a8527… · cases f8389b7047e0c2c0… （可 Get-FileHash 复算）"
+  }
+}

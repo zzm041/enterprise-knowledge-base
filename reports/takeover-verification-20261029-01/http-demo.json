@@ -1,0 +1,77 @@
+{
+  "status": "PASS",
+  "transport": "real localhost HTTP, separate Uvicorn process",
+  "checks": [
+    "startup",
+    "anonymous denial",
+    "create/ingest",
+    "citation",
+    "cross-tenant read denial",
+    "reader write denial",
+    "known lexical paraphrase bad case",
+    "unsupported format",
+    "process restart persistence",
+    "archive exclusion"
+  ],
+  "answer": {
+    "status": "answered",
+    "answer": "Demo restoration checks require a checksum review.",
+    "answer_mode": "extractive",
+    "citations": [
+      {
+        "chunk_id": 18,
+        "document_id": 17,
+        "title": "Demo restoration",
+        "version": 1,
+        "start": 0,
+        "end": 50,
+        "excerpt": "Demo restoration checks require a checksum review."
+      }
+    ],
+    "trace": {
+      "retrieval_mode": "bm25",
+      "rerank": "disabled",
+      "eligible_chunks": 14,
+      "ranked_chunk_ids": [
+        18
+      ],
+      "min_lexical_coverage": 0.45,
+      "max_lexical_coverage": 1.0,
+      "ranked_document_ids": [
+        17
+      ],
+      "permission_recheck": "passed",
+      "total_ms": 2.861
+    },
+    "request_id": "0d86cd674d5242c1a676a15ce971c691"
+  },
+  "bad_case": {
+    "dataset_id": "paraphrase-hard",
+    "question": "I forgot my login secret; where can I regain access?",
+    "expected_source": "Account recovery",
+    "actual_status": "insufficient_knowledge",
+    "limitation": "lexical retrieval misses a supported paraphrase"
+  },
+  "cross_tenant_read_status": 404,
+  "after_archive": {
+    "status": "insufficient_knowledge",
+    "answer": "",
+    "answer_mode": "extractive",
+    "citations": [],
+    "trace": {
+      "retrieval_mode": "bm25",
+      "rerank": "disabled",
+      "eligible_chunks": 13,
+      "ranked_chunk_ids": [],
+      "min_lexical_coverage": 0.45,
+      "max_lexical_coverage": 0.0,
+      "ranked_document_ids": [],
+      "total_ms": 1.522
+    },
+    "request_id": "5a1ebe66ca4c4fc3951593ad797a0165"
+  },
+  "database": "E:\\enterprise-knowledge-base\\runtime\\http-demo-169ef729\\knowledge.db",
+  "credentials": "omitted; synthetic runtime credentials ignored by Git",
+  "server_stopped": true,
+  "elapsed_seconds": 2.125
+}

@@ -1,0 +1,134 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><title>企业知识库（RAG）· 一页说明</title><style>
+@page{size:A4;margin:9mm}
+*{box-sizing:border-box}
+body{margin:0;font:13px/1.62 "Microsoft YaHei","PingFang SC",system-ui,sans-serif;color:#1d2621;background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.page{width:192mm}
+.top{display:flex;align-items:flex-end;justify-content:space-between;border-bottom:2px solid #1f6f5c;padding-bottom:6px;margin-bottom:9px}
+h1{margin:0;font-size:21px;letter-spacing:.2px}
+.sub{color:#5b6b64;font-size:11.5px;margin-top:3px}
+.tag{background:#eaf4f0;color:#1f6f5c;border:1px solid #cfe6de;border-radius:4px;padding:3px 8px;font-size:11px;white-space:nowrap}
+h2{font-size:12px;margin:12px 0 5px;color:#1f6f5c;letter-spacing:.3px;display:flex;align-items:center;gap:7px}
+h2::before{content:"";width:5px;height:12px;background:#1f6f5c;border-radius:1px}
+.kpi{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.k{background:#f7faf9;border:1px solid #e2ece8;border-radius:5px;padding:7px 8px}
+.k b{display:block;font-size:16px;color:#14453a;line-height:1.2}
+.k span{font-size:10px;color:#63766e;display:block;margin-top:3px;line-height:1.4}
+table{width:100%;border-collapse:collapse;font-size:11px}
+th,td{border-bottom:1px solid #e6eeeb;padding:5px 6px;text-align:left;vertical-align:top}
+th{background:#f2f7f5;color:#2c4a41;font-weight:600;font-size:10.5px}
+td.c{color:#1f6f5c;font-weight:700;white-space:nowrap}
+td.n{color:#7a8b84}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.box{border:1px solid #e2ece8;border-radius:5px;padding:8px 10px;background:#fbfdfc}
+.box h3{margin:0 0 4px;font-size:11px;color:#2c4a41}
+.box ul{margin:0;padding-left:15px}
+.box li{font-size:10.8px;color:#4c5f57;margin:2px 0;line-height:1.5}
+.caps{display:grid;grid-template-columns:1fr 1fr;gap:2px 16px;font-size:10.8px;color:#44564e}
+.caps div{padding:2.5px 0;border-bottom:1px dotted #e6eeeb}
+.caps b{color:#14453a}
+.foot{margin-top:10px;border-top:1px solid #e2ece8;padding-top:6px;color:#869791;font-size:10px;display:flex;justify-content:space-between}
+.arch{border:1px solid #e2ece8;border-radius:5px;padding:5px 6px;background:#fbfdfc}
+.lane{font-size:9.5px;fill:#1f6f5c;font-weight:700}
+</style></head><body><div class="page">
+<div class="top"><div><h1>企业知识库（RAG）· 一页说明</h1>
+<div class="sub">本地私有化部署 · 文档版本与权限 · 混合检索 + 重排 + 带引用生成 · 可运行、可复算</div></div>
+<span class="tag">单机 · 4 进程 · 全离线</span></div>
+<h2>架构：三条车道，一条请求链路</h2><div class="arch"><svg viewBox="0 0 720 176" width="100%" height="176">
+<defs><marker id="a" markerWidth="8" markerHeight="8" refX="7" refY="3.2" orient="auto"><path d="M0,0 L7,3.2 L0,6.4 z" fill="#9db4ab"/></marker></defs>
+<text x="4" y="9" class="lane">① 请求链路</text>
+<rect x="4" y="14" width="102" height="36" rx="4" fill="#fff" stroke="#b9cdc5"/>
+<text x="55" y="29" text-anchor="middle" fill="#1d3b33" font-weight="600" font-size="9.5">浏览器控制台</text>
+<text x="55" y="42" text-anchor="middle" fill="#6b7f78" font-size="8.5">提问 / 资料 / 审计</text>
+<rect x="126" y="14" width="102" height="36" rx="4" fill="#fff" stroke="#b9cdc5"/>
+<text x="177" y="29" text-anchor="middle" fill="#1d3b33" font-weight="600" font-size="9.5">同源代理</text>
+<text x="177" y="42" text-anchor="middle" fill="#6b7f78" font-size="8.5">会话 · 限流 · 审计</text>
+<rect x="248" y="14" width="112" height="36" rx="4" fill="#fff" stroke="#b9cdc5"/>
+<text x="304" y="29" text-anchor="middle" fill="#1d3b33" font-weight="600" font-size="9.5">知识库 API</text>
+<text x="304" y="42" text-anchor="middle" fill="#6b7f78" font-size="8.5">FastAPI + SQLite</text>
+<rect x="382" y="14" width="112" height="36" rx="4" fill="#fff" stroke="#b9cdc5"/>
+<text x="438" y="29" text-anchor="middle" fill="#1d3b33" font-weight="600" font-size="9.5">检索层</text>
+<text x="438" y="42" text-anchor="middle" fill="#6b7f78" font-size="8.5">BM25 ∪ 向量 + RRF</text>
+<rect x="516" y="14" width="88" height="36" rx="4" fill="#fff" stroke="#b9cdc5"/>
+<text x="560" y="29" text-anchor="middle" fill="#1d3b33" font-weight="600" font-size="9.5">RAG 网关</text>
+<text x="560" y="42" text-anchor="middle" fill="#6b7f78" font-size="8.5">emb / rerank / chat</text>
+<rect x="626" y="14" width="90" height="36" rx="4" fill="#fff" stroke="#b9cdc5"/>
+<text x="671" y="29" text-anchor="middle" fill="#1d3b33" font-weight="600" font-size="9.5">Ollama</text>
+<text x="671" y="42" text-anchor="middle" fill="#6b7f78" font-size="8.5">8B · 9B-VL</text>
+<line x1="106" y1="32" x2="126" y2="32" stroke="#9db4ab" stroke-width="1.2" marker-end="url(#a)"/>
+<line x1="228" y1="32" x2="248" y2="32" stroke="#9db4ab" stroke-width="1.2" marker-end="url(#a)"/>
+<line x1="360" y1="32" x2="382" y2="32" stroke="#9db4ab" stroke-width="1.2" marker-end="url(#a)"/>
+<line x1="494" y1="32" x2="516" y2="32" stroke="#9db4ab" stroke-width="1.2" marker-end="url(#a)"/>
+<line x1="604" y1="32" x2="626" y2="32" stroke="#9db4ab" stroke-width="1.2" marker-end="url(#a)"/>
+<text x="4" y="70" class="lane">② 治理与输出</text>
+<rect x="4" y="76" width="136" height="38" rx="4" fill="#f4faf7" stroke="#b9cdc5"/>
+<text x="72" y="91" text-anchor="middle" fill="#1d3b33" font-weight="600" font-size="9.5">助手层</text>
+<text x="72" y="104" text-anchor="middle" fill="#6b7f78" font-size="8.5">意图分流 · 多轮改写 · 拒答台账</text>
+<rect x="152" y="76" width="152" height="38" rx="4" fill="#f4faf7" stroke="#b9cdc5"/>
+<text x="228" y="91" text-anchor="middle" fill="#1d3b33" font-weight="600" font-size="9.5">权限：库 × 角色 × 可见范围</text>
+<text x="228" y="104" text-anchor="middle" fill="#6b7f78" font-size="8.5">检索前下推 → 越权即查不到</text>
+<rect x="316" y="76" width="152" height="38" rx="4" fill="#f4faf7" stroke="#b9cdc5"/>
+<text x="392" y="91" text-anchor="middle" fill="#1d3b33" font-weight="600" font-size="9.5">重排 + 带引用生成</text>
+<text x="392" y="104" text-anchor="middle" fill="#6b7f78" font-size="8.5">bge-reranker → Qwen3-8B</text>
+<rect x="480" y="76" width="236" height="38" rx="4" fill="#f4faf7" stroke="#b9cdc5"/>
+<text x="598" y="91" text-anchor="middle" fill="#1d3b33" font-weight="600" font-size="9.5">导出 / 审计</text>
+<text x="598" y="104" text-anchor="middle" fill="#6b7f78" font-size="8.5">md · docx · zip · csv · 变更记录</text>
+<text x="4" y="131" class="lane">③ 数据与质量</text>
+<rect x="4" y="137" width="136" height="34" rx="4" fill="#f7f9f8" stroke="#b9cdc5"/>
+<text x="72" y="152" text-anchor="middle" fill="#1d3b33" font-weight="600" font-size="9.5">语料</text>
+<text x="72" y="165" text-anchor="middle" fill="#6b7f78" font-size="8.5">97 篇中文 · 755 chunk</text>
+<rect x="152" y="137" width="152" height="34" rx="4" fill="#f7f9f8" stroke="#b9cdc5"/>
+<text x="228" y="152" text-anchor="middle" fill="#1d3b33" font-weight="600" font-size="9.5">导入流水线</text>
+<text x="228" y="165" text-anchor="middle" fill="#6b7f78" font-size="8.5">PDF/Word/Excel/CSV/图片/zip</text>
+<rect x="316" y="137" width="152" height="34" rx="4" fill="#f7f9f8" stroke="#b9cdc5"/>
+<text x="392" y="152" text-anchor="middle" fill="#1d3b33" font-weight="600" font-size="9.5">版本与回溯</text>
+<text x="392" y="165" text-anchor="middle" fill="#6b7f78" font-size="8.5">v(n) 可变 · diff 可比</text>
+<rect x="480" y="137" width="236" height="34" rx="4" fill="#f7f9f8" stroke="#b9cdc5"/>
+<text x="598" y="152" text-anchor="middle" fill="#1d3b33" font-weight="600" font-size="9.5">评测与自检</text>
+<text x="598" y="165" text-anchor="middle" fill="#6b7f78" font-size="8.5">28 题 × 4 档 · 54 项契约 · 23 条助手</text>
+</svg></div>
+<h2>关键数字（全部本机实测，报告可复算）</h2><div class="kpi">
+<div class="k"><b>0.90</b><span>BM25 Recall@4<br>负例拒答 8/8</span></div>
+<div class="k"><b>1.00</b><span>向量召回<br>但负例 0/8</span></div>
+<div class="k"><b>1.00 + 8/8</b><span>重排后<br>召回与拒答同时成立</span></div>
+<div class="k"><b>1.8 s</b><span>端到端中位<br>检索 <1 ms</span></div>
+<div class="k"><b>54 项</b><span>接口契约自检<br>脚本 = 页面</span></div>
+<div class="k"><b>0.98 rps</b><span>完整链路<br>饱和点 4 并发</span></div>
+</div>
+<h2>取舍：每个选择都有实测判据</h2><table>
+<tr><th style="width:26px">#</th><th style="width:78px">决策</th><th style="width:104px">选了</th><th style="width:84px">没选</th><th>判据（实测）</th></tr>
+<tr><td class="n">1</td><td>向量存储</td><td class="c">SQLite 向量列</td><td class="n">Milvus / pgvector</td><td>755 chunk 精确扫描 0.24 ms；外推 10 万 chunk 才 31 ms，而生成占 1.6 s——换索引收益为零</td></tr>
+<tr><td class="n">2</td><td>召回</td><td class="c">BM25 ∪ 向量 + RRF</td><td class="n">纯向量</td><td>纯向量召回 1.00，但 8 条负例全部被答；混合才能兼顾词面与语义</td></tr>
+<tr><td class="n">3</td><td>重排</td><td class="c">bge-reranker-v2-m3</td><td class="n">不重排</td><td>加后负例拒答回到 8/8 且召回不掉；代价 2.6 ms → 1.8 s</td></tr>
+<tr><td class="n">4</td><td>拒答</td><td class="c">生成侧判定 + fail-closed</td><td class="n">单一相似度阈值</td><td>网关挂掉返回 knowledge_unavailable，而不是“库里没有”</td></tr>
+<tr><td class="n">5</td><td>模型</td><td class="c">8B 文本 + 9B-VL 互斥</td><td class="n">14B 常驻</td><td>16G 卡同时只挂一个；8B 28 题零坏例 1.6 s，VL 读图热态 0.36 s</td></tr>
+<tr><td class="n">6</td><td>权限</td><td class="c">检索前 ACL 下推</td><td class="n">答完再过滤</td><td>越权表现为查不到 / 403，而不是查到再遮掩</td></tr>
+</table>
+<h2>端到端能力（不是功能列表，是能演示的路径）</h2><div class="caps">
+<div><b>双层知识库</b>：企业库 + 每人个人库，权限按库判</div>
+<div><b>四种角色</b>：管理员 / 员工 / 主管 / 外部租户，越库 403</div>
+<div><b>资料运营</b>：新建 · 改版 · 下线 · 恢复 · 删除（手打标题确认）</div>
+<div><b>批量</b>：zip 整包、整目录导入、批量下线与导出</div>
+<div><b>分类与检索</b>：14 组标签树、搜索标题或 ID、版本 diff</div>
+<div><b>多模态</b>：扫描件 OCR、图片直接入库、读图用完即卸</div>
+<div><b>助手层</b>：意图分流、多轮改写、拒答兜底、未解决台账</div>
+<div><b>可配置</b>：兜底话术三入口（启动参数 / 面板 / 接口）</div>
+<div><b>公开演示</b>：只读 + 口令 + 限流 + 伪造身份无效</div>
+<div><b>运维</b>：质量看板、变更审计、VACUUM 备份、故障 fail-closed</div>
+</div>
+<div class="two" style="margin-top:10px">
+<div class="box"><h3>边界：写清做了什么，也写清没做什么</h3><ul>
+<li>单机单进程：完整链路饱和 4 并发 / 0.98 rps，瓶颈是单卡生成</li>
+<li>语料 = 合成制度 90 篇 + 公开法规 7 篇，不是真实企业数据</li>
+<li>评测 = 自编 28 题 + 23 条助手用例，非盲测、非公开榜单</li>
+<li>鉴权 = 本地 Cookie 会话（PBKDF2 / 8h / 失败锁定）；无 SSO / OIDC</li>
+<li>无 CI/CD、无监控告警、无分布式副本</li>
+</ul></div>
+<div class="box"><h3>可验证性：这些数字凭什么可信</h3><ul>
+<li>54 项接口契约自检，脚本与页面同源，两端必须同时绿</li>
+<li>评测报告锁 corpus / cases 的 sha256，语料一改即报错</li>
+<li>改断言必须写明“旧断言为什么错”并进缺陷台账（PA-221…231）</li>
+<li>故障注入：杀网关后 /query 返回 fail-closed，页面与助手分别给专门文案</li>
+<li>备份：VACUUM INTO 0.02 s / 7.16 MB，integrity_check 双 ok</li>
+</ul></div></div>
+<div class="foot"><span>演示：本地 3 分钟录屏（登录 → 引用 → 权限 → 版本 → 导入 → 多模态 → 兜底话术 → 54 项自检）</span><span>2026-11 · 单机私有化 · 全离线</span></div>
+</div></body></html>
