@@ -185,6 +185,13 @@ class Assistant:
             return self._knowledge(identity, session, workspace, text, decision)
         if intent == it.CHITCHAT:
             return self._chitchat(session, text)
+        # 模型判「不在范围」时先别急着拒。把「灭火器在哪」这类场所事实问句误判成
+        # 外部问题，是路由最容易犯的错（规则层命中的投诉/转人工不走这里）。
+        # 先沿同一条检索路径探一次：命中就正常回答、照旧带引文；探不到再回到范围话术。
+        if intent == it.OUT_OF_SCOPE and decision.source == "model":
+            probe = self._knowledge(identity, session, workspace, text, decision)
+            if probe.get("answer_status") == "answered":
+                return probe
         return self._plain(
             self.reply_text("out_of_scope"),
             answer_status="out_of_scope",

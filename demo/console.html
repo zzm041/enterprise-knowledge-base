@@ -1115,6 +1115,8 @@ function aiMessage(m, idx) {
       " · " + esc(chainText(trace)) + " · 已按你的可见范围过滤" + "</div>";
   } else if (status === "smalltalk") {
     where = '<div class="meta-line">不查文档，也不编制度用词 · ' + esc(routeText(d)) + "</div>";
+  } else if (status === "out_of_scope") {
+    where = '<div class="meta-line">这一问没有检索：路由判定它不属于公司知识库范围 · ' + esc(routeText(d)) + "</div>";
   } else if (status === "knowledge_unavailable") {
     where = '<div class="meta-line">检索网关或本地模型没起来（embed / rerank / 生成 任一不可用），' +
       "所以这次没有回答；重启演示栈后会恢复，不是知识库里没有这条制度</div>";
