@@ -1682,9 +1682,51 @@ class Handler(BaseHTTPRequestHandler):
             ids = [int(x) for x in (body.get("ids") or [])]
         except (TypeError, ValueError):
             ids = []
-        if action != "archive" or not ids:
+        if action not in ("archive", "purge") or not ids:
             self._json(422, {"error": {"code": "CONSOLE.BAD_BATCH",
-                                       "detail": "action 只支持 archive，ids 不能为空"}})
+                                       "detail": "action 只支持 archive / purge，ids 不能为空"}})
+            return
+        if action == "purge" and not body.get("confirm"):
+            self._json(422, {"error": {"code": "CONSOLE.CONFIRM_REQUIRED",
+                                       "detail": "批量硬删要带 confirm: true"}})
+            return
+        if action == "purge":
+            # 自检收尾用：一次请求清掉本轮自检造出来的文档，别每跑一次就往侧栏留几篇。
+            # 删序与单篇 /__purge 一致（doc_tags → chunks → versions → documents），
+            # 每篇留一条 action='purged' 的审计，request_id 标明来源是自检清理。
+            conn = self._db()
+            if conn is None:
+                return
+            actor = self.headers.get("X-Identity") or "editor"
+            purged, failed, deleted = [], [], {"documents": 0, "versions": 0, "chunks": 0}
+            try:
+                for doc_id in ids:
+                    row = conn.execute(
+                        "SELECT id,title,tenant FROM documents WHERE id=? AND workspace=?",
+                        (doc_id, workspace)).fetchone()
+                    if row is None:
+                        failed.append({"id": doc_id, "status": 404, "code": "KB.NOT_FOUND"})
+                        continue
+                    with conn:
+                        try:
+                            conn.execute("DELETE FROM doc_tags WHERE document_id=?", (doc_id,))
+                        except sqlite3.OperationalError:
+                            pass
+                        deleted["chunks"] += conn.execute(
+                            "DELETE FROM chunks WHERE document_id=?", (doc_id,)).rowcount
+                        deleted["versions"] += conn.execute(
+                            "DELETE FROM versions WHERE document_id=?", (doc_id,)).rowcount
+                        deleted["documents"] += conn.execute(
+                            "DELETE FROM documents WHERE id=?", (doc_id,)).rowcount
+                        conn.execute(
+                            "INSERT INTO audit(tenant,actor,action,document_id,request_id) "
+                            "VALUES(?,?,?,?,?)",
+                            (row["tenant"], actor, "purged", doc_id, "selfcheck"))
+                    purged.append(doc_id)
+            finally:
+                conn.close()
+            self._json(200, {"action": action, "purged": purged,
+                             "deleted": deleted, "failed": failed})
             return
         conn = self._db()
         if conn is None:

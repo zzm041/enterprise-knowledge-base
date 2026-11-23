@@ -170,6 +170,13 @@ def main(argv=None) -> int:
         results.append({"name": name, "ok": bool(ok), "note": note})
         print(("PASS " if ok else "FAIL ") + name + (("  " + note) if note else ""), flush=True)
         return ok
+    # 自检是真写真删：先记下 handbook 现有的 document id，收尾把本轮新增的一律硬删，
+    # 免得每跑一次就往演示库里留几篇临时条目（历史上的 selfcheck/ocr-test/编码用例）。
+    base_ids: set[int] = set()
+    base_status, base_payload = cli.api("/documents?workspace=handbook", identity="editor")
+    if base_status == 200 and isinstance(base_payload, dict):
+        base_ids = {int(item["id"]) for item in (base_payload.get("items") or [])}
+
     status, _ = cli.api("/health", identity="anon")
     check("health", status == 200, f"HTTP {status}")
 
@@ -666,6 +673,24 @@ def main(argv=None) -> int:
                         body={"workspace": foreign, "question": "入职有什么福利", "mode": "auto"})
     check("personal isolate", deny_status == 403 and deny_q == 403,
           f"list HTTP {deny_status} query HTTP {deny_q} foreign={foreign}")
+
+    # 收尾：本轮新建的文档一次批量硬删（导入件 / zip 包 / 编码用例 / OCR 件 / 批量用例）。
+    cleaned = 0
+    if base_ids:
+        status_after, after = cli.api("/documents?workspace=handbook", identity="editor")
+        if status_after == 200 and isinstance(after, dict):
+            leftover = [int(item["id"]) for item in (after.get("items") or [])
+                        if int(item["id"]) not in base_ids]
+            if leftover:
+                status_cl, payload_cl = cli.api("/__batch", method="POST", identity="editor",
+                                                body={"workspace": "handbook", "action": "purge",
+                                                      "ids": leftover, "confirm": True})
+                if status_cl == 200 and isinstance(payload_cl, dict):
+                    cleaned = len(payload_cl.get("purged") or [])
+                else:
+                    print(f"WARN selfcheck cleanup HTTP {status_cl} leftover={leftover}", flush=True)
+    if cleaned:
+        print(f"selfcheck cleanup: purged {cleaned} documents", flush=True)
 
     passed = sum(1 for item in results if item["ok"])
     total = len(results)

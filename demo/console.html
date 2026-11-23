@@ -1437,6 +1437,14 @@ async function runChecks() {
     if (live) live.textContent = S.checksOut;
     return ok;
   };
+  /* 自检是「真 HTTP 写真库」：创建 / 导入 / 解包 / OCR 都会落文档。跑完必须清干净，
+     否则每点一次侧栏就多几篇临时条目（历史残留就是这么攒出来的）。
+     做法是先记下跑之前的 id 集合，收尾时把新增的一律硬删——以后再加用例也不用记得补清理。 */
+  const baseIds = new Set();
+  try {
+    const baseList = await api("/documents?workspace=handbook", { identity: "editor", quiet: true });
+    for (const d of ((baseList.data && baseList.data.items) || [])) baseIds.add(d.id);
+  } catch (e) { /* 拿不到基线就不做兜底，别把断言带红 */ }
   let r = await api("/health"); ck("health", r.status === 200);
   r = await api("/documents?workspace=handbook", { identity: "anon" }); ck("anon", r.status === 401);
 
@@ -1818,6 +1826,22 @@ async function runChecks() {
   } else {
     ck("personal isolate", false);
   }
+  /* 收尾：本轮新造出来的文档（导入件、zip 包、编码用例、批量用例、OCR 件）一次批量硬删。
+     单篇清理的用例已经删过的会在 failed 里返回 404，不影响任何断言。 */
+  let cleaned = 0;
+  if (baseIds.size) {
+    try {
+      const after = await api("/documents?workspace=handbook", { identity: "editor", quiet: true });
+      const leftover = ((after.data && after.data.items) || [])
+        .map((d) => d.id).filter((x) => !baseIds.has(x));
+      if (leftover.length) {
+        const cl = await api("/__batch", { method: "POST", identity: "editor",
+          body: { workspace: "handbook", action: "purge", ids: leftover, confirm: true } });
+        cleaned = ((cl.data && cl.data.purged) || []).length;
+      }
+    } catch (e) { /* 清理失败不改变断言结果：下一次自检的基线会把残留算进去 */ }
+  }
+  if (cleaned) toast("自检清尾：已删除本次新建的 " + cleaned + " 篇临时文档");
 
   await loadDocs();
   toast("自检完成：" + res.filter(Boolean).length + "/" + res.length + " 通过");
