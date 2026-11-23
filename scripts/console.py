@@ -20,6 +20,7 @@ import json
 import os
 import secrets
 import socket
+import shutil
 import sqlite3
 import subprocess
 import sys
@@ -336,7 +337,8 @@ class AssistantService:
 
 def write_assistant_config(run_dir: Path, api_base: str, tokens: dict[str, str],
                            llm_base: str, chat_model: str,
-                           replies: dict[str, str] | None = None) -> Path:
+                           replies: dict[str, str] | None = None,
+                           agentic: bool = False, react: bool = False) -> Path:
     """The assistant's runtime config: KB endpoint + per-identity tokens + model route.
 
     Tokens live here (server side) so the browser never holds one; the console proxy
@@ -351,6 +353,14 @@ def write_assistant_config(run_dir: Path, api_base: str, tokens: dict[str, str],
             "workspace": "handbook",
             "max_history": 6,
             "retry_on_insufficient": True,
+            # 多步检索：一轮问句会依次试「改写句 / 原句 / 去虚词 / 子问题 / 纯词面」，
+            # 拿到带引用的强证据就停；只多花检索，不多调生成模型。
+            "agentic": bool(agentic),
+            "agentic_max_rounds": 3,
+            # ReAct 规划：模型先用只读工具摸库、再交出「该怎么问」，作答与引用仍由 KB 出。
+            "react": bool(react),
+            "react_max_steps": 3,
+            "data_dir": str(run_dir),
             "greeting_examples": [
                 "入职当天在哪里领取办公电脑？",
                 "出差住宿每晚上限多少？",
@@ -1308,6 +1318,12 @@ class Handler(BaseHTTPRequestHandler):
         path = urlparse(self.path).path
         if path in ("/", "/index.html", "/console", "/console.html"):
             self._page()
+            return
+        if path in ("/healthz", "/health"):
+            # 探活对反向代理/LB/容器健康检查开放，不带身份、不写审计、不需要口令。
+            # /api/health 保留给页面与自检脚本（同样的内容，走 API 前缀）。
+            payload = self._healthz()
+            self._json(200 if payload["status"] == "ok" else 503, payload)
             return
         if not path.startswith("/api/"):
             self._json(404, {"error": {"code": "CONSOLE.NOT_FOUND", "path": path}})
@@ -2290,6 +2306,51 @@ class Handler(BaseHTTPRequestHandler):
         except Exception as exc:  # noqa: BLE001 - surfaced to the console, not raised
             return {"status": "unreachable", "detail": str(exc)}
 
+    def _healthz(self) -> dict:
+        """交付级探活：进程与上游（api）+ 库可读 + 数据目录可写 + 磁盘水位。
+
+        /api/health 只说明 API 进程活着；这里回答的是「这一套还能不能提供服务」。
+        任何一项失败只降级 status，不抛异常——探活自己报错就没法探活了。
+        """
+        checks: dict = {}
+        try:
+            with urlopen(f"{API.base}/health", timeout=5) as resp:
+                checks["api"] = json.loads(resp.read()).get("status") == "ok"
+        except Exception:  # noqa: BLE001
+            checks["api"] = False
+        active = None
+        try:
+            conn = sqlite3.connect(f"file:{DB_PATH}?mode=ro", uri=True)
+            try:
+                active = conn.execute(
+                    "SELECT COUNT(*) FROM documents WHERE status='ACTIVE'").fetchone()[0]
+                checks["database"] = True
+            finally:
+                conn.close()
+        except Exception:  # noqa: BLE001
+            checks["database"] = False
+        try:
+            probe = DB_PATH.parent / ".healthz-probe"
+            probe.write_text("ok", encoding="utf-8")
+            probe.unlink()
+            checks["data_dir_writable"] = True
+        except Exception:  # noqa: BLE001
+            checks["data_dir_writable"] = False
+        try:
+            free_mb = shutil.disk_usage(DB_PATH.parent).free // (1024 * 1024)
+        except Exception:  # noqa: BLE001
+            free_mb = None
+        checks["disk_free_mb"] = free_mb
+        # 磁盘低于 512 MiB 时 SQLite 写入会开始失败，提前报 degraded 而不是等它炸。
+        checks["disk_ok"] = True if free_mb is None else free_mb >= 512
+        ok = all(checks[key] for key in ("api", "database", "data_dir_writable", "disk_ok"))
+        return {
+            "status": "ok" if ok else "degraded",
+            "checks": checks,
+            "active_documents": active,
+            "data_dir": str(DB_PATH.parent),
+        }
+
     def _forward(self, method: str):
         parsed = urlparse(self.path)
         upstream = API.base + parsed.path[len("/api"):]
@@ -2390,6 +2451,10 @@ def main() -> None:
                              "。例：--reply out_of_scope='投诉请走公司工单系统'")
     parser.add_argument("--no-assistant", action="store_true",
                         help="do not start the conversational assistant service")
+    parser.add_argument("--agentic", action="store_true",
+                        help="助手走多步检索（改写/子问题/词面重试，取到强证据即停）而不是单轮检索")
+    parser.add_argument("--react", action="store_true",
+                        help="助手先用只读工具摸库、再交出检索问法（需同时开 --agentic）")
     parser.add_argument("--public", action="store_true",
                         help="对外演示模式：只读、身份钉死、管理端点关闭、按 IP 限流")
     parser.add_argument("--public-identity", default="reader",
@@ -2448,7 +2513,13 @@ def main() -> None:
     if providers:
         config_path = initialize_with_models(run_dir, providers)
     else:
-        config_path = initialize(run_dir)
+        # 无模型模式（--no-rag，容器/离线交付的默认形态）下 ekb.cli.initialize() 遇到已存在的库
+        # 会抛 KB.ALREADY_INITIALIZED——重启即崩。这里先认已建好的库，只有空目录才初始化。
+        existing = run_dir / "config.json"
+        if existing.exists() and (run_dir / "knowledge.db").exists():
+            config_path = existing
+        else:
+            config_path = initialize(run_dir)
     tokens = json.loads((run_dir / "demo-credentials.json").read_text(encoding="utf8"))
     IDENTITIES = {key: value for key, value in tokens.items()}
     IDENTITY_META = identity_meta(tokens)
@@ -2482,7 +2553,8 @@ def main() -> None:
         llm_base = (f"http://127.0.0.1:{RAG.port}/v1" if providers
                     else args.ollama.rstrip("/") + "/v1")
         assistant_config = write_assistant_config(
-            run_dir, API.base, tokens, llm_base, args.chat_model, REPLY_OVERRIDES
+            run_dir, API.base, tokens, llm_base, args.chat_model, REPLY_OVERRIDES,
+            agentic=bool(args.agentic), react=bool(args.react),
         )
         ASSISTANT_CONFIG = assistant_config
         ASSISTANT = AssistantService(free_port(), assistant_config, run_dir / "assistant.log")

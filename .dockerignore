@@ -1,0 +1,17 @@
+.git/
+.gitignore
+.venv/
+.cache/
+.pytest_cache/
+__pycache__/
+**/__pycache__/
+*.pyc
+runtime/
+reports/
+evals-rag/
+showcase/
+*.mp4
+*.db
+*.db-wal
+*.db-shm
+deploy/.env

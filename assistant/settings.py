@@ -40,6 +40,11 @@ class Settings:
             workspace=data.get("workspace", assistant_raw.pop("workspace", "handbook")),
             max_history=int(assistant_raw.pop("max_history", 6)),
             retry_on_insufficient=bool(assistant_raw.pop("retry_on_insufficient", True)),
+            agentic=bool(assistant_raw.pop("agentic", False)),
+            agentic_max_rounds=int(assistant_raw.pop("agentic_max_rounds", 3)),
+            react=bool(assistant_raw.pop("react", False)),
+            react_max_steps=int(assistant_raw.pop("react_max_steps", 3)),
+            data_dir=str(assistant_raw.pop("data_dir", "") or ""),
             greeting_examples=list(
                 assistant_raw.pop(
                     "greeting_examples", AssistantConfig().greeting_examples

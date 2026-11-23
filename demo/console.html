@@ -139,6 +139,14 @@ aside{background:var(--panel);min-height:0;display:flex;flex-direction:column}
 .cite .t{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:320px}
 .meta-line{margin-top:10px;color:var(--ink-3);font-size:11.5px;line-height:1.6}
 .meta-line button{border:0;background:none;color:var(--accent);padding:0;font-size:11.5px}
+.trace-fold{margin-top:6px}
+.trace-fold summary{cursor:pointer;list-style:none;display:inline-flex;align-items:center;gap:5px;
+  color:var(--ink-3);font-size:11.5px;user-select:none}
+.trace-fold summary::-webkit-details-marker{display:none}
+.trace-fold summary::before{content:"▸";font-size:9px;opacity:.75}
+.trace-fold[open] summary::before{content:"▾"}
+.trace-fold summary:hover{color:var(--ink-2)}
+.trace-fold .t-body{margin-top:4px;color:var(--ink-3);font-size:11.5px}
 .composer{flex:0 0 auto;border-top:1px solid var(--line);background:rgba(255,255,255,.96);
   backdrop-filter:saturate(1.2) blur(6px);padding:12px 26px 16px;box-shadow:0 -6px 20px rgba(16,24,40,.04)}
 .composer .box{max-width:780px;margin:0 auto;border:1px solid var(--line);border-radius:14px;background:#fff;
@@ -1109,10 +1117,14 @@ function aiMessage(m, idx) {
         '<span class="n">' + (i + 1) + "</span>" +
         '<span class="t">' + esc(c.title) + "</span>" +
         '<span style="color:var(--ink-3)">v' + esc(c.version) + "</span></button>").join("") + "</div>" : "";
+  // 链路细节（检索模式、模型名、片段数）是给排查用的，默认收起，点一下才展开；
+  // 正式使用时回答只留人看得懂的一句。
+  const fold = (inner) => '<details class="trace-fold"><summary>看检索过程</summary>' +
+    '<div class="t-body">' + inner + "</div></details>";
   let where;
   if (status === "answered") {
-    where = '<div class="meta-line">来源：' + esc(cits.map((c) => c.title).join("、") || "—") +
-      " · " + esc(chainText(trace)) + " · 已按你的可见范围过滤" + "</div>";
+    where = '<div class="meta-line">来源：' + esc(cits.map((c) => c.title).join("、") || "—") + "</div>" +
+      fold("检索链路：" + esc(chainText(trace)) + " · 已按你的可见范围过滤");
   } else if (status === "smalltalk") {
     where = '<div class="meta-line">不查文档，也不编制度用词 · ' + esc(routeText(d)) + "</div>";
   } else if (status === "out_of_scope") {
@@ -1121,8 +1133,9 @@ function aiMessage(m, idx) {
     where = '<div class="meta-line">检索网关或本地模型没起来（embed / rerank / 生成 任一不可用），' +
       "所以这次没有回答；重启演示栈后会恢复，不是知识库里没有这条制度</div>";
   } else {
-    where = '<div class="meta-line">已检索 ' + esc(trace.eligible_chunks == null ? "—" : trace.eligible_chunks) +
-      " 个片段，" + esc(chainText(trace)) + " 之后仍无一条能支撑回答</div>";
+    where = '<div class="meta-line">库里没有能支撑这条回答的原文，所以这里不编一个</div>' +
+      fold("已检索 " + esc(trace.eligible_chunks == null ? "—" : trace.eligible_chunks) +
+        " 个片段，" + esc(chainText(trace)) + " 之后仍无一条能支撑回答");
   }
   const intent = d.intent ? '<span class="tag info">意图 ' + esc(d.intent) + "</span>" : "";
   // 这一层没有真人坐席：助手不再承诺转接，也不生成没人接的工单号。
@@ -2353,14 +2366,16 @@ async function boot() {
     if (first) S.identity = first.key;
   }
   const rag = S.meta.rag || {};
+  // 输入框下那行常驻提示只留人话；模型名与检索模式放到 title 里，鼠标停一下才看得到。
   if (rag.enabled) {
-    $("pipeline-hint").textContent = "混合检索（BM25 + " + (rag.embedding_model || "bge-m3") +
-      " 向量）· " + (rag.rerank_model || "重排") + " 重排 · " + (rag.chat_model || "本地模型") + " 生成";
-    $("empty-desc").textContent = "回答只来自这个知识库里已入库且你有权查看的文档。检索走混合召回（BM25 + " +
-      (rag.embedding_model || "bge-m3") + " 向量），再用 " + (rag.rerank_model || "重排模型") +
-      " 重排，最后由 " + (rag.chat_model || "本地模型") + " 依据选中的片段作答，每句结论都带原文出处。";
+    $("pipeline-hint").textContent = "答的是库里原文，每条结论可回溯出处";
+    $("pipeline-hint").title = "检索链路：BM25 + " + (rag.embedding_model || "bge-m3") +
+      " 向量 · " + (rag.rerank_model || "重排") + " 重排 · " + (rag.chat_model || "本地模型") + " 生成";
+    $("empty-desc").textContent = "回答只来自这个知识库里已入库且你有权查看的文档，每句结论都带原文出处；" +
+      "库里没有能支撑的内容时会直说，并记进待补资料清单。";
   } else {
-    $("pipeline-hint").textContent = "词法检索（BM25）· 抽取式回答 · 未接模型网关（--no-rag）";
+    $("pipeline-hint").textContent = "答的是库里原文，每条结论可回溯出处";
+    $("pipeline-hint").title = "检索链路：词法检索（BM25）· 抽取式回答 · 未接模型网关（--no-rag）";
     $("empty-desc").textContent = "回答只来自这个知识库里已入库且你有权查看的文档；每条结论都带原文出处。";
   }
   const wantWs = new URLSearchParams(location.search).get("ws");

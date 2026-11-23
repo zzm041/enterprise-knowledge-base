@@ -14,7 +14,9 @@ from time import perf_counter
 from ekb.errors import KBError
 
 from assistant import intent as it
+from assistant.agentic import AgenticRunner
 from assistant.kb import KBClient
+from assistant.react import ReactPlanner, detect_planner_llm
 from assistant.llm import ChatModel
 from assistant.store import Store
 
@@ -61,6 +63,14 @@ class AssistantConfig:
     workspace: str = "handbook"
     max_history: int = 6
     retry_on_insufficient: bool = True
+    # 多步检索（Agentic RAG）：默认关，开起来只多花检索次数，不多调生成模型。
+    agentic: bool = False
+    agentic_max_rounds: int = 3
+    # ReAct 规划：开了之后模型先用只读工具摸库、再交出「该怎么问」；它不参与作答。
+    react: bool = False
+    react_max_steps: int = 3
+    # 本地库目录（含 accounts.json / knowledge.db）。空则 ReAct 规划自动跳过。
+    data_dir: str = ""
     greeting_examples: list[str] = field(
         default_factory=lambda: [
             "入职当天在哪里领取办公电脑？",
@@ -101,6 +111,41 @@ class Assistant:
         self.kb = kb
         self.llm = llm
         self.config = config or AssistantConfig()
+        self.runner = (
+            AgenticRunner(
+                self.kb,
+                max_rounds=self.config.agentic_max_rounds,
+                planner=self._build_planner(),
+            )
+            if self.config.agentic
+            else None
+        )
+
+    def _build_planner(self):
+        """ReAct 规划器：只读、按身份取 ACL、失败就返回 None（退回确定性候选）。"""
+        if not self.config.react:
+            return None
+        data_dir = (self.config.data_dir or "").strip()
+        if not data_dir:
+            return None
+        try:
+            from pathlib import Path
+
+            from scripts.mcp_server import Toolbox
+
+            base = Path(data_dir)
+            planner_llm = detect_planner_llm(
+                getattr(self.llm, "base_url", ""), getattr(self.llm, "model", "")
+            ) or self.llm
+            if not (base / "accounts.json").exists() or not (base / "knowledge.db").exists():
+                return None
+            return ReactPlanner(
+                lambda identity: Toolbox(base, identity),
+                planner_llm,
+                max_steps=self.config.react_max_steps,
+            )
+        except Exception:  # noqa: BLE001 - 规划器是可选增强，装不上就不装
+            return None
 
     def reply_text(self, key: str, default: str | None = None) -> str:
         """取兜底话术：配置里有非空值就用配置，否则用内置默认。"""
@@ -242,11 +287,34 @@ class Assistant:
             suggestions=self.config.greeting_examples[:2],
         )
 
+    def _retrieve(self, identity, workspace, question, text, decision) -> dict:
+        """一次检索的唯一入口：多步开着走 AgenticRunner，否则单轮 + 原文重试。
+
+        AgenticRunner 的候选里已经包含原文与子问题，所以它跑过之后不再重复原文重试。
+        """
+        if self.runner is not None:
+            result = self.runner.run(identity, workspace, text, decision_query=question)
+            rounds = int(((result.get("trace") or {}).get("agentic") or {}).get("rounds") or 1)
+            if rounds > 1:
+                decision.notes.append(f"agentic_rounds={rounds}")
+            return result
+        result = self.kb.query(identity, workspace, question)
+        if (
+            result.get("status") != "answered"
+            and self.config.retry_on_insufficient
+            and question != text
+        ):
+            retry = self.kb.query(identity, workspace, text)
+            if retry.get("status") == "answered":
+                decision.notes.append("rewrite_retry_with_original")
+                return retry
+        return result
+
     def _knowledge(self, identity, session, workspace, text, decision) -> dict:
         question = decision.query or text
         kb_error: KBError | None = None
         try:
-            result = self.kb.query(identity, workspace, question)
+            result = self._retrieve(identity, workspace, question, text, decision)
         except KBError as exc:
             kb_error = exc
             result = {}
@@ -263,13 +331,6 @@ class Assistant:
             raise kb_error
 
         status = result.get("status")
-        if status != "answered" and self.config.retry_on_insufficient and question != text:
-            retry = self.kb.query(identity, workspace, text)
-            if retry.get("status") == "answered":
-                result = retry
-                status = "answered"
-                decision.notes.append("rewrite_retry_with_original")
-
         citations = _cite_payload(result.get("citations") or [])
         if status == "answered" and citations:
             titles = []

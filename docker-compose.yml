@@ -1,0 +1,36 @@
+# EKB 企业知识库——单机可交付编排。
+#   cp deploy/.env.example deploy/.env   # 填 EKB_DEMO_PASSWORD
+#   docker compose up -d --build
+#   docker compose logs -f ekb
+name: ekb
+
+services:
+  ekb:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ekb-knowledge:1.0.0
+    container_name: ekb-knowledge
+    env_file:
+      - ./deploy/.env
+    ports:
+      - "${EKB_PORT:-8810}:${EKB_PORT:-8810}"
+    volumes:
+      - ekb-data:/app/runtime
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp
+    healthcheck:
+      test: ["CMD", "python", "-c", "import os,sys,urllib.request;u='http://127.0.0.1:%s/healthz'%os.environ.get('EKB_PORT','8810');sys.exit(0 if urllib.request.urlopen(u,timeout=4).status==200 else 1)"]
+      interval: 30s
+      timeout: 5s
+      start_period: 90s
+      retries: 3
+
+volumes:
+  ekb-data:
+    name: ekb-data
